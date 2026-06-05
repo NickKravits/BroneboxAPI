@@ -1,0 +1,176 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Role {
+  ADMINISTRATOR
+  STAFF
+}
+
+enum Status {
+  ACTIVE
+  BLOCKED
+  DELETED
+}
+
+enum TemPass {
+  YES
+  NO
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  login     String   @unique
+  password  String
+  tempass   TemPass  @default(YES)
+  name      String?
+  role      Role
+  cabinet   Int
+  status    Status   @default(ACTIVE)
+  createdAt DateTime @default(now())
+
+  staff Staff?
+}
+
+model Cabinet {
+  id               Int     @id @default(autoincrement())
+  realtycalendarid String? @unique
+  okidokiapi       String?
+  tochkaapi        String?
+  tochkauid        String?
+}
+
+enum Thumbler {
+  YES
+  NO
+}
+
+model Staff {
+  id                Int      @id
+  user              User     @relation(fields: [id], references: [id], onDelete: Cascade)
+  cabinetid         Int
+  manageobjects     Thumbler @default(NO)
+  managemaids       Thumbler @default(NO)
+  manageintegration Thumbler @default(NO)
+  managetemplates   Thumbler @default(YES)
+  manageautosent    Thumbler @default(NO)
+  seemaidsrate      Thumbler @default(YES)
+  managebooks       Thumbler @default(NO)
+}
+
+model Maids {
+  id        Int    @id @default(autoincrement())
+  name      String
+  rating    Float  @default(0.0)
+  cabinetid Int
+}
+
+model Objects {
+  id              Int           @id @default(autoincrement())
+  cabinetid       Int
+  realtyid        String?
+  name            String
+  instruction     String        @db.Text
+  checkindef      String
+  checkoutdef     String
+  sspayanddeposit ShowSettings
+  ssinstruction   ShowSettings
+  sscontract      ShowSettings
+  ssrateclean     ShowSettings
+  location        String
+  maplink         String?
+  deposit         String
+  odstringid      String?
+  odvalueid       String?
+  odnameid        String?
+  oddateinid      String?
+  oddateoutid     String?
+  oddepositid     String?
+  odpayperdayid   String?
+  odpayedid       String?
+  depositchanel   DepositChanel @default(NONE)
+  paymentchanel   PaymentChanel @default(NONE)
+  active          Thumbler      @default(YES)
+
+  photos ObjectPhoto[]
+}
+
+enum DepositChanel {
+  NONE
+  MONETA
+  TOCHKA
+  TBANK
+}
+
+enum PaymentChanel {
+  NONE
+  TOCHKA
+  TBANK
+}
+
+model ObjectPhoto {
+  id       Int     @id @default(autoincrement())
+  objectId Int
+  url      String
+  objects  Objects @relation(fields: [objectId], references: [id])
+}
+
+enum ShowSettings {
+  IMMEDIATELY // Сразу
+  DAY_BEFORE // За день до заселения
+  AFTER_CHECKIN // После заселения
+  AFTER_CHECKOUT // Сразу после выезда
+}
+
+model Bookings {
+  status               BookStatus?
+  id                   Int         @id
+  begin_date           String?
+  end_date             String?
+  realty_id            Int?
+  created_at           DateTime?
+  updated_at           DateTime?
+  amount               Int?
+  notes                String?
+  source               String?
+  prepayment           Int?
+  balance_to_be_paid_1 Int?
+  price_per_day        Int?
+  deposit              Int?
+  //client
+  client_id            Int? //id
+  fio                  String?
+  email                String?
+  phone                String?
+  additional_phone     String?
+  //CRM additional info
+  cabinet              Int
+  tochka_id_pay        Int?
+  tochka_id_deposit    Int?
+  begin_time           String?
+  end_time             String?
+  contract_id          String?
+  contract_link        String?
+  maid_id              Int?
+  review               Int?
+  channel              String?     @default(" ")
+
+  link String
+}
+
+enum BookStatus {
+  booked //Бронь активна
+  deleted //Бронь удалена
+  canceled //Бронь отменена
+  request //Заявка
+}
