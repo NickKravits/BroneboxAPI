@@ -22,6 +22,7 @@ fastify.register(require('@fastify/cors'), {
 // Плагины
 fastify.register(require('./src/plugins/prisma'))
 fastify.register(require('./src/plugins/jwt'))
+fastify.register(require('./src/plugins/sse'))
 
 // Роуты
 fastify.register(require('./src/routes/auth'), { prefix: '/auth' })
@@ -33,6 +34,7 @@ fastify.register(require('./src/routes/integration'), { prefix: '/integration' }
 fastify.register(require('./src/routes/webhook'), { prefix: '/webhook' })
 fastify.register(require('./src/routes/bookings'), { prefix: '/bookings' })
 fastify.register(require('./src/routes/guest'), { prefix: '/guest' })
+fastify.register(require('./src/routes/logs'), { prefix: '/logs' })
 
 fastify.listen({ port: 3000 }, (err) => {
   if (err) {

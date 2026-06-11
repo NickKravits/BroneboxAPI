@@ -134,6 +134,15 @@ module.exports = async (fastify) => {
                 where: { id: parseInt(id), cabinet: user.cabinet },
                 data
             })
+
+            await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: "SUCCESS",
+                message: `Бронирования | Изменена бронь ${id}`
+            }
+            })
+
             return reply.send({ updated })
         } catch (err) {
             console.error(err)
@@ -174,6 +183,15 @@ module.exports = async (fastify) => {
             await fastify.prisma.bookings.delete({
                 where: { id: parseInt(id), cabinet: user.cabinet }
             })
+
+            await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: "SUCCESS",
+                message: `Бронирования | Удалена бронь ${id}`
+            }
+            })
+
             return reply.send({ success: true })
         } catch (err) {
             console.error(err)

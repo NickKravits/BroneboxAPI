@@ -97,6 +97,14 @@ module.exports = async (fastify) => {
                 }
             })
 
+            await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: "SUCCESS",
+                message: `Горничные | Горничная создана ${name}`
+            }
+            })
+
             return reply.send({ message: 'Горничная успешно создана' })
 
         } catch (err) {
@@ -139,7 +147,8 @@ module.exports = async (fastify) => {
             const maid = await fastify.prisma.maids.findUnique({
                 where: { id, cabinetid: user.cabinet },
                 select: {
-                    id: true
+                    id: true,
+                    name: true
                 }
             })
 
@@ -149,6 +158,14 @@ module.exports = async (fastify) => {
 
             await fastify.prisma.maids.delete({
                 where: { id: maid.id, cabinetid: user.cabinet}
+            })
+
+            await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: "SUCCESS",
+                message: `Горничные | Горничная удалена ${maid.name}`
+            }
             })
 
             return reply.send({ message: 'Горничная успешно удалена' })

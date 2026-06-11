@@ -136,8 +136,23 @@ exports.Prisma.CabinetScalarFieldEnum = {
   id: 'id',
   realtycalendarid: 'realtycalendarid',
   okidokiapi: 'okidokiapi',
-  tochkaapi: 'tochkaapi',
-  tochkauid: 'tochkauid'
+  tochkaPhone: 'tochkaPhone',
+  tochkaApiKey: 'tochkaApiKey',
+  tochkaConsumerId: 'tochkaConsumerId',
+  tochkaPaymentMode: 'tochkaPaymentMode',
+  tochkaVatType: 'tochkaVatType',
+  tochkaPurpose: 'tochkaPurpose',
+  tochkaName: 'tochkaName',
+  tochkaCustomerCode: 'tochkaCustomerCode'
+};
+
+exports.Prisma.LogsScalarFieldEnum = {
+  id: 'id',
+  cabinetid: 'cabinetid',
+  status: 'status',
+  message: 'message',
+  date: 'date',
+  readed: 'readed'
 };
 
 exports.Prisma.StaffScalarFieldEnum = {
@@ -231,6 +246,11 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
@@ -242,11 +262,30 @@ exports.Prisma.UserOrderByRelevanceFieldEnum = {
   name: 'name'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
 exports.Prisma.CabinetOrderByRelevanceFieldEnum = {
   realtycalendarid: 'realtycalendarid',
   okidokiapi: 'okidokiapi',
-  tochkaapi: 'tochkaapi',
-  tochkauid: 'tochkauid'
+  tochkaPhone: 'tochkaPhone',
+  tochkaApiKey: 'tochkaApiKey',
+  tochkaConsumerId: 'tochkaConsumerId',
+  tochkaPurpose: 'tochkaPurpose',
+  tochkaName: 'tochkaName',
+  tochkaCustomerCode: 'tochkaCustomerCode'
+};
+
+exports.Prisma.LogsOrderByRelevanceFieldEnum = {
+  message: 'message'
 };
 
 exports.Prisma.MaidsOrderByRelevanceFieldEnum = {
@@ -254,7 +293,6 @@ exports.Prisma.MaidsOrderByRelevanceFieldEnum = {
 };
 
 exports.Prisma.ObjectsOrderByRelevanceFieldEnum = {
-  realtyid: 'realtyid',
   name: 'name',
   instruction: 'instruction',
   checkindef: 'checkindef',
@@ -308,6 +346,12 @@ exports.Status = exports.$Enums.Status = {
   DELETED: 'DELETED'
 };
 
+exports.LogStatus = exports.$Enums.LogStatus = {
+  INFO: 'INFO',
+  ERROR: 'ERROR',
+  SUCCESS: 'SUCCESS'
+};
+
 exports.Thumbler = exports.$Enums.Thumbler = {
   YES: 'YES',
   NO: 'NO'
@@ -343,6 +387,7 @@ exports.BookStatus = exports.$Enums.BookStatus = {
 exports.Prisma.ModelName = {
   User: 'User',
   Cabinet: 'Cabinet',
+  Logs: 'Logs',
   Staff: 'Staff',
   Maids: 'Maids',
   Objects: 'Objects',

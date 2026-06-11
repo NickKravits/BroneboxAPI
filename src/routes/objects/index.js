@@ -126,7 +126,7 @@ module.exports = async (fastify) => {
             const newObject = await fastify.prisma.objects.create({
                 data: {
                     cabinetid: user.cabinet,
-                    realtyid: realtyId,
+                    realtyid: Number(realtyId),
                     name,
                     instruction: instructions,
                     checkindef: checkInTime,
@@ -150,6 +150,14 @@ module.exports = async (fastify) => {
                     paymentchanel: PaymentChanel,
                     active
                 }
+            })
+
+            await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: "SUCCESS",
+                message: `Объекты | Создан объект ${name}`
+            }
             })
 
             return reply.send({ newObject })
@@ -447,6 +455,14 @@ module.exports = async (fastify) => {
             }
         })
 
+        await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: "SUCCESS",
+                message: `Объекты | Объект обновлён ${name}`
+            }
+            })
+
         return reply.send({ message: 'Объект успешно обновлён', object: updatedObject })
 
     } catch (err) {
@@ -531,7 +547,7 @@ fastify.delete('/photos/:photoId', async (req, reply) => {
 
         const object = await fastify.prisma.objects.findUnique({
             where: { id: objectId },
-            select: { id: true, cabinetid: true }
+            select: { id: true, cabinetid: true, name: true }
         })
 
         if (!object) {
@@ -558,6 +574,16 @@ fastify.delete('/photos/:photoId', async (req, reply) => {
         await fastify.prisma.bookings.deleteMany({ where: { realty_id: object.realtyid } })
 
         await fastify.prisma.objects.delete({ where: { id: objectId } })
+
+        await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: "SUCCESS",
+                message: `Объекты | Объект удалён ${object.name}`
+            }
+            })
+
+        return reply.send({ message: "Объект удалён!" })
 
     } catch (err) {
         return reply.status(401).send({ error: 'Неавторизованный доступ' })
@@ -599,7 +625,7 @@ fastify.delete('/photos/:photoId', async (req, reply) => {
         }
     }
 
-    const realtyid = String(rId)
+    const realtyid = rId
 
     const object = await fastify.prisma.objects.findFirst({
         where: { realtyid: realtyid, cabinetid: user.cabinet },
@@ -643,4 +669,55 @@ fastify.delete('/photos/:photoId', async (req, reply) => {
 
     return reply.send({ object })
   })
+
+    fastify.get('/check-availability', async (req, reply) => {
+        await req.jwtVerify()
+        const userId = req.user.id
+
+        const user = await fastify.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                role: true,
+                cabinet: true
+            }
+        })
+
+        if (!user) {
+            return reply.status(404).send({ error: 'Пользователь не найден' })
+        }
+
+        const userTimezone = user.cabinet.Timezone || 'Europe/Moscow';
+
+        const now = new Date()
+        const todayStr = new Intl.DateTimeFormat('en-CA', {
+            timeZone: userTimezone,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).format(now)
+
+        const AvailableObjects = []
+
+        //Находим объекты
+        const objects = await fastify.prisma.objects.findMany({
+            where: { cabinetid: user.cabinet }
+        })
+
+        for (const object of objects) {
+            const book = await fastify.prisma.bookings.findFirst({
+                where: {
+                    status: "booked",
+                    realty_id: object.realtyid,
+                    begin_date: {lte: todayStr},
+                    end_date: {gt: todayStr}
+                }
+            })
+
+            if (!book) {
+                AvailableObjects.push(object)
+            }
+        }
+
+        return reply.send({ AvailableObjects })
+    })
 }

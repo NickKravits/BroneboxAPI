@@ -24,6 +24,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type Cabinet = $Result.DefaultSelection<Prisma.$CabinetPayload>
 /**
+ * Model Logs
+ * 
+ */
+export type Logs = $Result.DefaultSelection<Prisma.$LogsPayload>
+/**
  * Model Staff
  * 
  */
@@ -76,6 +81,15 @@ export const TemPass: {
 };
 
 export type TemPass = (typeof TemPass)[keyof typeof TemPass]
+
+
+export const LogStatus: {
+  INFO: 'INFO',
+  ERROR: 'ERROR',
+  SUCCESS: 'SUCCESS'
+};
+
+export type LogStatus = (typeof LogStatus)[keyof typeof LogStatus]
 
 
 export const Thumbler: {
@@ -137,6 +151,10 @@ export const Status: typeof $Enums.Status
 export type TemPass = $Enums.TemPass
 
 export const TemPass: typeof $Enums.TemPass
+
+export type LogStatus = $Enums.LogStatus
+
+export const LogStatus: typeof $Enums.LogStatus
 
 export type Thumbler = $Enums.Thumbler
 
@@ -298,6 +316,16 @@ export class PrismaClient<
     * ```
     */
   get cabinet(): Prisma.CabinetDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.logs`: Exposes CRUD operations for the **Logs** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Logs
+    * const logs = await prisma.logs.findMany()
+    * ```
+    */
+  get logs(): Prisma.LogsDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.staff`: Exposes CRUD operations for the **Staff** model.
@@ -784,6 +812,7 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Cabinet: 'Cabinet',
+    Logs: 'Logs',
     Staff: 'Staff',
     Maids: 'Maids',
     Objects: 'Objects',
@@ -804,7 +833,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "cabinet" | "staff" | "maids" | "objects" | "objectPhoto" | "bookings"
+      modelProps: "user" | "cabinet" | "logs" | "staff" | "maids" | "objects" | "objectPhoto" | "bookings"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -937,6 +966,72 @@ export namespace Prisma {
           count: {
             args: Prisma.CabinetCountArgs<ExtArgs>
             result: $Utils.Optional<CabinetCountAggregateOutputType> | number
+          }
+        }
+      }
+      Logs: {
+        payload: Prisma.$LogsPayload<ExtArgs>
+        fields: Prisma.LogsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LogsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LogsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogsPayload>
+          }
+          findFirst: {
+            args: Prisma.LogsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LogsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogsPayload>
+          }
+          findMany: {
+            args: Prisma.LogsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogsPayload>[]
+          }
+          create: {
+            args: Prisma.LogsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogsPayload>
+          }
+          createMany: {
+            args: Prisma.LogsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.LogsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogsPayload>
+          }
+          update: {
+            args: Prisma.LogsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogsPayload>
+          }
+          deleteMany: {
+            args: Prisma.LogsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LogsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.LogsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LogsPayload>
+          }
+          aggregate: {
+            args: Prisma.LogsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLogs>
+          }
+          groupBy: {
+            args: Prisma.LogsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LogsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LogsCountArgs<ExtArgs>
+            result: $Utils.Optional<LogsCountAggregateOutputType> | number
           }
         }
       }
@@ -1380,6 +1475,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     user?: UserOmit
     cabinet?: CabinetOmit
+    logs?: LogsOmit
     staff?: StaffOmit
     maids?: MaidsOmit
     objects?: ObjectsOmit
@@ -2554,24 +2650,38 @@ export namespace Prisma {
     id: number | null
     realtycalendarid: string | null
     okidokiapi: string | null
-    tochkaapi: string | null
-    tochkauid: string | null
+    tochkaPhone: string | null
+    tochkaApiKey: string | null
+    tochkaConsumerId: string | null
+    tochkaPurpose: string | null
+    tochkaName: string | null
+    tochkaCustomerCode: string | null
   }
 
   export type CabinetMaxAggregateOutputType = {
     id: number | null
     realtycalendarid: string | null
     okidokiapi: string | null
-    tochkaapi: string | null
-    tochkauid: string | null
+    tochkaPhone: string | null
+    tochkaApiKey: string | null
+    tochkaConsumerId: string | null
+    tochkaPurpose: string | null
+    tochkaName: string | null
+    tochkaCustomerCode: string | null
   }
 
   export type CabinetCountAggregateOutputType = {
     id: number
     realtycalendarid: number
     okidokiapi: number
-    tochkaapi: number
-    tochkauid: number
+    tochkaPhone: number
+    tochkaApiKey: number
+    tochkaConsumerId: number
+    tochkaPaymentMode: number
+    tochkaVatType: number
+    tochkaPurpose: number
+    tochkaName: number
+    tochkaCustomerCode: number
     _all: number
   }
 
@@ -2588,24 +2698,38 @@ export namespace Prisma {
     id?: true
     realtycalendarid?: true
     okidokiapi?: true
-    tochkaapi?: true
-    tochkauid?: true
+    tochkaPhone?: true
+    tochkaApiKey?: true
+    tochkaConsumerId?: true
+    tochkaPurpose?: true
+    tochkaName?: true
+    tochkaCustomerCode?: true
   }
 
   export type CabinetMaxAggregateInputType = {
     id?: true
     realtycalendarid?: true
     okidokiapi?: true
-    tochkaapi?: true
-    tochkauid?: true
+    tochkaPhone?: true
+    tochkaApiKey?: true
+    tochkaConsumerId?: true
+    tochkaPurpose?: true
+    tochkaName?: true
+    tochkaCustomerCode?: true
   }
 
   export type CabinetCountAggregateInputType = {
     id?: true
     realtycalendarid?: true
     okidokiapi?: true
-    tochkaapi?: true
-    tochkauid?: true
+    tochkaPhone?: true
+    tochkaApiKey?: true
+    tochkaConsumerId?: true
+    tochkaPaymentMode?: true
+    tochkaVatType?: true
+    tochkaPurpose?: true
+    tochkaName?: true
+    tochkaCustomerCode?: true
     _all?: true
   }
 
@@ -2699,8 +2823,14 @@ export namespace Prisma {
     id: number
     realtycalendarid: string | null
     okidokiapi: string | null
-    tochkaapi: string | null
-    tochkauid: string | null
+    tochkaPhone: string | null
+    tochkaApiKey: string | null
+    tochkaConsumerId: string | null
+    tochkaPaymentMode: JsonValue | null
+    tochkaVatType: JsonValue | null
+    tochkaPurpose: string | null
+    tochkaName: string | null
+    tochkaCustomerCode: string | null
     _count: CabinetCountAggregateOutputType | null
     _avg: CabinetAvgAggregateOutputType | null
     _sum: CabinetSumAggregateOutputType | null
@@ -2726,8 +2856,14 @@ export namespace Prisma {
     id?: boolean
     realtycalendarid?: boolean
     okidokiapi?: boolean
-    tochkaapi?: boolean
-    tochkauid?: boolean
+    tochkaPhone?: boolean
+    tochkaApiKey?: boolean
+    tochkaConsumerId?: boolean
+    tochkaPaymentMode?: boolean
+    tochkaVatType?: boolean
+    tochkaPurpose?: boolean
+    tochkaName?: boolean
+    tochkaCustomerCode?: boolean
   }, ExtArgs["result"]["cabinet"]>
 
 
@@ -2736,11 +2872,17 @@ export namespace Prisma {
     id?: boolean
     realtycalendarid?: boolean
     okidokiapi?: boolean
-    tochkaapi?: boolean
-    tochkauid?: boolean
+    tochkaPhone?: boolean
+    tochkaApiKey?: boolean
+    tochkaConsumerId?: boolean
+    tochkaPaymentMode?: boolean
+    tochkaVatType?: boolean
+    tochkaPurpose?: boolean
+    tochkaName?: boolean
+    tochkaCustomerCode?: boolean
   }
 
-  export type CabinetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "realtycalendarid" | "okidokiapi" | "tochkaapi" | "tochkauid", ExtArgs["result"]["cabinet"]>
+  export type CabinetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "realtycalendarid" | "okidokiapi" | "tochkaPhone" | "tochkaApiKey" | "tochkaConsumerId" | "tochkaPaymentMode" | "tochkaVatType" | "tochkaPurpose" | "tochkaName" | "tochkaCustomerCode", ExtArgs["result"]["cabinet"]>
 
   export type $CabinetPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Cabinet"
@@ -2749,8 +2891,14 @@ export namespace Prisma {
       id: number
       realtycalendarid: string | null
       okidokiapi: string | null
-      tochkaapi: string | null
-      tochkauid: string | null
+      tochkaPhone: string | null
+      tochkaApiKey: string | null
+      tochkaConsumerId: string | null
+      tochkaPaymentMode: Prisma.JsonValue | null
+      tochkaVatType: Prisma.JsonValue | null
+      tochkaPurpose: string | null
+      tochkaName: string | null
+      tochkaCustomerCode: string | null
     }, ExtArgs["result"]["cabinet"]>
     composites: {}
   }
@@ -3123,8 +3271,14 @@ export namespace Prisma {
     readonly id: FieldRef<"Cabinet", 'Int'>
     readonly realtycalendarid: FieldRef<"Cabinet", 'String'>
     readonly okidokiapi: FieldRef<"Cabinet", 'String'>
-    readonly tochkaapi: FieldRef<"Cabinet", 'String'>
-    readonly tochkauid: FieldRef<"Cabinet", 'String'>
+    readonly tochkaPhone: FieldRef<"Cabinet", 'String'>
+    readonly tochkaApiKey: FieldRef<"Cabinet", 'String'>
+    readonly tochkaConsumerId: FieldRef<"Cabinet", 'String'>
+    readonly tochkaPaymentMode: FieldRef<"Cabinet", 'Json'>
+    readonly tochkaVatType: FieldRef<"Cabinet", 'Json'>
+    readonly tochkaPurpose: FieldRef<"Cabinet", 'String'>
+    readonly tochkaName: FieldRef<"Cabinet", 'String'>
+    readonly tochkaCustomerCode: FieldRef<"Cabinet", 'String'>
   }
     
 
@@ -3448,6 +3602,942 @@ export namespace Prisma {
      * Omit specific fields from the Cabinet
      */
     omit?: CabinetOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Logs
+   */
+
+  export type AggregateLogs = {
+    _count: LogsCountAggregateOutputType | null
+    _avg: LogsAvgAggregateOutputType | null
+    _sum: LogsSumAggregateOutputType | null
+    _min: LogsMinAggregateOutputType | null
+    _max: LogsMaxAggregateOutputType | null
+  }
+
+  export type LogsAvgAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+  }
+
+  export type LogsSumAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+  }
+
+  export type LogsMinAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    status: $Enums.LogStatus | null
+    message: string | null
+    date: Date | null
+    readed: $Enums.Thumbler | null
+  }
+
+  export type LogsMaxAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    status: $Enums.LogStatus | null
+    message: string | null
+    date: Date | null
+    readed: $Enums.Thumbler | null
+  }
+
+  export type LogsCountAggregateOutputType = {
+    id: number
+    cabinetid: number
+    status: number
+    message: number
+    date: number
+    readed: number
+    _all: number
+  }
+
+
+  export type LogsAvgAggregateInputType = {
+    id?: true
+    cabinetid?: true
+  }
+
+  export type LogsSumAggregateInputType = {
+    id?: true
+    cabinetid?: true
+  }
+
+  export type LogsMinAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    status?: true
+    message?: true
+    date?: true
+    readed?: true
+  }
+
+  export type LogsMaxAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    status?: true
+    message?: true
+    date?: true
+    readed?: true
+  }
+
+  export type LogsCountAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    status?: true
+    message?: true
+    date?: true
+    readed?: true
+    _all?: true
+  }
+
+  export type LogsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Logs to aggregate.
+     */
+    where?: LogsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Logs to fetch.
+     */
+    orderBy?: LogsOrderByWithRelationInput | LogsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LogsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Logs
+    **/
+    _count?: true | LogsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LogsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LogsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LogsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LogsMaxAggregateInputType
+  }
+
+  export type GetLogsAggregateType<T extends LogsAggregateArgs> = {
+        [P in keyof T & keyof AggregateLogs]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLogs[P]>
+      : GetScalarType<T[P], AggregateLogs[P]>
+  }
+
+
+
+
+  export type LogsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LogsWhereInput
+    orderBy?: LogsOrderByWithAggregationInput | LogsOrderByWithAggregationInput[]
+    by: LogsScalarFieldEnum[] | LogsScalarFieldEnum
+    having?: LogsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LogsCountAggregateInputType | true
+    _avg?: LogsAvgAggregateInputType
+    _sum?: LogsSumAggregateInputType
+    _min?: LogsMinAggregateInputType
+    _max?: LogsMaxAggregateInputType
+  }
+
+  export type LogsGroupByOutputType = {
+    id: number
+    cabinetid: number
+    status: $Enums.LogStatus
+    message: string
+    date: Date
+    readed: $Enums.Thumbler
+    _count: LogsCountAggregateOutputType | null
+    _avg: LogsAvgAggregateOutputType | null
+    _sum: LogsSumAggregateOutputType | null
+    _min: LogsMinAggregateOutputType | null
+    _max: LogsMaxAggregateOutputType | null
+  }
+
+  type GetLogsGroupByPayload<T extends LogsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LogsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LogsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LogsGroupByOutputType[P]>
+            : GetScalarType<T[P], LogsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LogsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    cabinetid?: boolean
+    status?: boolean
+    message?: boolean
+    date?: boolean
+    readed?: boolean
+  }, ExtArgs["result"]["logs"]>
+
+
+
+  export type LogsSelectScalar = {
+    id?: boolean
+    cabinetid?: boolean
+    status?: boolean
+    message?: boolean
+    date?: boolean
+    readed?: boolean
+  }
+
+  export type LogsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cabinetid" | "status" | "message" | "date" | "readed", ExtArgs["result"]["logs"]>
+
+  export type $LogsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Logs"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      cabinetid: number
+      status: $Enums.LogStatus
+      message: string
+      date: Date
+      readed: $Enums.Thumbler
+    }, ExtArgs["result"]["logs"]>
+    composites: {}
+  }
+
+  type LogsGetPayload<S extends boolean | null | undefined | LogsDefaultArgs> = $Result.GetResult<Prisma.$LogsPayload, S>
+
+  type LogsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LogsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LogsCountAggregateInputType | true
+    }
+
+  export interface LogsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Logs'], meta: { name: 'Logs' } }
+    /**
+     * Find zero or one Logs that matches the filter.
+     * @param {LogsFindUniqueArgs} args - Arguments to find a Logs
+     * @example
+     * // Get one Logs
+     * const logs = await prisma.logs.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LogsFindUniqueArgs>(args: SelectSubset<T, LogsFindUniqueArgs<ExtArgs>>): Prisma__LogsClient<$Result.GetResult<Prisma.$LogsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Logs that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LogsFindUniqueOrThrowArgs} args - Arguments to find a Logs
+     * @example
+     * // Get one Logs
+     * const logs = await prisma.logs.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LogsFindUniqueOrThrowArgs>(args: SelectSubset<T, LogsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LogsClient<$Result.GetResult<Prisma.$LogsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Logs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogsFindFirstArgs} args - Arguments to find a Logs
+     * @example
+     * // Get one Logs
+     * const logs = await prisma.logs.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LogsFindFirstArgs>(args?: SelectSubset<T, LogsFindFirstArgs<ExtArgs>>): Prisma__LogsClient<$Result.GetResult<Prisma.$LogsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Logs that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogsFindFirstOrThrowArgs} args - Arguments to find a Logs
+     * @example
+     * // Get one Logs
+     * const logs = await prisma.logs.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LogsFindFirstOrThrowArgs>(args?: SelectSubset<T, LogsFindFirstOrThrowArgs<ExtArgs>>): Prisma__LogsClient<$Result.GetResult<Prisma.$LogsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Logs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Logs
+     * const logs = await prisma.logs.findMany()
+     * 
+     * // Get first 10 Logs
+     * const logs = await prisma.logs.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const logsWithIdOnly = await prisma.logs.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LogsFindManyArgs>(args?: SelectSubset<T, LogsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LogsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Logs.
+     * @param {LogsCreateArgs} args - Arguments to create a Logs.
+     * @example
+     * // Create one Logs
+     * const Logs = await prisma.logs.create({
+     *   data: {
+     *     // ... data to create a Logs
+     *   }
+     * })
+     * 
+     */
+    create<T extends LogsCreateArgs>(args: SelectSubset<T, LogsCreateArgs<ExtArgs>>): Prisma__LogsClient<$Result.GetResult<Prisma.$LogsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Logs.
+     * @param {LogsCreateManyArgs} args - Arguments to create many Logs.
+     * @example
+     * // Create many Logs
+     * const logs = await prisma.logs.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LogsCreateManyArgs>(args?: SelectSubset<T, LogsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Logs.
+     * @param {LogsDeleteArgs} args - Arguments to delete one Logs.
+     * @example
+     * // Delete one Logs
+     * const Logs = await prisma.logs.delete({
+     *   where: {
+     *     // ... filter to delete one Logs
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LogsDeleteArgs>(args: SelectSubset<T, LogsDeleteArgs<ExtArgs>>): Prisma__LogsClient<$Result.GetResult<Prisma.$LogsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Logs.
+     * @param {LogsUpdateArgs} args - Arguments to update one Logs.
+     * @example
+     * // Update one Logs
+     * const logs = await prisma.logs.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LogsUpdateArgs>(args: SelectSubset<T, LogsUpdateArgs<ExtArgs>>): Prisma__LogsClient<$Result.GetResult<Prisma.$LogsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Logs.
+     * @param {LogsDeleteManyArgs} args - Arguments to filter Logs to delete.
+     * @example
+     * // Delete a few Logs
+     * const { count } = await prisma.logs.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LogsDeleteManyArgs>(args?: SelectSubset<T, LogsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Logs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Logs
+     * const logs = await prisma.logs.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LogsUpdateManyArgs>(args: SelectSubset<T, LogsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Logs.
+     * @param {LogsUpsertArgs} args - Arguments to update or create a Logs.
+     * @example
+     * // Update or create a Logs
+     * const logs = await prisma.logs.upsert({
+     *   create: {
+     *     // ... data to create a Logs
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Logs we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LogsUpsertArgs>(args: SelectSubset<T, LogsUpsertArgs<ExtArgs>>): Prisma__LogsClient<$Result.GetResult<Prisma.$LogsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Logs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogsCountArgs} args - Arguments to filter Logs to count.
+     * @example
+     * // Count the number of Logs
+     * const count = await prisma.logs.count({
+     *   where: {
+     *     // ... the filter for the Logs we want to count
+     *   }
+     * })
+    **/
+    count<T extends LogsCountArgs>(
+      args?: Subset<T, LogsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LogsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Logs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LogsAggregateArgs>(args: Subset<T, LogsAggregateArgs>): Prisma.PrismaPromise<GetLogsAggregateType<T>>
+
+    /**
+     * Group by Logs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LogsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LogsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LogsGroupByArgs['orderBy'] }
+        : { orderBy?: LogsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LogsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLogsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Logs model
+   */
+  readonly fields: LogsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Logs.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LogsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Logs model
+   */
+  interface LogsFieldRefs {
+    readonly id: FieldRef<"Logs", 'Int'>
+    readonly cabinetid: FieldRef<"Logs", 'Int'>
+    readonly status: FieldRef<"Logs", 'LogStatus'>
+    readonly message: FieldRef<"Logs", 'String'>
+    readonly date: FieldRef<"Logs", 'DateTime'>
+    readonly readed: FieldRef<"Logs", 'Thumbler'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Logs findUnique
+   */
+  export type LogsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Logs
+     */
+    select?: LogsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Logs
+     */
+    omit?: LogsOmit<ExtArgs> | null
+    /**
+     * Filter, which Logs to fetch.
+     */
+    where: LogsWhereUniqueInput
+  }
+
+  /**
+   * Logs findUniqueOrThrow
+   */
+  export type LogsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Logs
+     */
+    select?: LogsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Logs
+     */
+    omit?: LogsOmit<ExtArgs> | null
+    /**
+     * Filter, which Logs to fetch.
+     */
+    where: LogsWhereUniqueInput
+  }
+
+  /**
+   * Logs findFirst
+   */
+  export type LogsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Logs
+     */
+    select?: LogsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Logs
+     */
+    omit?: LogsOmit<ExtArgs> | null
+    /**
+     * Filter, which Logs to fetch.
+     */
+    where?: LogsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Logs to fetch.
+     */
+    orderBy?: LogsOrderByWithRelationInput | LogsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Logs.
+     */
+    cursor?: LogsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Logs.
+     */
+    distinct?: LogsScalarFieldEnum | LogsScalarFieldEnum[]
+  }
+
+  /**
+   * Logs findFirstOrThrow
+   */
+  export type LogsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Logs
+     */
+    select?: LogsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Logs
+     */
+    omit?: LogsOmit<ExtArgs> | null
+    /**
+     * Filter, which Logs to fetch.
+     */
+    where?: LogsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Logs to fetch.
+     */
+    orderBy?: LogsOrderByWithRelationInput | LogsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Logs.
+     */
+    cursor?: LogsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Logs.
+     */
+    distinct?: LogsScalarFieldEnum | LogsScalarFieldEnum[]
+  }
+
+  /**
+   * Logs findMany
+   */
+  export type LogsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Logs
+     */
+    select?: LogsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Logs
+     */
+    omit?: LogsOmit<ExtArgs> | null
+    /**
+     * Filter, which Logs to fetch.
+     */
+    where?: LogsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Logs to fetch.
+     */
+    orderBy?: LogsOrderByWithRelationInput | LogsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Logs.
+     */
+    cursor?: LogsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Logs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Logs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Logs.
+     */
+    distinct?: LogsScalarFieldEnum | LogsScalarFieldEnum[]
+  }
+
+  /**
+   * Logs create
+   */
+  export type LogsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Logs
+     */
+    select?: LogsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Logs
+     */
+    omit?: LogsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a Logs.
+     */
+    data: XOR<LogsCreateInput, LogsUncheckedCreateInput>
+  }
+
+  /**
+   * Logs createMany
+   */
+  export type LogsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Logs.
+     */
+    data: LogsCreateManyInput | LogsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Logs update
+   */
+  export type LogsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Logs
+     */
+    select?: LogsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Logs
+     */
+    omit?: LogsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a Logs.
+     */
+    data: XOR<LogsUpdateInput, LogsUncheckedUpdateInput>
+    /**
+     * Choose, which Logs to update.
+     */
+    where: LogsWhereUniqueInput
+  }
+
+  /**
+   * Logs updateMany
+   */
+  export type LogsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Logs.
+     */
+    data: XOR<LogsUpdateManyMutationInput, LogsUncheckedUpdateManyInput>
+    /**
+     * Filter which Logs to update
+     */
+    where?: LogsWhereInput
+    /**
+     * Limit how many Logs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Logs upsert
+   */
+  export type LogsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Logs
+     */
+    select?: LogsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Logs
+     */
+    omit?: LogsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the Logs to update in case it exists.
+     */
+    where: LogsWhereUniqueInput
+    /**
+     * In case the Logs found by the `where` argument doesn't exist, create a new Logs with this data.
+     */
+    create: XOR<LogsCreateInput, LogsUncheckedCreateInput>
+    /**
+     * In case the Logs was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LogsUpdateInput, LogsUncheckedUpdateInput>
+  }
+
+  /**
+   * Logs delete
+   */
+  export type LogsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Logs
+     */
+    select?: LogsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Logs
+     */
+    omit?: LogsOmit<ExtArgs> | null
+    /**
+     * Filter which Logs to delete.
+     */
+    where: LogsWhereUniqueInput
+  }
+
+  /**
+   * Logs deleteMany
+   */
+  export type LogsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Logs to delete
+     */
+    where?: LogsWhereInput
+    /**
+     * Limit how many Logs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Logs without action
+   */
+  export type LogsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Logs
+     */
+    select?: LogsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Logs
+     */
+    omit?: LogsOmit<ExtArgs> | null
   }
 
 
@@ -5400,17 +6490,19 @@ export namespace Prisma {
   export type ObjectsAvgAggregateOutputType = {
     id: number | null
     cabinetid: number | null
+    realtyid: number | null
   }
 
   export type ObjectsSumAggregateOutputType = {
     id: number | null
     cabinetid: number | null
+    realtyid: number | null
   }
 
   export type ObjectsMinAggregateOutputType = {
     id: number | null
     cabinetid: number | null
-    realtyid: string | null
+    realtyid: number | null
     name: string | null
     instruction: string | null
     checkindef: string | null
@@ -5438,7 +6530,7 @@ export namespace Prisma {
   export type ObjectsMaxAggregateOutputType = {
     id: number | null
     cabinetid: number | null
-    realtyid: string | null
+    realtyid: number | null
     name: string | null
     instruction: string | null
     checkindef: string | null
@@ -5496,11 +6588,13 @@ export namespace Prisma {
   export type ObjectsAvgAggregateInputType = {
     id?: true
     cabinetid?: true
+    realtyid?: true
   }
 
   export type ObjectsSumAggregateInputType = {
     id?: true
     cabinetid?: true
+    realtyid?: true
   }
 
   export type ObjectsMinAggregateInputType = {
@@ -5677,7 +6771,7 @@ export namespace Prisma {
   export type ObjectsGroupByOutputType = {
     id: number
     cabinetid: number
-    realtyid: string | null
+    realtyid: number | null
     name: string
     instruction: string
     checkindef: string
@@ -5795,7 +6889,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       cabinetid: number
-      realtyid: string | null
+      realtyid: number | null
       name: string
       instruction: string
       checkindef: string
@@ -6190,7 +7284,7 @@ export namespace Prisma {
   interface ObjectsFieldRefs {
     readonly id: FieldRef<"Objects", 'Int'>
     readonly cabinetid: FieldRef<"Objects", 'Int'>
-    readonly realtyid: FieldRef<"Objects", 'String'>
+    readonly realtyid: FieldRef<"Objects", 'Int'>
     readonly name: FieldRef<"Objects", 'String'>
     readonly instruction: FieldRef<"Objects", 'String'>
     readonly checkindef: FieldRef<"Objects", 'String'>
@@ -8830,11 +9924,29 @@ export namespace Prisma {
     id: 'id',
     realtycalendarid: 'realtycalendarid',
     okidokiapi: 'okidokiapi',
-    tochkaapi: 'tochkaapi',
-    tochkauid: 'tochkauid'
+    tochkaPhone: 'tochkaPhone',
+    tochkaApiKey: 'tochkaApiKey',
+    tochkaConsumerId: 'tochkaConsumerId',
+    tochkaPaymentMode: 'tochkaPaymentMode',
+    tochkaVatType: 'tochkaVatType',
+    tochkaPurpose: 'tochkaPurpose',
+    tochkaName: 'tochkaName',
+    tochkaCustomerCode: 'tochkaCustomerCode'
   };
 
   export type CabinetScalarFieldEnum = (typeof CabinetScalarFieldEnum)[keyof typeof CabinetScalarFieldEnum]
+
+
+  export const LogsScalarFieldEnum: {
+    id: 'id',
+    cabinetid: 'cabinetid',
+    status: 'status',
+    message: 'message',
+    date: 'date',
+    readed: 'readed'
+  };
+
+  export type LogsScalarFieldEnum = (typeof LogsScalarFieldEnum)[keyof typeof LogsScalarFieldEnum]
 
 
   export const StaffScalarFieldEnum: {
@@ -8946,6 +10058,14 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
   export const NullsOrder: {
     first: 'first',
     last: 'last'
@@ -8963,14 +10083,42 @@ export namespace Prisma {
   export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
 
 
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+  export const QueryMode: {
+    default: 'default',
+    insensitive: 'insensitive'
+  };
+
+  export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
   export const CabinetOrderByRelevanceFieldEnum: {
     realtycalendarid: 'realtycalendarid',
     okidokiapi: 'okidokiapi',
-    tochkaapi: 'tochkaapi',
-    tochkauid: 'tochkauid'
+    tochkaPhone: 'tochkaPhone',
+    tochkaApiKey: 'tochkaApiKey',
+    tochkaConsumerId: 'tochkaConsumerId',
+    tochkaPurpose: 'tochkaPurpose',
+    tochkaName: 'tochkaName',
+    tochkaCustomerCode: 'tochkaCustomerCode'
   };
 
   export type CabinetOrderByRelevanceFieldEnum = (typeof CabinetOrderByRelevanceFieldEnum)[keyof typeof CabinetOrderByRelevanceFieldEnum]
+
+
+  export const LogsOrderByRelevanceFieldEnum: {
+    message: 'message'
+  };
+
+  export type LogsOrderByRelevanceFieldEnum = (typeof LogsOrderByRelevanceFieldEnum)[keyof typeof LogsOrderByRelevanceFieldEnum]
 
 
   export const MaidsOrderByRelevanceFieldEnum: {
@@ -8981,7 +10129,6 @@ export namespace Prisma {
 
 
   export const ObjectsOrderByRelevanceFieldEnum: {
-    realtyid: 'realtyid',
     name: 'name',
     instruction: 'instruction',
     checkindef: 'checkindef',
@@ -9073,6 +10220,27 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
+   * Reference to a field of type 'LogStatus'
+   */
+  export type EnumLogStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LogStatus'>
     
 
 
@@ -9206,16 +10374,28 @@ export namespace Prisma {
     id?: IntFilter<"Cabinet"> | number
     realtycalendarid?: StringNullableFilter<"Cabinet"> | string | null
     okidokiapi?: StringNullableFilter<"Cabinet"> | string | null
-    tochkaapi?: StringNullableFilter<"Cabinet"> | string | null
-    tochkauid?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaPhone?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaApiKey?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaConsumerId?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaPaymentMode?: JsonNullableFilter<"Cabinet">
+    tochkaVatType?: JsonNullableFilter<"Cabinet">
+    tochkaPurpose?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaName?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaCustomerCode?: StringNullableFilter<"Cabinet"> | string | null
   }
 
   export type CabinetOrderByWithRelationInput = {
     id?: SortOrder
     realtycalendarid?: SortOrderInput | SortOrder
     okidokiapi?: SortOrderInput | SortOrder
-    tochkaapi?: SortOrderInput | SortOrder
-    tochkauid?: SortOrderInput | SortOrder
+    tochkaPhone?: SortOrderInput | SortOrder
+    tochkaApiKey?: SortOrderInput | SortOrder
+    tochkaConsumerId?: SortOrderInput | SortOrder
+    tochkaPaymentMode?: SortOrderInput | SortOrder
+    tochkaVatType?: SortOrderInput | SortOrder
+    tochkaPurpose?: SortOrderInput | SortOrder
+    tochkaName?: SortOrderInput | SortOrder
+    tochkaCustomerCode?: SortOrderInput | SortOrder
     _relevance?: CabinetOrderByRelevanceInput
   }
 
@@ -9226,16 +10406,28 @@ export namespace Prisma {
     OR?: CabinetWhereInput[]
     NOT?: CabinetWhereInput | CabinetWhereInput[]
     okidokiapi?: StringNullableFilter<"Cabinet"> | string | null
-    tochkaapi?: StringNullableFilter<"Cabinet"> | string | null
-    tochkauid?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaPhone?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaApiKey?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaConsumerId?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaPaymentMode?: JsonNullableFilter<"Cabinet">
+    tochkaVatType?: JsonNullableFilter<"Cabinet">
+    tochkaPurpose?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaName?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaCustomerCode?: StringNullableFilter<"Cabinet"> | string | null
   }, "id" | "realtycalendarid">
 
   export type CabinetOrderByWithAggregationInput = {
     id?: SortOrder
     realtycalendarid?: SortOrderInput | SortOrder
     okidokiapi?: SortOrderInput | SortOrder
-    tochkaapi?: SortOrderInput | SortOrder
-    tochkauid?: SortOrderInput | SortOrder
+    tochkaPhone?: SortOrderInput | SortOrder
+    tochkaApiKey?: SortOrderInput | SortOrder
+    tochkaConsumerId?: SortOrderInput | SortOrder
+    tochkaPaymentMode?: SortOrderInput | SortOrder
+    tochkaVatType?: SortOrderInput | SortOrder
+    tochkaPurpose?: SortOrderInput | SortOrder
+    tochkaName?: SortOrderInput | SortOrder
+    tochkaCustomerCode?: SortOrderInput | SortOrder
     _count?: CabinetCountOrderByAggregateInput
     _avg?: CabinetAvgOrderByAggregateInput
     _max?: CabinetMaxOrderByAggregateInput
@@ -9250,8 +10442,74 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Cabinet"> | number
     realtycalendarid?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     okidokiapi?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
-    tochkaapi?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
-    tochkauid?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    tochkaPhone?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    tochkaApiKey?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    tochkaConsumerId?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    tochkaPaymentMode?: JsonNullableWithAggregatesFilter<"Cabinet">
+    tochkaVatType?: JsonNullableWithAggregatesFilter<"Cabinet">
+    tochkaPurpose?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    tochkaName?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    tochkaCustomerCode?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+  }
+
+  export type LogsWhereInput = {
+    AND?: LogsWhereInput | LogsWhereInput[]
+    OR?: LogsWhereInput[]
+    NOT?: LogsWhereInput | LogsWhereInput[]
+    id?: IntFilter<"Logs"> | number
+    cabinetid?: IntFilter<"Logs"> | number
+    status?: EnumLogStatusFilter<"Logs"> | $Enums.LogStatus
+    message?: StringFilter<"Logs"> | string
+    date?: DateTimeFilter<"Logs"> | Date | string
+    readed?: EnumThumblerFilter<"Logs"> | $Enums.Thumbler
+  }
+
+  export type LogsOrderByWithRelationInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    status?: SortOrder
+    message?: SortOrder
+    date?: SortOrder
+    readed?: SortOrder
+    _relevance?: LogsOrderByRelevanceInput
+  }
+
+  export type LogsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: LogsWhereInput | LogsWhereInput[]
+    OR?: LogsWhereInput[]
+    NOT?: LogsWhereInput | LogsWhereInput[]
+    cabinetid?: IntFilter<"Logs"> | number
+    status?: EnumLogStatusFilter<"Logs"> | $Enums.LogStatus
+    message?: StringFilter<"Logs"> | string
+    date?: DateTimeFilter<"Logs"> | Date | string
+    readed?: EnumThumblerFilter<"Logs"> | $Enums.Thumbler
+  }, "id">
+
+  export type LogsOrderByWithAggregationInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    status?: SortOrder
+    message?: SortOrder
+    date?: SortOrder
+    readed?: SortOrder
+    _count?: LogsCountOrderByAggregateInput
+    _avg?: LogsAvgOrderByAggregateInput
+    _max?: LogsMaxOrderByAggregateInput
+    _min?: LogsMinOrderByAggregateInput
+    _sum?: LogsSumOrderByAggregateInput
+  }
+
+  export type LogsScalarWhereWithAggregatesInput = {
+    AND?: LogsScalarWhereWithAggregatesInput | LogsScalarWhereWithAggregatesInput[]
+    OR?: LogsScalarWhereWithAggregatesInput[]
+    NOT?: LogsScalarWhereWithAggregatesInput | LogsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Logs"> | number
+    cabinetid?: IntWithAggregatesFilter<"Logs"> | number
+    status?: EnumLogStatusWithAggregatesFilter<"Logs"> | $Enums.LogStatus
+    message?: StringWithAggregatesFilter<"Logs"> | string
+    date?: DateTimeWithAggregatesFilter<"Logs"> | Date | string
+    readed?: EnumThumblerWithAggregatesFilter<"Logs"> | $Enums.Thumbler
   }
 
   export type StaffWhereInput = {
@@ -9387,7 +10645,7 @@ export namespace Prisma {
     NOT?: ObjectsWhereInput | ObjectsWhereInput[]
     id?: IntFilter<"Objects"> | number
     cabinetid?: IntFilter<"Objects"> | number
-    realtyid?: StringNullableFilter<"Objects"> | string | null
+    realtyid?: IntNullableFilter<"Objects"> | number | null
     name?: StringFilter<"Objects"> | string
     instruction?: StringFilter<"Objects"> | string
     checkindef?: StringFilter<"Objects"> | string
@@ -9449,7 +10707,7 @@ export namespace Prisma {
     OR?: ObjectsWhereInput[]
     NOT?: ObjectsWhereInput | ObjectsWhereInput[]
     cabinetid?: IntFilter<"Objects"> | number
-    realtyid?: StringNullableFilter<"Objects"> | string | null
+    realtyid?: IntNullableFilter<"Objects"> | number | null
     name?: StringFilter<"Objects"> | string
     instruction?: StringFilter<"Objects"> | string
     checkindef?: StringFilter<"Objects"> | string
@@ -9514,7 +10772,7 @@ export namespace Prisma {
     NOT?: ObjectsScalarWhereWithAggregatesInput | ObjectsScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Objects"> | number
     cabinetid?: IntWithAggregatesFilter<"Objects"> | number
-    realtyid?: StringNullableWithAggregatesFilter<"Objects"> | string | null
+    realtyid?: IntNullableWithAggregatesFilter<"Objects"> | number | null
     name?: StringWithAggregatesFilter<"Objects"> | string
     instruction?: StringWithAggregatesFilter<"Objects"> | string
     checkindef?: StringWithAggregatesFilter<"Objects"> | string
@@ -9855,54 +11113,156 @@ export namespace Prisma {
   export type CabinetCreateInput = {
     realtycalendarid?: string | null
     okidokiapi?: string | null
-    tochkaapi?: string | null
-    tochkauid?: string | null
+    tochkaPhone?: string | null
+    tochkaApiKey?: string | null
+    tochkaConsumerId?: string | null
+    tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
+    tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
+    tochkaPurpose?: string | null
+    tochkaName?: string | null
+    tochkaCustomerCode?: string | null
   }
 
   export type CabinetUncheckedCreateInput = {
     id?: number
     realtycalendarid?: string | null
     okidokiapi?: string | null
-    tochkaapi?: string | null
-    tochkauid?: string | null
+    tochkaPhone?: string | null
+    tochkaApiKey?: string | null
+    tochkaConsumerId?: string | null
+    tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
+    tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
+    tochkaPurpose?: string | null
+    tochkaName?: string | null
+    tochkaCustomerCode?: string | null
   }
 
   export type CabinetUpdateInput = {
     realtycalendarid?: NullableStringFieldUpdateOperationsInput | string | null
     okidokiapi?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkaapi?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkauid?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaApiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaConsumerId?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
+    tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
+    tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaName?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaCustomerCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CabinetUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     realtycalendarid?: NullableStringFieldUpdateOperationsInput | string | null
     okidokiapi?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkaapi?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkauid?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaApiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaConsumerId?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
+    tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
+    tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaName?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaCustomerCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CabinetCreateManyInput = {
     id?: number
     realtycalendarid?: string | null
     okidokiapi?: string | null
-    tochkaapi?: string | null
-    tochkauid?: string | null
+    tochkaPhone?: string | null
+    tochkaApiKey?: string | null
+    tochkaConsumerId?: string | null
+    tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
+    tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
+    tochkaPurpose?: string | null
+    tochkaName?: string | null
+    tochkaCustomerCode?: string | null
   }
 
   export type CabinetUpdateManyMutationInput = {
     realtycalendarid?: NullableStringFieldUpdateOperationsInput | string | null
     okidokiapi?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkaapi?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkauid?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaApiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaConsumerId?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
+    tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
+    tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaName?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaCustomerCode?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CabinetUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     realtycalendarid?: NullableStringFieldUpdateOperationsInput | string | null
     okidokiapi?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkaapi?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkauid?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaApiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaConsumerId?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
+    tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
+    tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaName?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaCustomerCode?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type LogsCreateInput = {
+    cabinetid: number
+    status: $Enums.LogStatus
+    message: string
+    date?: Date | string
+    readed?: $Enums.Thumbler
+  }
+
+  export type LogsUncheckedCreateInput = {
+    id?: number
+    cabinetid: number
+    status: $Enums.LogStatus
+    message: string
+    date?: Date | string
+    readed?: $Enums.Thumbler
+  }
+
+  export type LogsUpdateInput = {
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    status?: EnumLogStatusFieldUpdateOperationsInput | $Enums.LogStatus
+    message?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    readed?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+  }
+
+  export type LogsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    status?: EnumLogStatusFieldUpdateOperationsInput | $Enums.LogStatus
+    message?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    readed?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+  }
+
+  export type LogsCreateManyInput = {
+    id?: number
+    cabinetid: number
+    status: $Enums.LogStatus
+    message: string
+    date?: Date | string
+    readed?: $Enums.Thumbler
+  }
+
+  export type LogsUpdateManyMutationInput = {
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    status?: EnumLogStatusFieldUpdateOperationsInput | $Enums.LogStatus
+    message?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    readed?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+  }
+
+  export type LogsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    status?: EnumLogStatusFieldUpdateOperationsInput | $Enums.LogStatus
+    message?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    readed?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
   }
 
   export type StaffCreateInput = {
@@ -10036,7 +11396,7 @@ export namespace Prisma {
 
   export type ObjectsCreateInput = {
     cabinetid: number
-    realtyid?: string | null
+    realtyid?: number | null
     name: string
     instruction: string
     checkindef: string
@@ -10065,7 +11425,7 @@ export namespace Prisma {
   export type ObjectsUncheckedCreateInput = {
     id?: number
     cabinetid: number
-    realtyid?: string | null
+    realtyid?: number | null
     name: string
     instruction: string
     checkindef: string
@@ -10093,7 +11453,7 @@ export namespace Prisma {
 
   export type ObjectsUpdateInput = {
     cabinetid?: IntFieldUpdateOperationsInput | number
-    realtyid?: NullableStringFieldUpdateOperationsInput | string | null
+    realtyid?: NullableIntFieldUpdateOperationsInput | number | null
     name?: StringFieldUpdateOperationsInput | string
     instruction?: StringFieldUpdateOperationsInput | string
     checkindef?: StringFieldUpdateOperationsInput | string
@@ -10122,7 +11482,7 @@ export namespace Prisma {
   export type ObjectsUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     cabinetid?: IntFieldUpdateOperationsInput | number
-    realtyid?: NullableStringFieldUpdateOperationsInput | string | null
+    realtyid?: NullableIntFieldUpdateOperationsInput | number | null
     name?: StringFieldUpdateOperationsInput | string
     instruction?: StringFieldUpdateOperationsInput | string
     checkindef?: StringFieldUpdateOperationsInput | string
@@ -10151,7 +11511,7 @@ export namespace Prisma {
   export type ObjectsCreateManyInput = {
     id?: number
     cabinetid: number
-    realtyid?: string | null
+    realtyid?: number | null
     name: string
     instruction: string
     checkindef: string
@@ -10178,7 +11538,7 @@ export namespace Prisma {
 
   export type ObjectsUpdateManyMutationInput = {
     cabinetid?: IntFieldUpdateOperationsInput | number
-    realtyid?: NullableStringFieldUpdateOperationsInput | string | null
+    realtyid?: NullableIntFieldUpdateOperationsInput | number | null
     name?: StringFieldUpdateOperationsInput | string
     instruction?: StringFieldUpdateOperationsInput | string
     checkindef?: StringFieldUpdateOperationsInput | string
@@ -10206,7 +11566,7 @@ export namespace Prisma {
   export type ObjectsUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     cabinetid?: IntFieldUpdateOperationsInput | number
-    realtyid?: NullableStringFieldUpdateOperationsInput | string | null
+    realtyid?: NullableIntFieldUpdateOperationsInput | number | null
     name?: StringFieldUpdateOperationsInput | string
     instruction?: StringFieldUpdateOperationsInput | string
     checkindef?: StringFieldUpdateOperationsInput | string
@@ -10730,6 +12090,29 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue
+    lte?: InputJsonValue
+    gt?: InputJsonValue
+    gte?: InputJsonValue
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type CabinetOrderByRelevanceInput = {
     fields: CabinetOrderByRelevanceFieldEnum | CabinetOrderByRelevanceFieldEnum[]
@@ -10741,8 +12124,14 @@ export namespace Prisma {
     id?: SortOrder
     realtycalendarid?: SortOrder
     okidokiapi?: SortOrder
-    tochkaapi?: SortOrder
-    tochkauid?: SortOrder
+    tochkaPhone?: SortOrder
+    tochkaApiKey?: SortOrder
+    tochkaConsumerId?: SortOrder
+    tochkaPaymentMode?: SortOrder
+    tochkaVatType?: SortOrder
+    tochkaPurpose?: SortOrder
+    tochkaName?: SortOrder
+    tochkaCustomerCode?: SortOrder
   }
 
   export type CabinetAvgOrderByAggregateInput = {
@@ -10753,20 +12142,61 @@ export namespace Prisma {
     id?: SortOrder
     realtycalendarid?: SortOrder
     okidokiapi?: SortOrder
-    tochkaapi?: SortOrder
-    tochkauid?: SortOrder
+    tochkaPhone?: SortOrder
+    tochkaApiKey?: SortOrder
+    tochkaConsumerId?: SortOrder
+    tochkaPurpose?: SortOrder
+    tochkaName?: SortOrder
+    tochkaCustomerCode?: SortOrder
   }
 
   export type CabinetMinOrderByAggregateInput = {
     id?: SortOrder
     realtycalendarid?: SortOrder
     okidokiapi?: SortOrder
-    tochkaapi?: SortOrder
-    tochkauid?: SortOrder
+    tochkaPhone?: SortOrder
+    tochkaApiKey?: SortOrder
+    tochkaConsumerId?: SortOrder
+    tochkaPurpose?: SortOrder
+    tochkaName?: SortOrder
+    tochkaCustomerCode?: SortOrder
   }
 
   export type CabinetSumOrderByAggregateInput = {
     id?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue
+    lte?: InputJsonValue
+    gt?: InputJsonValue
+    gte?: InputJsonValue
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type EnumLogStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.LogStatus | EnumLogStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.LogStatus[]
+    notIn?: $Enums.LogStatus[]
+    not?: NestedEnumLogStatusFilter<$PrismaModel> | $Enums.LogStatus
   }
 
   export type EnumThumblerFilter<$PrismaModel = never> = {
@@ -10774,6 +12204,69 @@ export namespace Prisma {
     in?: $Enums.Thumbler[]
     notIn?: $Enums.Thumbler[]
     not?: NestedEnumThumblerFilter<$PrismaModel> | $Enums.Thumbler
+  }
+
+  export type LogsOrderByRelevanceInput = {
+    fields: LogsOrderByRelevanceFieldEnum | LogsOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type LogsCountOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    status?: SortOrder
+    message?: SortOrder
+    date?: SortOrder
+    readed?: SortOrder
+  }
+
+  export type LogsAvgOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+  }
+
+  export type LogsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    status?: SortOrder
+    message?: SortOrder
+    date?: SortOrder
+    readed?: SortOrder
+  }
+
+  export type LogsMinOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    status?: SortOrder
+    message?: SortOrder
+    date?: SortOrder
+    readed?: SortOrder
+  }
+
+  export type LogsSumOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+  }
+
+  export type EnumLogStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.LogStatus | EnumLogStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.LogStatus[]
+    notIn?: $Enums.LogStatus[]
+    not?: NestedEnumLogStatusWithAggregatesFilter<$PrismaModel> | $Enums.LogStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumLogStatusFilter<$PrismaModel>
+    _max?: NestedEnumLogStatusFilter<$PrismaModel>
+  }
+
+  export type EnumThumblerWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Thumbler | EnumThumblerFieldRefInput<$PrismaModel>
+    in?: $Enums.Thumbler[]
+    notIn?: $Enums.Thumbler[]
+    not?: NestedEnumThumblerWithAggregatesFilter<$PrismaModel> | $Enums.Thumbler
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumThumblerFilter<$PrismaModel>
+    _max?: NestedEnumThumblerFilter<$PrismaModel>
   }
 
   export type UserScalarRelationFilter = {
@@ -10825,16 +12318,6 @@ export namespace Prisma {
   export type StaffSumOrderByAggregateInput = {
     id?: SortOrder
     cabinetid?: SortOrder
-  }
-
-  export type EnumThumblerWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Thumbler | EnumThumblerFieldRefInput<$PrismaModel>
-    in?: $Enums.Thumbler[]
-    notIn?: $Enums.Thumbler[]
-    not?: NestedEnumThumblerWithAggregatesFilter<$PrismaModel> | $Enums.Thumbler
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumThumblerFilter<$PrismaModel>
-    _max?: NestedEnumThumblerFilter<$PrismaModel>
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -10901,6 +12384,17 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type EnumShowSettingsFilter<$PrismaModel = never> = {
@@ -10971,6 +12465,7 @@ export namespace Prisma {
   export type ObjectsAvgOrderByAggregateInput = {
     id?: SortOrder
     cabinetid?: SortOrder
+    realtyid?: SortOrder
   }
 
   export type ObjectsMaxOrderByAggregateInput = {
@@ -11032,6 +12527,23 @@ export namespace Prisma {
   export type ObjectsSumOrderByAggregateInput = {
     id?: SortOrder
     cabinetid?: SortOrder
+    realtyid?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type EnumShowSettingsWithAggregatesFilter<$PrismaModel = never> = {
@@ -11108,17 +12620,6 @@ export namespace Prisma {
     in?: $Enums.BookStatus[] | null
     notIn?: $Enums.BookStatus[] | null
     not?: NestedEnumBookStatusNullableFilter<$PrismaModel> | $Enums.BookStatus | null
-  }
-
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type DateTimeNullableFilter<$PrismaModel = never> = {
@@ -11279,22 +12780,6 @@ export namespace Prisma {
     _max?: NestedEnumBookStatusNullableFilter<$PrismaModel>
   }
 
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | null
@@ -11373,14 +12858,18 @@ export namespace Prisma {
     update?: XOR<XOR<StaffUpdateToOneWithWhereWithoutUserInput, StaffUpdateWithoutUserInput>, StaffUncheckedUpdateWithoutUserInput>
   }
 
-  export type UserCreateNestedOneWithoutStaffInput = {
-    create?: XOR<UserCreateWithoutStaffInput, UserUncheckedCreateWithoutStaffInput>
-    connectOrCreate?: UserCreateOrConnectWithoutStaffInput
-    connect?: UserWhereUniqueInput
+  export type EnumLogStatusFieldUpdateOperationsInput = {
+    set?: $Enums.LogStatus
   }
 
   export type EnumThumblerFieldUpdateOperationsInput = {
     set?: $Enums.Thumbler
+  }
+
+  export type UserCreateNestedOneWithoutStaffInput = {
+    create?: XOR<UserCreateWithoutStaffInput, UserUncheckedCreateWithoutStaffInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStaffInput
+    connect?: UserWhereUniqueInput
   }
 
   export type UserUpdateOneRequiredWithoutStaffNestedInput = {
@@ -11411,6 +12900,14 @@ export namespace Prisma {
     connectOrCreate?: ObjectPhotoCreateOrConnectWithoutObjectsInput | ObjectPhotoCreateOrConnectWithoutObjectsInput[]
     createMany?: ObjectPhotoCreateManyObjectsInputEnvelope
     connect?: ObjectPhotoWhereUniqueInput | ObjectPhotoWhereUniqueInput[]
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type EnumShowSettingsFieldUpdateOperationsInput = {
@@ -11469,14 +12966,6 @@ export namespace Prisma {
 
   export type NullableEnumBookStatusFieldUpdateOperationsInput = {
     set?: $Enums.BookStatus | null
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -11673,12 +13162,52 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue
+    lte?: InputJsonValue
+    gt?: InputJsonValue
+    gte?: InputJsonValue
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedEnumLogStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.LogStatus | EnumLogStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.LogStatus[]
+    notIn?: $Enums.LogStatus[]
+    not?: NestedEnumLogStatusFilter<$PrismaModel> | $Enums.LogStatus
+  }
 
   export type NestedEnumThumblerFilter<$PrismaModel = never> = {
     equals?: $Enums.Thumbler | EnumThumblerFieldRefInput<$PrismaModel>
     in?: $Enums.Thumbler[]
     notIn?: $Enums.Thumbler[]
     not?: NestedEnumThumblerFilter<$PrismaModel> | $Enums.Thumbler
+  }
+
+  export type NestedEnumLogStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.LogStatus | EnumLogStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.LogStatus[]
+    notIn?: $Enums.LogStatus[]
+    not?: NestedEnumLogStatusWithAggregatesFilter<$PrismaModel> | $Enums.LogStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumLogStatusFilter<$PrismaModel>
+    _max?: NestedEnumLogStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumThumblerWithAggregatesFilter<$PrismaModel = never> = {
@@ -11726,6 +13255,33 @@ export namespace Prisma {
     in?: $Enums.PaymentChanel[]
     notIn?: $Enums.PaymentChanel[]
     not?: NestedEnumPaymentChanelFilter<$PrismaModel> | $Enums.PaymentChanel
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumShowSettingsWithAggregatesFilter<$PrismaModel = never> = {
@@ -11784,33 +13340,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumBookStatusNullableFilter<$PrismaModel>
     _max?: NestedEnumBookStatusNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -11995,7 +13524,7 @@ export namespace Prisma {
 
   export type ObjectsCreateWithoutPhotosInput = {
     cabinetid: number
-    realtyid?: string | null
+    realtyid?: number | null
     name: string
     instruction: string
     checkindef: string
@@ -12023,7 +13552,7 @@ export namespace Prisma {
   export type ObjectsUncheckedCreateWithoutPhotosInput = {
     id?: number
     cabinetid: number
-    realtyid?: string | null
+    realtyid?: number | null
     name: string
     instruction: string
     checkindef: string
@@ -12066,7 +13595,7 @@ export namespace Prisma {
 
   export type ObjectsUpdateWithoutPhotosInput = {
     cabinetid?: IntFieldUpdateOperationsInput | number
-    realtyid?: NullableStringFieldUpdateOperationsInput | string | null
+    realtyid?: NullableIntFieldUpdateOperationsInput | number | null
     name?: StringFieldUpdateOperationsInput | string
     instruction?: StringFieldUpdateOperationsInput | string
     checkindef?: StringFieldUpdateOperationsInput | string
@@ -12094,7 +13623,7 @@ export namespace Prisma {
   export type ObjectsUncheckedUpdateWithoutPhotosInput = {
     id?: IntFieldUpdateOperationsInput | number
     cabinetid?: IntFieldUpdateOperationsInput | number
-    realtyid?: NullableStringFieldUpdateOperationsInput | string | null
+    realtyid?: NullableIntFieldUpdateOperationsInput | number | null
     name?: StringFieldUpdateOperationsInput | string
     instruction?: StringFieldUpdateOperationsInput | string
     checkindef?: StringFieldUpdateOperationsInput | string

@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt')
+const { log } = require('console')
 const crypto = require('crypto')
 
 module.exports = async (fastify) => {
@@ -7,7 +8,7 @@ module.exports = async (fastify) => {
     const { login, password } = req.body
 
     const user = await fastify.prisma.user.findUnique({
-      where: { login }
+      where: {login}
     })
 
     if (!user) {
@@ -24,6 +25,14 @@ module.exports = async (fastify) => {
     }
 
     const token = fastify.jwt.sign({ id: user.id, login: user.login })
+
+    await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: "SUCCESS",
+                message: `Вход | Выполнен вход в аккаунт ${user.login}`
+            }
+        })
 
     return { token }
   })

@@ -111,6 +111,14 @@ module.exports = async (fastify) => {
                 })
             })
 
+            await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: "SUCCESS",
+                message: `Менеджеры | Создана учетная запись менеджера ${login}`
+            }
+            })
+
             return reply.status(201).send({ login: login, password: password })
 
         } catch (err) {
@@ -168,6 +176,14 @@ module.exports = async (fastify) => {
                     where: { id: findLogin.id,
                         cabinet: user.cabinet }
                 })
+            })
+
+            await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: "SUCCESS",
+                message: `Менеджеры | Учетная запись менеджера удалена ${findLogin.login}`
+            }
             })
 
             return reply.status(200).send({ message: 'Сотрудник успешно удален' })
@@ -295,6 +311,14 @@ module.exports = async (fastify) => {
                 data: {
                     [permission]: value
                 }
+            })
+
+            await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: "SUCCESS",
+                message: `Менеджеры | Обновлены права менеджера ${findLogin.login}`
+            }
             })
 
             return reply.status(200).send({ message: 'Права сотрудника успешно обновлены' })

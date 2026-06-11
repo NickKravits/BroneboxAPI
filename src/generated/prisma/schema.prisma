@@ -43,11 +43,32 @@ model User {
 }
 
 model Cabinet {
-  id               Int     @id @default(autoincrement())
-  realtycalendarid String? @unique
-  okidokiapi       String?
-  tochkaapi        String?
-  tochkauid        String?
+  id                 Int     @id @default(autoincrement())
+  realtycalendarid   String? @unique
+  okidokiapi         String?
+  tochkaPhone        String?
+  tochkaApiKey       String?
+  tochkaConsumerId   String?
+  tochkaPaymentMode  Json?
+  tochkaVatType      Json?
+  tochkaPurpose      String?
+  tochkaName         String?
+  tochkaCustomerCode String?
+}
+
+model Logs {
+  id        Int       @id @default(autoincrement())
+  cabinetid Int
+  status    LogStatus
+  message   String
+  date      DateTime  @default(now())
+  readed    Thumbler  @default(NO)
+}
+
+enum LogStatus {
+  INFO
+  ERROR
+  SUCCESS
 }
 
 enum Thumbler {
@@ -78,7 +99,7 @@ model Maids {
 model Objects {
   id              Int           @id @default(autoincrement())
   cabinetid       Int
-  realtyid        String?
+  realtyid        Int?
   name            String
   instruction     String        @db.Text
   checkindef      String

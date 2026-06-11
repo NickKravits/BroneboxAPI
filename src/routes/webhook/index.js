@@ -44,9 +44,10 @@ module.exports = async (fastify) => {
             }
 
             const object = await fastify.prisma.objects.findFirst({
-                where: { realtyid: String(realty_id), cabinetid: cabinet.id },
+                where: { realtyid: realty_id, cabinetid: cabinet.id },
                 select: { 
                     id: true,
+                    name: true,
                     deposit,
                     odstringid: true,
                     odvalueid: true,
@@ -60,18 +61,32 @@ module.exports = async (fastify) => {
             })
 
             if (!object) {
+                await fastify.prisma.logs.create({
+                    data: {
+                            cabinetid: cabinet.id,
+                            status: "ERROR",
+                            message: `Бронирования | Бронирование не получено! Так как объект ${realty_id} не найден! Бронирование перенесено в необработанные брони!`
+                        }
+                    })
                 return reply.status(200).send({ error: 'Объект не найден' })
-                //Пока ничего не делаем, позже бронь будет помещаться в другую таблицу, а в эту попадать только после привязки к объекту
             }
 
             if (status !== "booked" && status !== "canceled" && status !== "deleted" && status !== "request") {
+                await fastify.prisma.logs.create({
+                    data: {
+                        cabinetid: cabinet.id,
+                        status: "ERROR",
+                        message: `Бронирования | Невозможно получить бронирование ${id}! Недопустимый статус бронирования!`
+                    }
+                })
+
                 return reply.status(200).send({ error: 'Недопустимый статус бронирования' })
             }
 
             if (action === 'create_booking') {
                 let okiDokiLink = ""
                 let okiDokiId = ""
-                if (cabinet.okidokiapi !== "") {
+                if (cabinet.okidokiapi) {
                     const odStringId = object.odstringid;
                     const odValueId = object.odvalueid;
                     const odNameId = object.odnameid;
@@ -80,6 +95,18 @@ module.exports = async (fastify) => {
                     const odDepositId = object.oddepositid;
                     const odPayPerDayId = object.odpayperdayid;
                     const odPayedId = object.odpayedid;
+
+                    if (odStringId == "" || odValueId == "" || odNameId == "" || odDateInId == "" || odDateOutId == "" || odDepositId == "" || odPayPerDayId == "" || odPayedId == "") {
+                        await fastify.prisma.logs.create({
+                        data: {
+                            cabinetid: cabinet.id,
+                            status: "INFO",
+                            message: `Договоры | Договор может быть создан как черновик! Так как на объекте ${realty_id} заполнены не все поля!`
+                        }
+                        })
+                    }
+
+                    if (odStringId != "") {
 
                     function formatDate(dateString) {
                         // Проверяем, что строка не пустая и соответствует формату YYYY-MM-DD
@@ -140,6 +167,22 @@ module.exports = async (fastify) => {
                     okiDokiLink = data.link;
                     okiDokiId = data.contract_id;
                 }
+            }
+
+            const existingBooking = await fastify.prisma.bookings.findFirst({
+                where: { id: id, cabinet: cabinet.id }
+            })
+
+            if (existingBooking) {
+                await fastify.prisma.logs.create({
+                    data: {
+                        cabinetid: cabinet.id,
+                        status: "INFO",
+                        message: `Бронирования | Бронирование ${id} уже существует, поэтому оно не было создано!`
+                    }
+                });
+                return reply.status(200).send({ ok: true })
+            }
 
                 const link = crypto.randomBytes(6).toString('hex')
                 await fastify.prisma.bookings.create({
@@ -169,7 +212,30 @@ module.exports = async (fastify) => {
                         link: link
                     }
                 })
+
+                fastify.pushToClients(cabinet.id, 'new_booking', {
+                    guestName:  fio,
+                    objectName: object.name,
+                    checkin:    begin_date
+                })
+
+                return reply.status(200).send({ ok: true })
             } else if (action === 'update_booking') {
+                const book = await fastify.prisma.bookings.findFirst({
+                    where: { id: id, cabinet: cabinet.id }
+                })
+
+                if (!book) {
+                    await fastify.prisma.logs.create({
+                    data: {
+                        cabinetid: cabinet.id,
+                        status: "INFO",
+                        message: `Бронирования | Бронирование не может быть обновлено, так как бронировние не найдено! Бронь перенесена в необработанные брони!`
+                    }
+                })
+                return reply.status(200).send({ ok: true })
+                }
+
                 await fastify.prisma.bookings.update({
                     where: { id: id, cabinet: cabinet.id },
                     data: {
@@ -193,10 +259,40 @@ module.exports = async (fastify) => {
                     }
                 })
             } else if (action === 'delete_booking') {
+                const book = await fastify.prisma.bookings.findFirst({
+                    where: { id: id, cabinet: cabinet.id }
+                })
+
+                if (!book) {
+                    await fastify.prisma.logs.create({
+                    data: {
+                            cabinetid: cabinet.id,
+                            status: "INFO",
+                            message: `Бронирования | Бронирование не удалено! Так как бронирование ${id} не найдено!`
+                        }
+                    })
+                    return reply.status(200).send({ ok: true })
+                }
+
                 await fastify.prisma.bookings.delete({
                     where: { id: id, cabinet: cabinet.id }
                 })
             } else if (action === 'cancel_booking') {
+                const book = await fastify.prisma.bookings.findFirst({
+                    where: { id: id, cabinet: cabinet.id }
+                })
+
+                if (!book) {
+                    await fastify.prisma.logs.create({
+                    data: {
+                            cabinetid: cabinet.id,
+                            status: "INFO",
+                            message: `Бронирования | Бронирование не отменено! Так как бронирование ${id} не найдено!`
+                        }
+                    })
+                    return reply.status(200).send({ ok: true })
+                }
+
                 await fastify.prisma.bookings.update({
                     where: { id: id, cabinet: cabinet.id },
                     data: { status: 'canceled' }
