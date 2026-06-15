@@ -49,7 +49,7 @@ model Cabinet {
   okidokiapi          String?
   tochkaPhone         String?
   tochkaApiKey        String?
-  tochkaConsumerId    String?
+  tochkaMerchantId    String?
   tochkaPaymentMode   Json?
   tochkaVatType       Json?
   tochkaPurpose       String?

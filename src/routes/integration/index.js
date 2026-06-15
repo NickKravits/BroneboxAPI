@@ -85,7 +85,7 @@ module.exports = async (fastify) => {
         const userId = req.user.id
 
         let okidoki = false
-        let tochka = false
+        let tochka = "NOT_CONNECTED"
 
         let permissions = false
 
@@ -123,7 +123,8 @@ module.exports = async (fastify) => {
             select: {
                 okidokiapi: true,
                 tochkaApiKey: true,
-                tochkaCustomerCode: true
+                tochkaCustomerCode: true,
+                tochkaMerchantId: true
             }
         })
 
@@ -134,9 +135,12 @@ module.exports = async (fastify) => {
         }
 
         if (cabinet.tochkaApiKey && cabinet.tochkaCustomerCode) {
-            tochka = true
+            tochka = "CONNECTED"
+            if (!cabinet.tochkaMerchantId) {
+                tochka = "NOT_READY"
+            }
         } else {
-            tochka = false
+            tochka = "NOT_CONNECTED"
         }
 
         return reply.send({ okidoki, tochka, permissions })
@@ -329,11 +333,9 @@ module.exports = async (fastify) => {
             await req.jwtVerify()
 
             const userId = req.user.id
-            const { phone, apiKey, consumerId, paymentMode, vatType, purpose, name } = req.body
+            const { phone, apiKey, vatType, purpose, name } = req.body
 
-            fastify.log.info(`paymentMode: ${JSON.stringify(paymentMode)}, тип: ${typeof paymentMode}`)
-
-            if (!apiKey || !phone || !paymentMode || !vatType || !purpose || !name) {
+            if (!apiKey || !phone || !vatType || !purpose || !name) {
                 return reply.status(400).send({ error: 'Обязательные поля не заполнены' })
             }
 
@@ -360,17 +362,6 @@ module.exports = async (fastify) => {
                 if (!staff || staff.manageintegration !== 'YES') {
                     return reply.status(403).send({ error: 'Недостаточно прав' })
                 }
-            }
-
-            const VALID_PAYMENT_MODES = ['sbp', 'card', 'tbank', 'dolyami'];
-
-            if (!Array.isArray(paymentMode) || paymentMode.length === 0) {
-                return reply.status(400).send({ error: 'Выберите хотя бы один способ оплаты' });
-            }
-
-            const invalidModes = paymentMode.filter(m => !VALID_PAYMENT_MODES.includes(m));
-            if (invalidModes.length) {
-                return reply.status(400).send({ error: `Недопустимые способы оплаты: ${invalidModes.join(', ')}` });
             }
 
             const VALID_VAT = ['none','vat0','vat5','vat7','vat10','vat22','vat105','vat107','vat110','vat122'];
@@ -479,13 +470,81 @@ module.exports = async (fastify) => {
                 }
             }
 
+            const responseMerchant = await fetch(`https://enter.tochka.com/sandbox/v2/acquiring/v1.0/retailers?customerCode=${customerCode}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                }   
+            });
+
+            if (!responseMerchant.ok) {
+                const httpStatus = responseMerchant.status;
+                const errorText = await responseMerchant.text();
+                fastify.log.error(`[Ошибка Точки] Статус: ${httpStatus} | Ответ: ${errorText}`);
+
+                switch (httpStatus) {
+                    case 400:
+                        return reply.status(400).send({
+                            error: 'Код: 400. Ошибка валидации! Проверьте, что у вас настроена торговая точка в банке!'
+                        });
+
+                    case 403:
+                        return reply.status(403).send({
+                            error: 'Код: 403. Что-то пошло не так! Попробуйте позже или свяжитесь с банком!'
+                        });
+
+                    case 404:
+                        return reply.status(404).send({
+                            error: 'Код: 404. Метод не найден! Обратитесь к разработчику!'
+                        });
+
+                    case 424:
+                        return reply.status(424).send({
+                            error: 'Код: 424. Что-то пошло не так! Попробуйте позже или свяжитесь с банком!'
+                        });
+
+                    case 500:
+                        return reply.status(500).send({
+                            error: 'Код: 500. Ошибка запроса! Обратитесь к разработчику!'
+                        });
+
+                    default:
+                        return reply.status(502).send({
+                            error: `Неожиданный ответ от банка. Код: ${httpStatus}`
+                        });
+                }
+            }
+
+            const dataMerchant = await responseMerchant.json();
+
+            const merchantArray = dataMerchant.Data?.Retailer;
+
+            let merchantResult = "ERROR";
+
+            if (merchantArray.length === 1) {
+                merchantResult = "CONNECTED";
+            } else if (merchantArray.length === 0) {
+                merchantResult = "NOT_CONNECTED";
+            } else if (merchantArray.length > 1) {
+                merchantResult = "MULTIPLE";
+            }
+
+            if (merchantResult === "NOT_CONNECTED") {
+                return reply.status(400).send({ error: 'Торговая точка не найдена! Проверьте, что у вас настроена торговая точка в банке!' })
+            }
+            if (merchantResult === "ERROR") {
+                return reply.status(400).send({ error: 'Произошла ошибка при получении данных о торговой точке!' })
+            }
+
+            const merchantIdValue = merchantResult === "CONNECTED" ? merchantArray[0]?.merchantId : null;
+
             await fastify.prisma.cabinet.update({
                 where: { id: user.cabinet },
                 data: { 
                     tochkaPhone: phone,
                     tochkaApiKey: apiKey,
-                    tochkaConsumerId: consumerId,
-                    tochkaPaymentMode: paymentMode,
+                    tochkaMerchantId: merchantIdValue,
                     tochkaVatType: vatType,
                     tochkaPurpose: purpose,
                     tochkaName: name,
@@ -493,19 +552,131 @@ module.exports = async (fastify) => {
                  }
             })
 
+            let message = `Интеграция | Подключена интеграция с Точка банком. `
+
+            if (merchantResult === "MULTIPLE") {
+                message += `Найдены несколько торговых точек, выберите нужную в настройках.`
+            }
+
             await fastify.prisma.logs.create({
                 data: {
                     cabinetid: user.cabinet,
                     status: "SUCCESS",
-                    message: "Интеграция | Подключена интеграция с Точка банком"
+                    message: message
                 }
             })
 
-            return reply.send({ message: "Интеграция успешно установлена!" })
+            let messageInt = `Интеграция | Подключена интеграция с Точка банком. `
+
+            if (merchantResult === "MULTIPLE") {
+                messageInt += `Найдены несколько торговых точек, выберите нужную в настройках.`
+            }
+
+            return reply.send({ message, merchantResult, dataMerchant })
         } catch (err) {
             console.debug(err)
             return reply.status(401).send({ error: 'Неавторизованный доступ' })
         }
 
+    })
+
+    fastify.post('/tochka/disconnect', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+
+            const userId = req.user.id
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true, role: true }
+            })
+
+            if (!user) {
+                return reply.status(404).send({ error: 'Пользователь не найден' })
+            }
+
+            if (user.role !== 'ADMINISTRATOR') {
+                const staff = await fastify.prisma.staff.findUnique({
+                    where: { id: userId, cabinetid: user.cabinet },
+                    select: { manageintegration: true }
+                })
+                if (!staff || staff.manageintegration !== 'YES') {
+                    return reply.status(403).send({ error: 'Недостаточно прав' })
+                }
+            }
+
+            await fastify.prisma.cabinet.update({
+                where: { id: user.cabinet },
+                data: {
+                    tochkaPhone: null,
+                    tochkaApiKey: null,
+                    tochkaMerchantId: null,
+                    tochkaPaymentMode: null,
+                    tochkaVatType: null,
+                    tochkaPurpose: null,
+                    tochkaName: null,
+                    tochkaCustomerCode: null
+                }
+            })
+
+            await fastify.prisma.logs.create({
+                data: {
+                    cabinetid: user.cabinet,
+                    status: "SUCCESS",
+                    message: "Интеграция | Отключена интеграция с Точка банком"
+                }
+            })
+
+            return reply.send({ message: "Интеграция успешно отключена!" })
+        } catch (err) {
+            console.debug(err)
+            return reply.status(401).send({ error: 'Неавторизованный доступ' })
+        }
+    })
+
+    fastify.post('/tochka/select-merchant', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+
+            const userId = req.user.id
+            const { merchantId } = req.body
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true, role: true }
+            })
+
+            if (!user) {
+                return reply.status(404).send({ error: 'Пользователь не найден' })
+            }
+
+            if (user.role !== 'ADMINISTRATOR') {
+                const staff = await fastify.prisma.staff.findUnique({
+                    where: { id: userId, cabinetid: user.cabinet },
+                    select: { manageintegration: true }
+                })
+                if (!staff || staff.manageintegration !== 'YES') {
+                    return reply.status(403).send({ error: 'Недостаточно прав' })
+                }
+            }
+
+            await fastify.prisma.cabinet.update({
+                where: { id: user.cabinet },
+                data: { tochkaMerchantId: merchantId }
+            })
+
+            await fastify.prisma.logs.create({
+                data: {
+                    cabinetid: user.cabinet,
+                    status: "SUCCESS",
+                    message: "Интеграция | Завершена интеграция с Точка банком. Торговая точка выбрана."
+                }
+            })
+
+            return reply.send({ message: "Интеграция успешно подключена!" })
+        } catch (err) {
+            console.debug(err)
+            return reply.status(401).send({ error: 'Неавторизованный доступ' })
+        }
     })
 }

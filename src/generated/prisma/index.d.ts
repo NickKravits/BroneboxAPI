@@ -83,6 +83,25 @@ export const TemPass: {
 export type TemPass = (typeof TemPass)[keyof typeof TemPass]
 
 
+export const Timezone: {
+  ETC_GMT_1: 'ETC_GMT_1',
+  EUROPE_CENTRAL: 'EUROPE_CENTRAL',
+  EUROPE_KALININGRAD: 'EUROPE_KALININGRAD',
+  EUROPE_MOSCOW: 'EUROPE_MOSCOW',
+  EUROPE_SAMARA: 'EUROPE_SAMARA',
+  ASIA_YEKATERINBURG: 'ASIA_YEKATERINBURG',
+  ASIA_OMSK: 'ASIA_OMSK',
+  ASIA_KRASNOYARSK: 'ASIA_KRASNOYARSK',
+  ASIA_IRKUTSK: 'ASIA_IRKUTSK',
+  ASIA_YAKUTSK: 'ASIA_YAKUTSK',
+  ASIA_VLADIVOSTOK: 'ASIA_VLADIVOSTOK',
+  ASIA_MAGADAN: 'ASIA_MAGADAN',
+  ASIA_KAMCHATKA: 'ASIA_KAMCHATKA'
+};
+
+export type Timezone = (typeof Timezone)[keyof typeof Timezone]
+
+
 export const LogStatus: {
   INFO: 'INFO',
   ERROR: 'ERROR',
@@ -151,6 +170,10 @@ export const Status: typeof $Enums.Status
 export type TemPass = $Enums.TemPass
 
 export const TemPass: typeof $Enums.TemPass
+
+export type Timezone = $Enums.Timezone
+
+export const Timezone: typeof $Enums.Timezone
 
 export type LogStatus = $Enums.LogStatus
 
@@ -2648,11 +2671,12 @@ export namespace Prisma {
 
   export type CabinetMinAggregateOutputType = {
     id: number | null
+    Timezone: $Enums.Timezone | null
     realtycalendarid: string | null
     okidokiapi: string | null
     tochkaPhone: string | null
     tochkaApiKey: string | null
-    tochkaConsumerId: string | null
+    tochkaMerchantId: string | null
     tochkaPurpose: string | null
     tochkaName: string | null
     tochkaCustomerCode: string | null
@@ -2660,11 +2684,12 @@ export namespace Prisma {
 
   export type CabinetMaxAggregateOutputType = {
     id: number | null
+    Timezone: $Enums.Timezone | null
     realtycalendarid: string | null
     okidokiapi: string | null
     tochkaPhone: string | null
     tochkaApiKey: string | null
-    tochkaConsumerId: string | null
+    tochkaMerchantId: string | null
     tochkaPurpose: string | null
     tochkaName: string | null
     tochkaCustomerCode: string | null
@@ -2672,11 +2697,12 @@ export namespace Prisma {
 
   export type CabinetCountAggregateOutputType = {
     id: number
+    Timezone: number
     realtycalendarid: number
     okidokiapi: number
     tochkaPhone: number
     tochkaApiKey: number
-    tochkaConsumerId: number
+    tochkaMerchantId: number
     tochkaPaymentMode: number
     tochkaVatType: number
     tochkaPurpose: number
@@ -2696,11 +2722,12 @@ export namespace Prisma {
 
   export type CabinetMinAggregateInputType = {
     id?: true
+    Timezone?: true
     realtycalendarid?: true
     okidokiapi?: true
     tochkaPhone?: true
     tochkaApiKey?: true
-    tochkaConsumerId?: true
+    tochkaMerchantId?: true
     tochkaPurpose?: true
     tochkaName?: true
     tochkaCustomerCode?: true
@@ -2708,11 +2735,12 @@ export namespace Prisma {
 
   export type CabinetMaxAggregateInputType = {
     id?: true
+    Timezone?: true
     realtycalendarid?: true
     okidokiapi?: true
     tochkaPhone?: true
     tochkaApiKey?: true
-    tochkaConsumerId?: true
+    tochkaMerchantId?: true
     tochkaPurpose?: true
     tochkaName?: true
     tochkaCustomerCode?: true
@@ -2720,11 +2748,12 @@ export namespace Prisma {
 
   export type CabinetCountAggregateInputType = {
     id?: true
+    Timezone?: true
     realtycalendarid?: true
     okidokiapi?: true
     tochkaPhone?: true
     tochkaApiKey?: true
-    tochkaConsumerId?: true
+    tochkaMerchantId?: true
     tochkaPaymentMode?: true
     tochkaVatType?: true
     tochkaPurpose?: true
@@ -2821,11 +2850,12 @@ export namespace Prisma {
 
   export type CabinetGroupByOutputType = {
     id: number
+    Timezone: $Enums.Timezone
     realtycalendarid: string | null
     okidokiapi: string | null
     tochkaPhone: string | null
     tochkaApiKey: string | null
-    tochkaConsumerId: string | null
+    tochkaMerchantId: string | null
     tochkaPaymentMode: JsonValue | null
     tochkaVatType: JsonValue | null
     tochkaPurpose: string | null
@@ -2854,11 +2884,12 @@ export namespace Prisma {
 
   export type CabinetSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    Timezone?: boolean
     realtycalendarid?: boolean
     okidokiapi?: boolean
     tochkaPhone?: boolean
     tochkaApiKey?: boolean
-    tochkaConsumerId?: boolean
+    tochkaMerchantId?: boolean
     tochkaPaymentMode?: boolean
     tochkaVatType?: boolean
     tochkaPurpose?: boolean
@@ -2870,11 +2901,12 @@ export namespace Prisma {
 
   export type CabinetSelectScalar = {
     id?: boolean
+    Timezone?: boolean
     realtycalendarid?: boolean
     okidokiapi?: boolean
     tochkaPhone?: boolean
     tochkaApiKey?: boolean
-    tochkaConsumerId?: boolean
+    tochkaMerchantId?: boolean
     tochkaPaymentMode?: boolean
     tochkaVatType?: boolean
     tochkaPurpose?: boolean
@@ -2882,18 +2914,19 @@ export namespace Prisma {
     tochkaCustomerCode?: boolean
   }
 
-  export type CabinetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "realtycalendarid" | "okidokiapi" | "tochkaPhone" | "tochkaApiKey" | "tochkaConsumerId" | "tochkaPaymentMode" | "tochkaVatType" | "tochkaPurpose" | "tochkaName" | "tochkaCustomerCode", ExtArgs["result"]["cabinet"]>
+  export type CabinetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "Timezone" | "realtycalendarid" | "okidokiapi" | "tochkaPhone" | "tochkaApiKey" | "tochkaMerchantId" | "tochkaPaymentMode" | "tochkaVatType" | "tochkaPurpose" | "tochkaName" | "tochkaCustomerCode", ExtArgs["result"]["cabinet"]>
 
   export type $CabinetPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Cabinet"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: number
+      Timezone: $Enums.Timezone
       realtycalendarid: string | null
       okidokiapi: string | null
       tochkaPhone: string | null
       tochkaApiKey: string | null
-      tochkaConsumerId: string | null
+      tochkaMerchantId: string | null
       tochkaPaymentMode: Prisma.JsonValue | null
       tochkaVatType: Prisma.JsonValue | null
       tochkaPurpose: string | null
@@ -3269,11 +3302,12 @@ export namespace Prisma {
    */
   interface CabinetFieldRefs {
     readonly id: FieldRef<"Cabinet", 'Int'>
+    readonly Timezone: FieldRef<"Cabinet", 'Timezone'>
     readonly realtycalendarid: FieldRef<"Cabinet", 'String'>
     readonly okidokiapi: FieldRef<"Cabinet", 'String'>
     readonly tochkaPhone: FieldRef<"Cabinet", 'String'>
     readonly tochkaApiKey: FieldRef<"Cabinet", 'String'>
-    readonly tochkaConsumerId: FieldRef<"Cabinet", 'String'>
+    readonly tochkaMerchantId: FieldRef<"Cabinet", 'String'>
     readonly tochkaPaymentMode: FieldRef<"Cabinet", 'Json'>
     readonly tochkaVatType: FieldRef<"Cabinet", 'Json'>
     readonly tochkaPurpose: FieldRef<"Cabinet", 'String'>
@@ -9922,11 +9956,12 @@ export namespace Prisma {
 
   export const CabinetScalarFieldEnum: {
     id: 'id',
+    Timezone: 'Timezone',
     realtycalendarid: 'realtycalendarid',
     okidokiapi: 'okidokiapi',
     tochkaPhone: 'tochkaPhone',
     tochkaApiKey: 'tochkaApiKey',
-    tochkaConsumerId: 'tochkaConsumerId',
+    tochkaMerchantId: 'tochkaMerchantId',
     tochkaPaymentMode: 'tochkaPaymentMode',
     tochkaVatType: 'tochkaVatType',
     tochkaPurpose: 'tochkaPurpose',
@@ -10105,7 +10140,7 @@ export namespace Prisma {
     okidokiapi: 'okidokiapi',
     tochkaPhone: 'tochkaPhone',
     tochkaApiKey: 'tochkaApiKey',
-    tochkaConsumerId: 'tochkaConsumerId',
+    tochkaMerchantId: 'tochkaMerchantId',
     tochkaPurpose: 'tochkaPurpose',
     tochkaName: 'tochkaName',
     tochkaCustomerCode: 'tochkaCustomerCode'
@@ -10220,6 +10255,13 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+  /**
+   * Reference to a field of type 'Timezone'
+   */
+  export type EnumTimezoneFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Timezone'>
     
 
 
@@ -10372,11 +10414,12 @@ export namespace Prisma {
     OR?: CabinetWhereInput[]
     NOT?: CabinetWhereInput | CabinetWhereInput[]
     id?: IntFilter<"Cabinet"> | number
+    Timezone?: EnumTimezoneFilter<"Cabinet"> | $Enums.Timezone
     realtycalendarid?: StringNullableFilter<"Cabinet"> | string | null
     okidokiapi?: StringNullableFilter<"Cabinet"> | string | null
     tochkaPhone?: StringNullableFilter<"Cabinet"> | string | null
     tochkaApiKey?: StringNullableFilter<"Cabinet"> | string | null
-    tochkaConsumerId?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaMerchantId?: StringNullableFilter<"Cabinet"> | string | null
     tochkaPaymentMode?: JsonNullableFilter<"Cabinet">
     tochkaVatType?: JsonNullableFilter<"Cabinet">
     tochkaPurpose?: StringNullableFilter<"Cabinet"> | string | null
@@ -10386,11 +10429,12 @@ export namespace Prisma {
 
   export type CabinetOrderByWithRelationInput = {
     id?: SortOrder
+    Timezone?: SortOrder
     realtycalendarid?: SortOrderInput | SortOrder
     okidokiapi?: SortOrderInput | SortOrder
     tochkaPhone?: SortOrderInput | SortOrder
     tochkaApiKey?: SortOrderInput | SortOrder
-    tochkaConsumerId?: SortOrderInput | SortOrder
+    tochkaMerchantId?: SortOrderInput | SortOrder
     tochkaPaymentMode?: SortOrderInput | SortOrder
     tochkaVatType?: SortOrderInput | SortOrder
     tochkaPurpose?: SortOrderInput | SortOrder
@@ -10405,10 +10449,11 @@ export namespace Prisma {
     AND?: CabinetWhereInput | CabinetWhereInput[]
     OR?: CabinetWhereInput[]
     NOT?: CabinetWhereInput | CabinetWhereInput[]
+    Timezone?: EnumTimezoneFilter<"Cabinet"> | $Enums.Timezone
     okidokiapi?: StringNullableFilter<"Cabinet"> | string | null
     tochkaPhone?: StringNullableFilter<"Cabinet"> | string | null
     tochkaApiKey?: StringNullableFilter<"Cabinet"> | string | null
-    tochkaConsumerId?: StringNullableFilter<"Cabinet"> | string | null
+    tochkaMerchantId?: StringNullableFilter<"Cabinet"> | string | null
     tochkaPaymentMode?: JsonNullableFilter<"Cabinet">
     tochkaVatType?: JsonNullableFilter<"Cabinet">
     tochkaPurpose?: StringNullableFilter<"Cabinet"> | string | null
@@ -10418,11 +10463,12 @@ export namespace Prisma {
 
   export type CabinetOrderByWithAggregationInput = {
     id?: SortOrder
+    Timezone?: SortOrder
     realtycalendarid?: SortOrderInput | SortOrder
     okidokiapi?: SortOrderInput | SortOrder
     tochkaPhone?: SortOrderInput | SortOrder
     tochkaApiKey?: SortOrderInput | SortOrder
-    tochkaConsumerId?: SortOrderInput | SortOrder
+    tochkaMerchantId?: SortOrderInput | SortOrder
     tochkaPaymentMode?: SortOrderInput | SortOrder
     tochkaVatType?: SortOrderInput | SortOrder
     tochkaPurpose?: SortOrderInput | SortOrder
@@ -10440,11 +10486,12 @@ export namespace Prisma {
     OR?: CabinetScalarWhereWithAggregatesInput[]
     NOT?: CabinetScalarWhereWithAggregatesInput | CabinetScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Cabinet"> | number
+    Timezone?: EnumTimezoneWithAggregatesFilter<"Cabinet"> | $Enums.Timezone
     realtycalendarid?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     okidokiapi?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     tochkaPhone?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     tochkaApiKey?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
-    tochkaConsumerId?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    tochkaMerchantId?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     tochkaPaymentMode?: JsonNullableWithAggregatesFilter<"Cabinet">
     tochkaVatType?: JsonNullableWithAggregatesFilter<"Cabinet">
     tochkaPurpose?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
@@ -11111,11 +11158,12 @@ export namespace Prisma {
   }
 
   export type CabinetCreateInput = {
+    Timezone?: $Enums.Timezone
     realtycalendarid?: string | null
     okidokiapi?: string | null
     tochkaPhone?: string | null
     tochkaApiKey?: string | null
-    tochkaConsumerId?: string | null
+    tochkaMerchantId?: string | null
     tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
     tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
     tochkaPurpose?: string | null
@@ -11125,11 +11173,12 @@ export namespace Prisma {
 
   export type CabinetUncheckedCreateInput = {
     id?: number
+    Timezone?: $Enums.Timezone
     realtycalendarid?: string | null
     okidokiapi?: string | null
     tochkaPhone?: string | null
     tochkaApiKey?: string | null
-    tochkaConsumerId?: string | null
+    tochkaMerchantId?: string | null
     tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
     tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
     tochkaPurpose?: string | null
@@ -11138,11 +11187,12 @@ export namespace Prisma {
   }
 
   export type CabinetUpdateInput = {
+    Timezone?: EnumTimezoneFieldUpdateOperationsInput | $Enums.Timezone
     realtycalendarid?: NullableStringFieldUpdateOperationsInput | string | null
     okidokiapi?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaPhone?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkaConsumerId?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaMerchantId?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
     tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
     tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11152,11 +11202,12 @@ export namespace Prisma {
 
   export type CabinetUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    Timezone?: EnumTimezoneFieldUpdateOperationsInput | $Enums.Timezone
     realtycalendarid?: NullableStringFieldUpdateOperationsInput | string | null
     okidokiapi?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaPhone?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkaConsumerId?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaMerchantId?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
     tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
     tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11166,11 +11217,12 @@ export namespace Prisma {
 
   export type CabinetCreateManyInput = {
     id?: number
+    Timezone?: $Enums.Timezone
     realtycalendarid?: string | null
     okidokiapi?: string | null
     tochkaPhone?: string | null
     tochkaApiKey?: string | null
-    tochkaConsumerId?: string | null
+    tochkaMerchantId?: string | null
     tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
     tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
     tochkaPurpose?: string | null
@@ -11179,11 +11231,12 @@ export namespace Prisma {
   }
 
   export type CabinetUpdateManyMutationInput = {
+    Timezone?: EnumTimezoneFieldUpdateOperationsInput | $Enums.Timezone
     realtycalendarid?: NullableStringFieldUpdateOperationsInput | string | null
     okidokiapi?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaPhone?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkaConsumerId?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaMerchantId?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
     tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
     tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11193,11 +11246,12 @@ export namespace Prisma {
 
   export type CabinetUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
+    Timezone?: EnumTimezoneFieldUpdateOperationsInput | $Enums.Timezone
     realtycalendarid?: NullableStringFieldUpdateOperationsInput | string | null
     okidokiapi?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaPhone?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    tochkaConsumerId?: NullableStringFieldUpdateOperationsInput | string | null
+    tochkaMerchantId?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaPaymentMode?: NullableJsonNullValueInput | InputJsonValue
     tochkaVatType?: NullableJsonNullValueInput | InputJsonValue
     tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12090,6 +12144,13 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
+
+  export type EnumTimezoneFilter<$PrismaModel = never> = {
+    equals?: $Enums.Timezone | EnumTimezoneFieldRefInput<$PrismaModel>
+    in?: $Enums.Timezone[]
+    notIn?: $Enums.Timezone[]
+    not?: NestedEnumTimezoneFilter<$PrismaModel> | $Enums.Timezone
+  }
   export type JsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -12122,11 +12183,12 @@ export namespace Prisma {
 
   export type CabinetCountOrderByAggregateInput = {
     id?: SortOrder
+    Timezone?: SortOrder
     realtycalendarid?: SortOrder
     okidokiapi?: SortOrder
     tochkaPhone?: SortOrder
     tochkaApiKey?: SortOrder
-    tochkaConsumerId?: SortOrder
+    tochkaMerchantId?: SortOrder
     tochkaPaymentMode?: SortOrder
     tochkaVatType?: SortOrder
     tochkaPurpose?: SortOrder
@@ -12140,11 +12202,12 @@ export namespace Prisma {
 
   export type CabinetMaxOrderByAggregateInput = {
     id?: SortOrder
+    Timezone?: SortOrder
     realtycalendarid?: SortOrder
     okidokiapi?: SortOrder
     tochkaPhone?: SortOrder
     tochkaApiKey?: SortOrder
-    tochkaConsumerId?: SortOrder
+    tochkaMerchantId?: SortOrder
     tochkaPurpose?: SortOrder
     tochkaName?: SortOrder
     tochkaCustomerCode?: SortOrder
@@ -12152,11 +12215,12 @@ export namespace Prisma {
 
   export type CabinetMinOrderByAggregateInput = {
     id?: SortOrder
+    Timezone?: SortOrder
     realtycalendarid?: SortOrder
     okidokiapi?: SortOrder
     tochkaPhone?: SortOrder
     tochkaApiKey?: SortOrder
-    tochkaConsumerId?: SortOrder
+    tochkaMerchantId?: SortOrder
     tochkaPurpose?: SortOrder
     tochkaName?: SortOrder
     tochkaCustomerCode?: SortOrder
@@ -12164,6 +12228,16 @@ export namespace Prisma {
 
   export type CabinetSumOrderByAggregateInput = {
     id?: SortOrder
+  }
+
+  export type EnumTimezoneWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Timezone | EnumTimezoneFieldRefInput<$PrismaModel>
+    in?: $Enums.Timezone[]
+    notIn?: $Enums.Timezone[]
+    not?: NestedEnumTimezoneWithAggregatesFilter<$PrismaModel> | $Enums.Timezone
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTimezoneFilter<$PrismaModel>
+    _max?: NestedEnumTimezoneFilter<$PrismaModel>
   }
   export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -12858,6 +12932,10 @@ export namespace Prisma {
     update?: XOR<XOR<StaffUpdateToOneWithWhereWithoutUserInput, StaffUpdateWithoutUserInput>, StaffUncheckedUpdateWithoutUserInput>
   }
 
+  export type EnumTimezoneFieldUpdateOperationsInput = {
+    set?: $Enums.Timezone
+  }
+
   export type EnumLogStatusFieldUpdateOperationsInput = {
     set?: $Enums.LogStatus
   }
@@ -13161,6 +13239,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTimezoneFilter<$PrismaModel = never> = {
+    equals?: $Enums.Timezone | EnumTimezoneFieldRefInput<$PrismaModel>
+    in?: $Enums.Timezone[]
+    notIn?: $Enums.Timezone[]
+    not?: NestedEnumTimezoneFilter<$PrismaModel> | $Enums.Timezone
+  }
+
+  export type NestedEnumTimezoneWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Timezone | EnumTimezoneFieldRefInput<$PrismaModel>
+    in?: $Enums.Timezone[]
+    notIn?: $Enums.Timezone[]
+    not?: NestedEnumTimezoneWithAggregatesFilter<$PrismaModel> | $Enums.Timezone
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTimezoneFilter<$PrismaModel>
+    _max?: NestedEnumTimezoneFilter<$PrismaModel>
   }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<

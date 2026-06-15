@@ -134,11 +134,12 @@ exports.Prisma.UserScalarFieldEnum = {
 
 exports.Prisma.CabinetScalarFieldEnum = {
   id: 'id',
+  Timezone: 'Timezone',
   realtycalendarid: 'realtycalendarid',
   okidokiapi: 'okidokiapi',
   tochkaPhone: 'tochkaPhone',
   tochkaApiKey: 'tochkaApiKey',
-  tochkaConsumerId: 'tochkaConsumerId',
+  tochkaMerchantId: 'tochkaMerchantId',
   tochkaPaymentMode: 'tochkaPaymentMode',
   tochkaVatType: 'tochkaVatType',
   tochkaPurpose: 'tochkaPurpose',
@@ -278,7 +279,7 @@ exports.Prisma.CabinetOrderByRelevanceFieldEnum = {
   okidokiapi: 'okidokiapi',
   tochkaPhone: 'tochkaPhone',
   tochkaApiKey: 'tochkaApiKey',
-  tochkaConsumerId: 'tochkaConsumerId',
+  tochkaMerchantId: 'tochkaMerchantId',
   tochkaPurpose: 'tochkaPurpose',
   tochkaName: 'tochkaName',
   tochkaCustomerCode: 'tochkaCustomerCode'
@@ -344,6 +345,22 @@ exports.Status = exports.$Enums.Status = {
   ACTIVE: 'ACTIVE',
   BLOCKED: 'BLOCKED',
   DELETED: 'DELETED'
+};
+
+exports.Timezone = exports.$Enums.Timezone = {
+  ETC_GMT_1: 'ETC_GMT_1',
+  EUROPE_CENTRAL: 'EUROPE_CENTRAL',
+  EUROPE_KALININGRAD: 'EUROPE_KALININGRAD',
+  EUROPE_MOSCOW: 'EUROPE_MOSCOW',
+  EUROPE_SAMARA: 'EUROPE_SAMARA',
+  ASIA_YEKATERINBURG: 'ASIA_YEKATERINBURG',
+  ASIA_OMSK: 'ASIA_OMSK',
+  ASIA_KRASNOYARSK: 'ASIA_KRASNOYARSK',
+  ASIA_IRKUTSK: 'ASIA_IRKUTSK',
+  ASIA_YAKUTSK: 'ASIA_YAKUTSK',
+  ASIA_VLADIVOSTOK: 'ASIA_VLADIVOSTOK',
+  ASIA_MAGADAN: 'ASIA_MAGADAN',
+  ASIA_KAMCHATKA: 'ASIA_KAMCHATKA'
 };
 
 exports.LogStatus = exports.$Enums.LogStatus = {

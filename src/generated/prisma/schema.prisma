@@ -43,17 +43,34 @@ model User {
 }
 
 model Cabinet {
-  id                 Int     @id @default(autoincrement())
-  realtycalendarid   String? @unique
+  id                 Int      @id @default(autoincrement())
+  Timezone           Timezone @default(EUROPE_MOSCOW)
+  realtycalendarid   String?  @unique
   okidokiapi         String?
   tochkaPhone        String?
   tochkaApiKey       String?
-  tochkaConsumerId   String?
+  tochkaMerchantId   String?
   tochkaPaymentMode  Json?
   tochkaVatType      Json?
   tochkaPurpose      String?
   tochkaName         String?
   tochkaCustomerCode String?
+}
+
+enum Timezone {
+  ETC_GMT_1          @map("Etc/GMT-1") // ХЗ, что, но (UTC+1)
+  EUROPE_CENTRAL     @map("Europe/Berlin") // Центральная Европа (UTC+1 / UTC+2) 
+  EUROPE_KALININGRAD @map("Europe/Kaliningrad") // Калининград (UTC+2)
+  EUROPE_MOSCOW      @map("Europe/Moscow") // Москва, Санкт-Петербург, Казань (UTC+3)
+  EUROPE_SAMARA      @map("Europe/Samara") // Самара, Ижевск (UTC+4)
+  ASIA_YEKATERINBURG @map("Asia/Yekaterinburg") // Екатеринбург, Пермь, Тюмень (UTC+5)
+  ASIA_OMSK          @map("Asia/Omsk") // Омск (UTC+6)
+  ASIA_KRASNOYARSK   @map("Asia/Krasnoyarsk") // Красноярск, Новосибирск, Томск (UTC+7)
+  ASIA_IRKUTSK       @map("Asia/Irkutsk") // Иркутск, Улан-Удэ (UTC+8)
+  ASIA_YAKUTSK       @map("Asia/Yakutsk") // Якутск, Чита, Благовещенск (UTC+9)
+  ASIA_VLADIVOSTOK   @map("Asia/Vladivostok") // Владивосток, Хабаровск (UTC+10)
+  ASIA_MAGADAN       @map("Asia/Magadan") // Магадан, Сахалин (UTC+11)
+  ASIA_KAMCHATKA     @map("Asia/Kamchatka") // Камчатка, Анадырь (UTC+12)
 }
 
 model Logs {
