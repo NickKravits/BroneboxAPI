@@ -639,7 +639,7 @@ module.exports = async (fastify) => {
             await req.jwtVerify()
 
             const userId = req.user.id
-            const { merchantId } = req.body
+            const { merchantId, paymentModes } = req.body
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
@@ -660,9 +660,35 @@ module.exports = async (fastify) => {
                 }
             }
 
+            const cabinet = await fastify.prisma.cabinet.findUnique({
+                where: { id: user.cabinet },
+                select: { tochkaApiKey: true, tochkaCustomerCode: true }
+            })
+
+            if (!cabinet?.tochkaApiKey || !cabinet?.tochkaCustomerCode) {
+                return reply.status(400).send({ 
+                    error: 'Сначала настройте интеграцию с Точка Банком' 
+                })
+            }
+
+            if (!merchantId) {
+                return reply.status(400).send({ error: 'merchantId обязателен' })
+            }
+
+            const VALID_PAYMENT_MODES = ['sbp', 'card', 'tinkoff', 'dolyame'];
+
+            if (!Array.isArray(paymentModes) || paymentModes.length === 0) {
+                return reply.status(400).send({ error: 'paymentModes обязателен и не может быть пустым' })
+            }
+
+            const invalidModes = paymentModes.filter(m => !VALID_PAYMENT_MODES.includes(m))
+            if (invalidModes.length) {
+                return reply.status(400).send({ error: `Недопустимые способы оплаты: ${invalidModes.join(', ')}` })
+}
+
             await fastify.prisma.cabinet.update({
                 where: { id: user.cabinet },
-                data: { tochkaMerchantId: merchantId }
+                data: { tochkaMerchantId: merchantId, tochkaPaymentMode: paymentModes }
             })
 
             await fastify.prisma.logs.create({
@@ -674,6 +700,97 @@ module.exports = async (fastify) => {
             })
 
             return reply.send({ message: "Интеграция успешно подключена!" })
+        } catch (err) {
+            console.debug(err)
+            return reply.status(401).send({ error: 'Неавторизованный доступ' })
+        }
+    })
+
+    fastify.get('/tochka/get-merchants', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+
+            const userId = req.user.id
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true, role: true }
+            })
+
+            if (!user) {
+                return reply.status(404).send({ error: 'Пользователь не найден' })
+            }
+
+            if (user.role !== 'ADMINISTRATOR') {
+                const staff = await fastify.prisma.staff.findUnique({
+                    where: { id: userId, cabinetid: user.cabinet },
+                    select: { manageintegration: true }
+                })
+                if (!staff || staff.manageintegration !== 'YES') {
+                    return reply.status(403).send({ error: 'Недостаточно прав' })
+                }
+            }
+
+            const cabinet = await fastify.prisma.cabinet.findUnique({
+                where: { id: user.cabinet },
+                select: { tochkaApiKey: true, tochkaCustomerCode: true }
+            })
+
+            if (!cabinet?.tochkaApiKey || !cabinet?.tochkaCustomerCode) {
+                return reply.status(400).send({ 
+                    error: 'Сначала настройте интеграцию с Точка Банком' 
+                })
+            }
+
+            const responseMerchant = await fetch(`https://enter.tochka.com/sandbox/v2/acquiring/v1.0/retailers?customerCode=${cabinet.tochkaCustomerCode}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${cabinet.tochkaApiKey}`
+                }   
+            });
+
+            if (!responseMerchant.ok) {
+                const httpStatus = responseMerchant.status;
+                const errorText = await responseMerchant.text();
+                fastify.log.error(`[Ошибка Точки] Статус: ${httpStatus} | Ответ: ${errorText}`);
+
+                switch (httpStatus) {
+                    case 400:
+                        return reply.status(400).send({
+                            error: 'Код: 400. Ошибка валидации! Проверьте, что у вас настроена торговая точка в банке!'
+                        });
+
+                    case 403:
+                        return reply.status(403).send({
+                            error: 'Код: 403. Что-то пошло не так! Попробуйте позже или свяжитесь с банком!'
+                        });
+
+                    case 404:
+                        return reply.status(404).send({
+                            error: 'Код: 404. Метод не найден! Обратитесь к разработчику!'
+                        });
+
+                    case 424:
+                        return reply.status(424).send({
+                            error: 'Код: 424. Что-то пошло не так! Попробуйте позже или свяжитесь с банком!'
+                        });
+
+                    case 500:
+                        return reply.status(500).send({
+                            error: 'Код: 500. Ошибка запроса! Обратитесь к разработчику!'
+                        });
+
+                    default:
+                        return reply.status(502).send({
+                            error: `Неожиданный ответ от банка. Код: ${httpStatus}`
+                        });
+                }
+            }
+
+            const dataMerchant = await responseMerchant.json();
+
+            return reply.send({ dataMerchant })
         } catch (err) {
             console.debug(err)
             return reply.status(401).send({ error: 'Неавторизованный доступ' })
