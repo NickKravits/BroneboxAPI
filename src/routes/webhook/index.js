@@ -214,9 +214,9 @@ module.exports = async (fastify) => {
                 })
 
                 fastify.pushToClients(cabinet.id, 'new_booking', {
-                    guestName:  fio,
                     objectName: object.name,
-                    checkin:    begin_date
+                    checkin:    begin_date,
+                    checkout:   end_date
                 })
 
                 return reply.status(200).send({ ok: true })
@@ -258,6 +258,12 @@ module.exports = async (fastify) => {
                         additional_phone: additional_phone,
                     }
                 })
+
+                fastify.pushToClients(cabinet.id, 'update_booking', {
+                    objectName: object.name,
+                    checkin:    begin_date,
+                    checkout:   end_date
+                })
             } else if (action === 'delete_booking') {
                 const book = await fastify.prisma.bookings.findFirst({
                     where: { id: id, cabinet: cabinet.id }
@@ -276,6 +282,12 @@ module.exports = async (fastify) => {
 
                 await fastify.prisma.bookings.delete({
                     where: { id: id, cabinet: cabinet.id }
+                })
+
+                fastify.pushToClients(cabinet.id, 'delete_booking', {
+                    objectName: object.name,
+                    checkin:    begin_date,
+                    checkout:   end_date
                 })
             } else if (action === 'cancel_booking') {
                 const book = await fastify.prisma.bookings.findFirst({

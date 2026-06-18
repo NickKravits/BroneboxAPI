@@ -35,6 +35,8 @@ fastify.register(require('./src/routes/webhook'), { prefix: '/webhook' })
 fastify.register(require('./src/routes/bookings'), { prefix: '/bookings' })
 fastify.register(require('./src/routes/guest'), { prefix: '/guest' })
 fastify.register(require('./src/routes/logs'), { prefix: '/logs' })
+fastify.register(require('./src/routes/cabinet'), { prefix: '/cabinet' })
+fastify.register(require('./src/routes/events'))
 
 fastify.listen({ port: 3000 }, (err) => {
   if (err) {

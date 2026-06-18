@@ -11,11 +11,13 @@ module.exports = async (fastify) => {
 
         const cabinetId = user.cabinet
 
+        reply.hijack()
         reply.raw.writeHead(200, {
-            'Content-Type':      'text/event-stream',
-            'Cache-Control':     'no-cache',
-            'Connection':        'keep-alive',
-            'X-Accel-Buffering': 'no'
+            'Content-Type':            'text/event-stream',
+            'Cache-Control':           'no-cache',
+            'Connection':              'keep-alive',
+            'X-Accel-Buffering':       'no',
+            'Access-Control-Allow-Origin': '*'
         })
         reply.raw.flushHeaders()
 

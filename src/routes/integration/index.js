@@ -370,7 +370,7 @@ module.exports = async (fastify) => {
                 return reply.status(400).send({ error: 'Недопустимая ставка НДС' });
             }
 
-            const customerCodeRes = await fetch('https://enter.tochka.com/sandbox/v2/open-banking/v1.0/customers', {
+            const customerCodeRes = await fetch('https://enter.tochka.com/uapi/open-banking/v1.0/customers', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -424,7 +424,7 @@ module.exports = async (fastify) => {
             }
             const customerCode = customers[0].customerCode;
 
-            const response = await fetch(`https://enter.tochka.com/sandbox/v2/acquiring/v1.0/payments?customerCode=${customerCode}`, {
+            const response = await fetch(`https://enter.tochka.com/uapi/acquiring/v1.0/payments?customerCode=${customerCode}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -470,7 +470,7 @@ module.exports = async (fastify) => {
                 }
             }
 
-            const responseMerchant = await fetch(`https://enter.tochka.com/sandbox/v2/acquiring/v1.0/retailers?customerCode=${customerCode}`, {
+            const responseMerchant = await fetch(`https://enter.tochka.com/uapi/acquiring/v1.0/retailers?customerCode=${customerCode}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -742,7 +742,7 @@ module.exports = async (fastify) => {
                 })
             }
 
-            const responseMerchant = await fetch(`https://enter.tochka.com/sandbox/v2/acquiring/v1.0/retailers?customerCode=${cabinet.tochkaCustomerCode}`, {
+            const responseMerchant = await fetch(`https://enter.tochka.com/uapi/acquiring/v1.0/retailers?customerCode=${cabinet.tochkaCustomerCode}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
