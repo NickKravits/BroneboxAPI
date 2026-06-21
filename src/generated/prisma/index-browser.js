@@ -144,7 +144,12 @@ exports.Prisma.CabinetScalarFieldEnum = {
   tochkaVatType: 'tochkaVatType',
   tochkaPurpose: 'tochkaPurpose',
   tochkaName: 'tochkaName',
-  tochkaCustomerCode: 'tochkaCustomerCode'
+  tochkaCustomerCode: 'tochkaCustomerCode',
+  cleaningTemplate: 'cleaningTemplate',
+  approxTimeMarker: 'approxTimeMarker',
+  emptyStayMarker: 'emptyStayMarker',
+  cleaningHeader: 'cleaningHeader',
+  cleaningFooter: 'cleaningFooter'
 };
 
 exports.Prisma.LogsScalarFieldEnum = {
@@ -242,6 +247,21 @@ exports.Prisma.BookingsScalarFieldEnum = {
   link: 'link'
 };
 
+exports.Prisma.CleaningScheduleScalarFieldEnum = {
+  id: 'id',
+  cabinetid: 'cabinetid',
+  objectid: 'objectid',
+  date: 'date',
+  booking_id: 'booking_id',
+  maid_id: 'maid_id',
+  checkin_time: 'checkin_time',
+  checkout_time: 'checkout_time',
+  comment: 'comment',
+  included: 'included',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -282,7 +302,12 @@ exports.Prisma.CabinetOrderByRelevanceFieldEnum = {
   tochkaMerchantId: 'tochkaMerchantId',
   tochkaPurpose: 'tochkaPurpose',
   tochkaName: 'tochkaName',
-  tochkaCustomerCode: 'tochkaCustomerCode'
+  tochkaCustomerCode: 'tochkaCustomerCode',
+  cleaningTemplate: 'cleaningTemplate',
+  approxTimeMarker: 'approxTimeMarker',
+  emptyStayMarker: 'emptyStayMarker',
+  cleaningHeader: 'cleaningHeader',
+  cleaningFooter: 'cleaningFooter'
 };
 
 exports.Prisma.LogsOrderByRelevanceFieldEnum = {
@@ -330,6 +355,13 @@ exports.Prisma.BookingsOrderByRelevanceFieldEnum = {
   contract_link: 'contract_link',
   channel: 'channel',
   link: 'link'
+};
+
+exports.Prisma.CleaningScheduleOrderByRelevanceFieldEnum = {
+  date: 'date',
+  checkin_time: 'checkin_time',
+  checkout_time: 'checkout_time',
+  comment: 'comment'
 };
 exports.TemPass = exports.$Enums.TemPass = {
   YES: 'YES',
@@ -409,7 +441,8 @@ exports.Prisma.ModelName = {
   Maids: 'Maids',
   Objects: 'Objects',
   ObjectPhoto: 'ObjectPhoto',
-  Bookings: 'Bookings'
+  Bookings: 'Bookings',
+  CleaningSchedule: 'CleaningSchedule'
 };
 
 /**

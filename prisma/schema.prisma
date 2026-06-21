@@ -55,6 +55,11 @@ model Cabinet {
   tochkaPurpose       String?
   tochkaName          String?
   tochkaCustomerCode  String?
+  cleaningTemplate    String?   @db.Text
+  approxTimeMarker    String?   @default("~")
+  emptyStayMarker     String?   @default("—")
+  cleaningHeader      String?   @db.Text
+  cleaningFooter      String?   @db.Text
 }
 
 enum Timezone {
@@ -211,4 +216,21 @@ enum BookStatus {
   deleted   //Бронь удалена
   canceled  //Бронь отменена
   request   //Заявка
+}
+
+model CleaningSchedule {
+  id            Int       @id @default(autoincrement())
+  cabinetid     Int
+  objectid      Int
+  date          String
+  booking_id    Int?
+  maid_id       Int?
+  checkin_time  String?
+  checkout_time String?
+  comment       String?   @db.Text
+  included      Thumbler  @default(YES)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([cabinetid, objectid, date])
 }

@@ -53,6 +53,11 @@ export type ObjectPhoto = $Result.DefaultSelection<Prisma.$ObjectPhotoPayload>
  * 
  */
 export type Bookings = $Result.DefaultSelection<Prisma.$BookingsPayload>
+/**
+ * Model CleaningSchedule
+ * 
+ */
+export type CleaningSchedule = $Result.DefaultSelection<Prisma.$CleaningSchedulePayload>
 
 /**
  * Enums
@@ -399,6 +404,16 @@ export class PrismaClient<
     * ```
     */
   get bookings(): Prisma.BookingsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.cleaningSchedule`: Exposes CRUD operations for the **CleaningSchedule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CleaningSchedules
+    * const cleaningSchedules = await prisma.cleaningSchedule.findMany()
+    * ```
+    */
+  get cleaningSchedule(): Prisma.CleaningScheduleDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -840,7 +855,8 @@ export namespace Prisma {
     Maids: 'Maids',
     Objects: 'Objects',
     ObjectPhoto: 'ObjectPhoto',
-    Bookings: 'Bookings'
+    Bookings: 'Bookings',
+    CleaningSchedule: 'CleaningSchedule'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -856,7 +872,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "cabinet" | "logs" | "staff" | "maids" | "objects" | "objectPhoto" | "bookings"
+      modelProps: "user" | "cabinet" | "logs" | "staff" | "maids" | "objects" | "objectPhoto" | "bookings" | "cleaningSchedule"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1388,6 +1404,72 @@ export namespace Prisma {
           }
         }
       }
+      CleaningSchedule: {
+        payload: Prisma.$CleaningSchedulePayload<ExtArgs>
+        fields: Prisma.CleaningScheduleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CleaningScheduleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CleaningSchedulePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CleaningScheduleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CleaningSchedulePayload>
+          }
+          findFirst: {
+            args: Prisma.CleaningScheduleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CleaningSchedulePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CleaningScheduleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CleaningSchedulePayload>
+          }
+          findMany: {
+            args: Prisma.CleaningScheduleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CleaningSchedulePayload>[]
+          }
+          create: {
+            args: Prisma.CleaningScheduleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CleaningSchedulePayload>
+          }
+          createMany: {
+            args: Prisma.CleaningScheduleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.CleaningScheduleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CleaningSchedulePayload>
+          }
+          update: {
+            args: Prisma.CleaningScheduleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CleaningSchedulePayload>
+          }
+          deleteMany: {
+            args: Prisma.CleaningScheduleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CleaningScheduleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.CleaningScheduleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CleaningSchedulePayload>
+          }
+          aggregate: {
+            args: Prisma.CleaningScheduleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCleaningSchedule>
+          }
+          groupBy: {
+            args: Prisma.CleaningScheduleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CleaningScheduleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CleaningScheduleCountArgs<ExtArgs>
+            result: $Utils.Optional<CleaningScheduleCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1504,6 +1586,7 @@ export namespace Prisma {
     objects?: ObjectsOmit
     objectPhoto?: ObjectPhotoOmit
     bookings?: BookingsOmit
+    cleaningSchedule?: CleaningScheduleOmit
   }
 
   /* Types for Logging */
@@ -2680,6 +2763,11 @@ export namespace Prisma {
     tochkaPurpose: string | null
     tochkaName: string | null
     tochkaCustomerCode: string | null
+    cleaningTemplate: string | null
+    approxTimeMarker: string | null
+    emptyStayMarker: string | null
+    cleaningHeader: string | null
+    cleaningFooter: string | null
   }
 
   export type CabinetMaxAggregateOutputType = {
@@ -2693,6 +2781,11 @@ export namespace Prisma {
     tochkaPurpose: string | null
     tochkaName: string | null
     tochkaCustomerCode: string | null
+    cleaningTemplate: string | null
+    approxTimeMarker: string | null
+    emptyStayMarker: string | null
+    cleaningHeader: string | null
+    cleaningFooter: string | null
   }
 
   export type CabinetCountAggregateOutputType = {
@@ -2708,6 +2801,11 @@ export namespace Prisma {
     tochkaPurpose: number
     tochkaName: number
     tochkaCustomerCode: number
+    cleaningTemplate: number
+    approxTimeMarker: number
+    emptyStayMarker: number
+    cleaningHeader: number
+    cleaningFooter: number
     _all: number
   }
 
@@ -2731,6 +2829,11 @@ export namespace Prisma {
     tochkaPurpose?: true
     tochkaName?: true
     tochkaCustomerCode?: true
+    cleaningTemplate?: true
+    approxTimeMarker?: true
+    emptyStayMarker?: true
+    cleaningHeader?: true
+    cleaningFooter?: true
   }
 
   export type CabinetMaxAggregateInputType = {
@@ -2744,6 +2847,11 @@ export namespace Prisma {
     tochkaPurpose?: true
     tochkaName?: true
     tochkaCustomerCode?: true
+    cleaningTemplate?: true
+    approxTimeMarker?: true
+    emptyStayMarker?: true
+    cleaningHeader?: true
+    cleaningFooter?: true
   }
 
   export type CabinetCountAggregateInputType = {
@@ -2759,6 +2867,11 @@ export namespace Prisma {
     tochkaPurpose?: true
     tochkaName?: true
     tochkaCustomerCode?: true
+    cleaningTemplate?: true
+    approxTimeMarker?: true
+    emptyStayMarker?: true
+    cleaningHeader?: true
+    cleaningFooter?: true
     _all?: true
   }
 
@@ -2861,6 +2974,11 @@ export namespace Prisma {
     tochkaPurpose: string | null
     tochkaName: string | null
     tochkaCustomerCode: string | null
+    cleaningTemplate: string | null
+    approxTimeMarker: string | null
+    emptyStayMarker: string | null
+    cleaningHeader: string | null
+    cleaningFooter: string | null
     _count: CabinetCountAggregateOutputType | null
     _avg: CabinetAvgAggregateOutputType | null
     _sum: CabinetSumAggregateOutputType | null
@@ -2895,6 +3013,11 @@ export namespace Prisma {
     tochkaPurpose?: boolean
     tochkaName?: boolean
     tochkaCustomerCode?: boolean
+    cleaningTemplate?: boolean
+    approxTimeMarker?: boolean
+    emptyStayMarker?: boolean
+    cleaningHeader?: boolean
+    cleaningFooter?: boolean
   }, ExtArgs["result"]["cabinet"]>
 
 
@@ -2912,9 +3035,14 @@ export namespace Prisma {
     tochkaPurpose?: boolean
     tochkaName?: boolean
     tochkaCustomerCode?: boolean
+    cleaningTemplate?: boolean
+    approxTimeMarker?: boolean
+    emptyStayMarker?: boolean
+    cleaningHeader?: boolean
+    cleaningFooter?: boolean
   }
 
-  export type CabinetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "Timezone" | "realtycalendarid" | "okidokiapi" | "tochkaPhone" | "tochkaApiKey" | "tochkaMerchantId" | "tochkaPaymentMode" | "tochkaVatType" | "tochkaPurpose" | "tochkaName" | "tochkaCustomerCode", ExtArgs["result"]["cabinet"]>
+  export type CabinetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "Timezone" | "realtycalendarid" | "okidokiapi" | "tochkaPhone" | "tochkaApiKey" | "tochkaMerchantId" | "tochkaPaymentMode" | "tochkaVatType" | "tochkaPurpose" | "tochkaName" | "tochkaCustomerCode" | "cleaningTemplate" | "approxTimeMarker" | "emptyStayMarker" | "cleaningHeader" | "cleaningFooter", ExtArgs["result"]["cabinet"]>
 
   export type $CabinetPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Cabinet"
@@ -2932,6 +3060,11 @@ export namespace Prisma {
       tochkaPurpose: string | null
       tochkaName: string | null
       tochkaCustomerCode: string | null
+      cleaningTemplate: string | null
+      approxTimeMarker: string | null
+      emptyStayMarker: string | null
+      cleaningHeader: string | null
+      cleaningFooter: string | null
     }, ExtArgs["result"]["cabinet"]>
     composites: {}
   }
@@ -3313,6 +3446,11 @@ export namespace Prisma {
     readonly tochkaPurpose: FieldRef<"Cabinet", 'String'>
     readonly tochkaName: FieldRef<"Cabinet", 'String'>
     readonly tochkaCustomerCode: FieldRef<"Cabinet", 'String'>
+    readonly cleaningTemplate: FieldRef<"Cabinet", 'String'>
+    readonly approxTimeMarker: FieldRef<"Cabinet", 'String'>
+    readonly emptyStayMarker: FieldRef<"Cabinet", 'String'>
+    readonly cleaningHeader: FieldRef<"Cabinet", 'String'>
+    readonly cleaningFooter: FieldRef<"Cabinet", 'String'>
   }
     
 
@@ -9926,6 +10064,1020 @@ export namespace Prisma {
 
 
   /**
+   * Model CleaningSchedule
+   */
+
+  export type AggregateCleaningSchedule = {
+    _count: CleaningScheduleCountAggregateOutputType | null
+    _avg: CleaningScheduleAvgAggregateOutputType | null
+    _sum: CleaningScheduleSumAggregateOutputType | null
+    _min: CleaningScheduleMinAggregateOutputType | null
+    _max: CleaningScheduleMaxAggregateOutputType | null
+  }
+
+  export type CleaningScheduleAvgAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    objectid: number | null
+    booking_id: number | null
+    maid_id: number | null
+  }
+
+  export type CleaningScheduleSumAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    objectid: number | null
+    booking_id: number | null
+    maid_id: number | null
+  }
+
+  export type CleaningScheduleMinAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    objectid: number | null
+    date: string | null
+    booking_id: number | null
+    maid_id: number | null
+    checkin_time: string | null
+    checkout_time: string | null
+    comment: string | null
+    included: $Enums.Thumbler | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CleaningScheduleMaxAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    objectid: number | null
+    date: string | null
+    booking_id: number | null
+    maid_id: number | null
+    checkin_time: string | null
+    checkout_time: string | null
+    comment: string | null
+    included: $Enums.Thumbler | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CleaningScheduleCountAggregateOutputType = {
+    id: number
+    cabinetid: number
+    objectid: number
+    date: number
+    booking_id: number
+    maid_id: number
+    checkin_time: number
+    checkout_time: number
+    comment: number
+    included: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CleaningScheduleAvgAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    objectid?: true
+    booking_id?: true
+    maid_id?: true
+  }
+
+  export type CleaningScheduleSumAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    objectid?: true
+    booking_id?: true
+    maid_id?: true
+  }
+
+  export type CleaningScheduleMinAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    objectid?: true
+    date?: true
+    booking_id?: true
+    maid_id?: true
+    checkin_time?: true
+    checkout_time?: true
+    comment?: true
+    included?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CleaningScheduleMaxAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    objectid?: true
+    date?: true
+    booking_id?: true
+    maid_id?: true
+    checkin_time?: true
+    checkout_time?: true
+    comment?: true
+    included?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CleaningScheduleCountAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    objectid?: true
+    date?: true
+    booking_id?: true
+    maid_id?: true
+    checkin_time?: true
+    checkout_time?: true
+    comment?: true
+    included?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CleaningScheduleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CleaningSchedule to aggregate.
+     */
+    where?: CleaningScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CleaningSchedules to fetch.
+     */
+    orderBy?: CleaningScheduleOrderByWithRelationInput | CleaningScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CleaningScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CleaningSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CleaningSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CleaningSchedules
+    **/
+    _count?: true | CleaningScheduleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CleaningScheduleAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CleaningScheduleSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CleaningScheduleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CleaningScheduleMaxAggregateInputType
+  }
+
+  export type GetCleaningScheduleAggregateType<T extends CleaningScheduleAggregateArgs> = {
+        [P in keyof T & keyof AggregateCleaningSchedule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCleaningSchedule[P]>
+      : GetScalarType<T[P], AggregateCleaningSchedule[P]>
+  }
+
+
+
+
+  export type CleaningScheduleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CleaningScheduleWhereInput
+    orderBy?: CleaningScheduleOrderByWithAggregationInput | CleaningScheduleOrderByWithAggregationInput[]
+    by: CleaningScheduleScalarFieldEnum[] | CleaningScheduleScalarFieldEnum
+    having?: CleaningScheduleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CleaningScheduleCountAggregateInputType | true
+    _avg?: CleaningScheduleAvgAggregateInputType
+    _sum?: CleaningScheduleSumAggregateInputType
+    _min?: CleaningScheduleMinAggregateInputType
+    _max?: CleaningScheduleMaxAggregateInputType
+  }
+
+  export type CleaningScheduleGroupByOutputType = {
+    id: number
+    cabinetid: number
+    objectid: number
+    date: string
+    booking_id: number | null
+    maid_id: number | null
+    checkin_time: string | null
+    checkout_time: string | null
+    comment: string | null
+    included: $Enums.Thumbler
+    createdAt: Date
+    updatedAt: Date
+    _count: CleaningScheduleCountAggregateOutputType | null
+    _avg: CleaningScheduleAvgAggregateOutputType | null
+    _sum: CleaningScheduleSumAggregateOutputType | null
+    _min: CleaningScheduleMinAggregateOutputType | null
+    _max: CleaningScheduleMaxAggregateOutputType | null
+  }
+
+  type GetCleaningScheduleGroupByPayload<T extends CleaningScheduleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CleaningScheduleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CleaningScheduleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CleaningScheduleGroupByOutputType[P]>
+            : GetScalarType<T[P], CleaningScheduleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CleaningScheduleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    cabinetid?: boolean
+    objectid?: boolean
+    date?: boolean
+    booking_id?: boolean
+    maid_id?: boolean
+    checkin_time?: boolean
+    checkout_time?: boolean
+    comment?: boolean
+    included?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["cleaningSchedule"]>
+
+
+
+  export type CleaningScheduleSelectScalar = {
+    id?: boolean
+    cabinetid?: boolean
+    objectid?: boolean
+    date?: boolean
+    booking_id?: boolean
+    maid_id?: boolean
+    checkin_time?: boolean
+    checkout_time?: boolean
+    comment?: boolean
+    included?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CleaningScheduleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cabinetid" | "objectid" | "date" | "booking_id" | "maid_id" | "checkin_time" | "checkout_time" | "comment" | "included" | "createdAt" | "updatedAt", ExtArgs["result"]["cleaningSchedule"]>
+
+  export type $CleaningSchedulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CleaningSchedule"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      cabinetid: number
+      objectid: number
+      date: string
+      booking_id: number | null
+      maid_id: number | null
+      checkin_time: string | null
+      checkout_time: string | null
+      comment: string | null
+      included: $Enums.Thumbler
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["cleaningSchedule"]>
+    composites: {}
+  }
+
+  type CleaningScheduleGetPayload<S extends boolean | null | undefined | CleaningScheduleDefaultArgs> = $Result.GetResult<Prisma.$CleaningSchedulePayload, S>
+
+  type CleaningScheduleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CleaningScheduleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CleaningScheduleCountAggregateInputType | true
+    }
+
+  export interface CleaningScheduleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CleaningSchedule'], meta: { name: 'CleaningSchedule' } }
+    /**
+     * Find zero or one CleaningSchedule that matches the filter.
+     * @param {CleaningScheduleFindUniqueArgs} args - Arguments to find a CleaningSchedule
+     * @example
+     * // Get one CleaningSchedule
+     * const cleaningSchedule = await prisma.cleaningSchedule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CleaningScheduleFindUniqueArgs>(args: SelectSubset<T, CleaningScheduleFindUniqueArgs<ExtArgs>>): Prisma__CleaningScheduleClient<$Result.GetResult<Prisma.$CleaningSchedulePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CleaningSchedule that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CleaningScheduleFindUniqueOrThrowArgs} args - Arguments to find a CleaningSchedule
+     * @example
+     * // Get one CleaningSchedule
+     * const cleaningSchedule = await prisma.cleaningSchedule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CleaningScheduleFindUniqueOrThrowArgs>(args: SelectSubset<T, CleaningScheduleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CleaningScheduleClient<$Result.GetResult<Prisma.$CleaningSchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CleaningSchedule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CleaningScheduleFindFirstArgs} args - Arguments to find a CleaningSchedule
+     * @example
+     * // Get one CleaningSchedule
+     * const cleaningSchedule = await prisma.cleaningSchedule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CleaningScheduleFindFirstArgs>(args?: SelectSubset<T, CleaningScheduleFindFirstArgs<ExtArgs>>): Prisma__CleaningScheduleClient<$Result.GetResult<Prisma.$CleaningSchedulePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CleaningSchedule that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CleaningScheduleFindFirstOrThrowArgs} args - Arguments to find a CleaningSchedule
+     * @example
+     * // Get one CleaningSchedule
+     * const cleaningSchedule = await prisma.cleaningSchedule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CleaningScheduleFindFirstOrThrowArgs>(args?: SelectSubset<T, CleaningScheduleFindFirstOrThrowArgs<ExtArgs>>): Prisma__CleaningScheduleClient<$Result.GetResult<Prisma.$CleaningSchedulePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CleaningSchedules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CleaningScheduleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CleaningSchedules
+     * const cleaningSchedules = await prisma.cleaningSchedule.findMany()
+     * 
+     * // Get first 10 CleaningSchedules
+     * const cleaningSchedules = await prisma.cleaningSchedule.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const cleaningScheduleWithIdOnly = await prisma.cleaningSchedule.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CleaningScheduleFindManyArgs>(args?: SelectSubset<T, CleaningScheduleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CleaningSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CleaningSchedule.
+     * @param {CleaningScheduleCreateArgs} args - Arguments to create a CleaningSchedule.
+     * @example
+     * // Create one CleaningSchedule
+     * const CleaningSchedule = await prisma.cleaningSchedule.create({
+     *   data: {
+     *     // ... data to create a CleaningSchedule
+     *   }
+     * })
+     * 
+     */
+    create<T extends CleaningScheduleCreateArgs>(args: SelectSubset<T, CleaningScheduleCreateArgs<ExtArgs>>): Prisma__CleaningScheduleClient<$Result.GetResult<Prisma.$CleaningSchedulePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CleaningSchedules.
+     * @param {CleaningScheduleCreateManyArgs} args - Arguments to create many CleaningSchedules.
+     * @example
+     * // Create many CleaningSchedules
+     * const cleaningSchedule = await prisma.cleaningSchedule.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CleaningScheduleCreateManyArgs>(args?: SelectSubset<T, CleaningScheduleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a CleaningSchedule.
+     * @param {CleaningScheduleDeleteArgs} args - Arguments to delete one CleaningSchedule.
+     * @example
+     * // Delete one CleaningSchedule
+     * const CleaningSchedule = await prisma.cleaningSchedule.delete({
+     *   where: {
+     *     // ... filter to delete one CleaningSchedule
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CleaningScheduleDeleteArgs>(args: SelectSubset<T, CleaningScheduleDeleteArgs<ExtArgs>>): Prisma__CleaningScheduleClient<$Result.GetResult<Prisma.$CleaningSchedulePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CleaningSchedule.
+     * @param {CleaningScheduleUpdateArgs} args - Arguments to update one CleaningSchedule.
+     * @example
+     * // Update one CleaningSchedule
+     * const cleaningSchedule = await prisma.cleaningSchedule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CleaningScheduleUpdateArgs>(args: SelectSubset<T, CleaningScheduleUpdateArgs<ExtArgs>>): Prisma__CleaningScheduleClient<$Result.GetResult<Prisma.$CleaningSchedulePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CleaningSchedules.
+     * @param {CleaningScheduleDeleteManyArgs} args - Arguments to filter CleaningSchedules to delete.
+     * @example
+     * // Delete a few CleaningSchedules
+     * const { count } = await prisma.cleaningSchedule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CleaningScheduleDeleteManyArgs>(args?: SelectSubset<T, CleaningScheduleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CleaningSchedules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CleaningScheduleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CleaningSchedules
+     * const cleaningSchedule = await prisma.cleaningSchedule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CleaningScheduleUpdateManyArgs>(args: SelectSubset<T, CleaningScheduleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one CleaningSchedule.
+     * @param {CleaningScheduleUpsertArgs} args - Arguments to update or create a CleaningSchedule.
+     * @example
+     * // Update or create a CleaningSchedule
+     * const cleaningSchedule = await prisma.cleaningSchedule.upsert({
+     *   create: {
+     *     // ... data to create a CleaningSchedule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CleaningSchedule we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CleaningScheduleUpsertArgs>(args: SelectSubset<T, CleaningScheduleUpsertArgs<ExtArgs>>): Prisma__CleaningScheduleClient<$Result.GetResult<Prisma.$CleaningSchedulePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CleaningSchedules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CleaningScheduleCountArgs} args - Arguments to filter CleaningSchedules to count.
+     * @example
+     * // Count the number of CleaningSchedules
+     * const count = await prisma.cleaningSchedule.count({
+     *   where: {
+     *     // ... the filter for the CleaningSchedules we want to count
+     *   }
+     * })
+    **/
+    count<T extends CleaningScheduleCountArgs>(
+      args?: Subset<T, CleaningScheduleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CleaningScheduleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CleaningSchedule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CleaningScheduleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CleaningScheduleAggregateArgs>(args: Subset<T, CleaningScheduleAggregateArgs>): Prisma.PrismaPromise<GetCleaningScheduleAggregateType<T>>
+
+    /**
+     * Group by CleaningSchedule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CleaningScheduleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CleaningScheduleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CleaningScheduleGroupByArgs['orderBy'] }
+        : { orderBy?: CleaningScheduleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CleaningScheduleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCleaningScheduleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CleaningSchedule model
+   */
+  readonly fields: CleaningScheduleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CleaningSchedule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CleaningScheduleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CleaningSchedule model
+   */
+  interface CleaningScheduleFieldRefs {
+    readonly id: FieldRef<"CleaningSchedule", 'Int'>
+    readonly cabinetid: FieldRef<"CleaningSchedule", 'Int'>
+    readonly objectid: FieldRef<"CleaningSchedule", 'Int'>
+    readonly date: FieldRef<"CleaningSchedule", 'String'>
+    readonly booking_id: FieldRef<"CleaningSchedule", 'Int'>
+    readonly maid_id: FieldRef<"CleaningSchedule", 'Int'>
+    readonly checkin_time: FieldRef<"CleaningSchedule", 'String'>
+    readonly checkout_time: FieldRef<"CleaningSchedule", 'String'>
+    readonly comment: FieldRef<"CleaningSchedule", 'String'>
+    readonly included: FieldRef<"CleaningSchedule", 'Thumbler'>
+    readonly createdAt: FieldRef<"CleaningSchedule", 'DateTime'>
+    readonly updatedAt: FieldRef<"CleaningSchedule", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CleaningSchedule findUnique
+   */
+  export type CleaningScheduleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CleaningSchedule
+     */
+    select?: CleaningScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CleaningSchedule
+     */
+    omit?: CleaningScheduleOmit<ExtArgs> | null
+    /**
+     * Filter, which CleaningSchedule to fetch.
+     */
+    where: CleaningScheduleWhereUniqueInput
+  }
+
+  /**
+   * CleaningSchedule findUniqueOrThrow
+   */
+  export type CleaningScheduleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CleaningSchedule
+     */
+    select?: CleaningScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CleaningSchedule
+     */
+    omit?: CleaningScheduleOmit<ExtArgs> | null
+    /**
+     * Filter, which CleaningSchedule to fetch.
+     */
+    where: CleaningScheduleWhereUniqueInput
+  }
+
+  /**
+   * CleaningSchedule findFirst
+   */
+  export type CleaningScheduleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CleaningSchedule
+     */
+    select?: CleaningScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CleaningSchedule
+     */
+    omit?: CleaningScheduleOmit<ExtArgs> | null
+    /**
+     * Filter, which CleaningSchedule to fetch.
+     */
+    where?: CleaningScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CleaningSchedules to fetch.
+     */
+    orderBy?: CleaningScheduleOrderByWithRelationInput | CleaningScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CleaningSchedules.
+     */
+    cursor?: CleaningScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CleaningSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CleaningSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CleaningSchedules.
+     */
+    distinct?: CleaningScheduleScalarFieldEnum | CleaningScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * CleaningSchedule findFirstOrThrow
+   */
+  export type CleaningScheduleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CleaningSchedule
+     */
+    select?: CleaningScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CleaningSchedule
+     */
+    omit?: CleaningScheduleOmit<ExtArgs> | null
+    /**
+     * Filter, which CleaningSchedule to fetch.
+     */
+    where?: CleaningScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CleaningSchedules to fetch.
+     */
+    orderBy?: CleaningScheduleOrderByWithRelationInput | CleaningScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CleaningSchedules.
+     */
+    cursor?: CleaningScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CleaningSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CleaningSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CleaningSchedules.
+     */
+    distinct?: CleaningScheduleScalarFieldEnum | CleaningScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * CleaningSchedule findMany
+   */
+  export type CleaningScheduleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CleaningSchedule
+     */
+    select?: CleaningScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CleaningSchedule
+     */
+    omit?: CleaningScheduleOmit<ExtArgs> | null
+    /**
+     * Filter, which CleaningSchedules to fetch.
+     */
+    where?: CleaningScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CleaningSchedules to fetch.
+     */
+    orderBy?: CleaningScheduleOrderByWithRelationInput | CleaningScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CleaningSchedules.
+     */
+    cursor?: CleaningScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CleaningSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CleaningSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CleaningSchedules.
+     */
+    distinct?: CleaningScheduleScalarFieldEnum | CleaningScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * CleaningSchedule create
+   */
+  export type CleaningScheduleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CleaningSchedule
+     */
+    select?: CleaningScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CleaningSchedule
+     */
+    omit?: CleaningScheduleOmit<ExtArgs> | null
+    /**
+     * The data needed to create a CleaningSchedule.
+     */
+    data: XOR<CleaningScheduleCreateInput, CleaningScheduleUncheckedCreateInput>
+  }
+
+  /**
+   * CleaningSchedule createMany
+   */
+  export type CleaningScheduleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CleaningSchedules.
+     */
+    data: CleaningScheduleCreateManyInput | CleaningScheduleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CleaningSchedule update
+   */
+  export type CleaningScheduleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CleaningSchedule
+     */
+    select?: CleaningScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CleaningSchedule
+     */
+    omit?: CleaningScheduleOmit<ExtArgs> | null
+    /**
+     * The data needed to update a CleaningSchedule.
+     */
+    data: XOR<CleaningScheduleUpdateInput, CleaningScheduleUncheckedUpdateInput>
+    /**
+     * Choose, which CleaningSchedule to update.
+     */
+    where: CleaningScheduleWhereUniqueInput
+  }
+
+  /**
+   * CleaningSchedule updateMany
+   */
+  export type CleaningScheduleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CleaningSchedules.
+     */
+    data: XOR<CleaningScheduleUpdateManyMutationInput, CleaningScheduleUncheckedUpdateManyInput>
+    /**
+     * Filter which CleaningSchedules to update
+     */
+    where?: CleaningScheduleWhereInput
+    /**
+     * Limit how many CleaningSchedules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CleaningSchedule upsert
+   */
+  export type CleaningScheduleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CleaningSchedule
+     */
+    select?: CleaningScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CleaningSchedule
+     */
+    omit?: CleaningScheduleOmit<ExtArgs> | null
+    /**
+     * The filter to search for the CleaningSchedule to update in case it exists.
+     */
+    where: CleaningScheduleWhereUniqueInput
+    /**
+     * In case the CleaningSchedule found by the `where` argument doesn't exist, create a new CleaningSchedule with this data.
+     */
+    create: XOR<CleaningScheduleCreateInput, CleaningScheduleUncheckedCreateInput>
+    /**
+     * In case the CleaningSchedule was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CleaningScheduleUpdateInput, CleaningScheduleUncheckedUpdateInput>
+  }
+
+  /**
+   * CleaningSchedule delete
+   */
+  export type CleaningScheduleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CleaningSchedule
+     */
+    select?: CleaningScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CleaningSchedule
+     */
+    omit?: CleaningScheduleOmit<ExtArgs> | null
+    /**
+     * Filter which CleaningSchedule to delete.
+     */
+    where: CleaningScheduleWhereUniqueInput
+  }
+
+  /**
+   * CleaningSchedule deleteMany
+   */
+  export type CleaningScheduleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CleaningSchedules to delete
+     */
+    where?: CleaningScheduleWhereInput
+    /**
+     * Limit how many CleaningSchedules to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CleaningSchedule without action
+   */
+  export type CleaningScheduleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CleaningSchedule
+     */
+    select?: CleaningScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CleaningSchedule
+     */
+    omit?: CleaningScheduleOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -9966,7 +11118,12 @@ export namespace Prisma {
     tochkaVatType: 'tochkaVatType',
     tochkaPurpose: 'tochkaPurpose',
     tochkaName: 'tochkaName',
-    tochkaCustomerCode: 'tochkaCustomerCode'
+    tochkaCustomerCode: 'tochkaCustomerCode',
+    cleaningTemplate: 'cleaningTemplate',
+    approxTimeMarker: 'approxTimeMarker',
+    emptyStayMarker: 'emptyStayMarker',
+    cleaningHeader: 'cleaningHeader',
+    cleaningFooter: 'cleaningFooter'
   };
 
   export type CabinetScalarFieldEnum = (typeof CabinetScalarFieldEnum)[keyof typeof CabinetScalarFieldEnum]
@@ -10085,6 +11242,24 @@ export namespace Prisma {
   export type BookingsScalarFieldEnum = (typeof BookingsScalarFieldEnum)[keyof typeof BookingsScalarFieldEnum]
 
 
+  export const CleaningScheduleScalarFieldEnum: {
+    id: 'id',
+    cabinetid: 'cabinetid',
+    objectid: 'objectid',
+    date: 'date',
+    booking_id: 'booking_id',
+    maid_id: 'maid_id',
+    checkin_time: 'checkin_time',
+    checkout_time: 'checkout_time',
+    comment: 'comment',
+    included: 'included',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CleaningScheduleScalarFieldEnum = (typeof CleaningScheduleScalarFieldEnum)[keyof typeof CleaningScheduleScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -10143,7 +11318,12 @@ export namespace Prisma {
     tochkaMerchantId: 'tochkaMerchantId',
     tochkaPurpose: 'tochkaPurpose',
     tochkaName: 'tochkaName',
-    tochkaCustomerCode: 'tochkaCustomerCode'
+    tochkaCustomerCode: 'tochkaCustomerCode',
+    cleaningTemplate: 'cleaningTemplate',
+    approxTimeMarker: 'approxTimeMarker',
+    emptyStayMarker: 'emptyStayMarker',
+    cleaningHeader: 'cleaningHeader',
+    cleaningFooter: 'cleaningFooter'
   };
 
   export type CabinetOrderByRelevanceFieldEnum = (typeof CabinetOrderByRelevanceFieldEnum)[keyof typeof CabinetOrderByRelevanceFieldEnum]
@@ -10209,6 +11389,16 @@ export namespace Prisma {
   };
 
   export type BookingsOrderByRelevanceFieldEnum = (typeof BookingsOrderByRelevanceFieldEnum)[keyof typeof BookingsOrderByRelevanceFieldEnum]
+
+
+  export const CleaningScheduleOrderByRelevanceFieldEnum: {
+    date: 'date',
+    checkin_time: 'checkin_time',
+    checkout_time: 'checkout_time',
+    comment: 'comment'
+  };
+
+  export type CleaningScheduleOrderByRelevanceFieldEnum = (typeof CleaningScheduleOrderByRelevanceFieldEnum)[keyof typeof CleaningScheduleOrderByRelevanceFieldEnum]
 
 
   /**
@@ -10425,6 +11615,11 @@ export namespace Prisma {
     tochkaPurpose?: StringNullableFilter<"Cabinet"> | string | null
     tochkaName?: StringNullableFilter<"Cabinet"> | string | null
     tochkaCustomerCode?: StringNullableFilter<"Cabinet"> | string | null
+    cleaningTemplate?: StringNullableFilter<"Cabinet"> | string | null
+    approxTimeMarker?: StringNullableFilter<"Cabinet"> | string | null
+    emptyStayMarker?: StringNullableFilter<"Cabinet"> | string | null
+    cleaningHeader?: StringNullableFilter<"Cabinet"> | string | null
+    cleaningFooter?: StringNullableFilter<"Cabinet"> | string | null
   }
 
   export type CabinetOrderByWithRelationInput = {
@@ -10440,6 +11635,11 @@ export namespace Prisma {
     tochkaPurpose?: SortOrderInput | SortOrder
     tochkaName?: SortOrderInput | SortOrder
     tochkaCustomerCode?: SortOrderInput | SortOrder
+    cleaningTemplate?: SortOrderInput | SortOrder
+    approxTimeMarker?: SortOrderInput | SortOrder
+    emptyStayMarker?: SortOrderInput | SortOrder
+    cleaningHeader?: SortOrderInput | SortOrder
+    cleaningFooter?: SortOrderInput | SortOrder
     _relevance?: CabinetOrderByRelevanceInput
   }
 
@@ -10459,6 +11659,11 @@ export namespace Prisma {
     tochkaPurpose?: StringNullableFilter<"Cabinet"> | string | null
     tochkaName?: StringNullableFilter<"Cabinet"> | string | null
     tochkaCustomerCode?: StringNullableFilter<"Cabinet"> | string | null
+    cleaningTemplate?: StringNullableFilter<"Cabinet"> | string | null
+    approxTimeMarker?: StringNullableFilter<"Cabinet"> | string | null
+    emptyStayMarker?: StringNullableFilter<"Cabinet"> | string | null
+    cleaningHeader?: StringNullableFilter<"Cabinet"> | string | null
+    cleaningFooter?: StringNullableFilter<"Cabinet"> | string | null
   }, "id" | "realtycalendarid">
 
   export type CabinetOrderByWithAggregationInput = {
@@ -10474,6 +11679,11 @@ export namespace Prisma {
     tochkaPurpose?: SortOrderInput | SortOrder
     tochkaName?: SortOrderInput | SortOrder
     tochkaCustomerCode?: SortOrderInput | SortOrder
+    cleaningTemplate?: SortOrderInput | SortOrder
+    approxTimeMarker?: SortOrderInput | SortOrder
+    emptyStayMarker?: SortOrderInput | SortOrder
+    cleaningHeader?: SortOrderInput | SortOrder
+    cleaningFooter?: SortOrderInput | SortOrder
     _count?: CabinetCountOrderByAggregateInput
     _avg?: CabinetAvgOrderByAggregateInput
     _max?: CabinetMaxOrderByAggregateInput
@@ -10497,6 +11707,11 @@ export namespace Prisma {
     tochkaPurpose?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     tochkaName?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     tochkaCustomerCode?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    cleaningTemplate?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    approxTimeMarker?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    emptyStayMarker?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    cleaningHeader?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    cleaningFooter?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
   }
 
   export type LogsWhereInput = {
@@ -11072,6 +12287,97 @@ export namespace Prisma {
     link?: StringWithAggregatesFilter<"Bookings"> | string
   }
 
+  export type CleaningScheduleWhereInput = {
+    AND?: CleaningScheduleWhereInput | CleaningScheduleWhereInput[]
+    OR?: CleaningScheduleWhereInput[]
+    NOT?: CleaningScheduleWhereInput | CleaningScheduleWhereInput[]
+    id?: IntFilter<"CleaningSchedule"> | number
+    cabinetid?: IntFilter<"CleaningSchedule"> | number
+    objectid?: IntFilter<"CleaningSchedule"> | number
+    date?: StringFilter<"CleaningSchedule"> | string
+    booking_id?: IntNullableFilter<"CleaningSchedule"> | number | null
+    maid_id?: IntNullableFilter<"CleaningSchedule"> | number | null
+    checkin_time?: StringNullableFilter<"CleaningSchedule"> | string | null
+    checkout_time?: StringNullableFilter<"CleaningSchedule"> | string | null
+    comment?: StringNullableFilter<"CleaningSchedule"> | string | null
+    included?: EnumThumblerFilter<"CleaningSchedule"> | $Enums.Thumbler
+    createdAt?: DateTimeFilter<"CleaningSchedule"> | Date | string
+    updatedAt?: DateTimeFilter<"CleaningSchedule"> | Date | string
+  }
+
+  export type CleaningScheduleOrderByWithRelationInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    objectid?: SortOrder
+    date?: SortOrder
+    booking_id?: SortOrderInput | SortOrder
+    maid_id?: SortOrderInput | SortOrder
+    checkin_time?: SortOrderInput | SortOrder
+    checkout_time?: SortOrderInput | SortOrder
+    comment?: SortOrderInput | SortOrder
+    included?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _relevance?: CleaningScheduleOrderByRelevanceInput
+  }
+
+  export type CleaningScheduleWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    cabinetid_objectid_date?: CleaningScheduleCabinetidObjectidDateCompoundUniqueInput
+    AND?: CleaningScheduleWhereInput | CleaningScheduleWhereInput[]
+    OR?: CleaningScheduleWhereInput[]
+    NOT?: CleaningScheduleWhereInput | CleaningScheduleWhereInput[]
+    cabinetid?: IntFilter<"CleaningSchedule"> | number
+    objectid?: IntFilter<"CleaningSchedule"> | number
+    date?: StringFilter<"CleaningSchedule"> | string
+    booking_id?: IntNullableFilter<"CleaningSchedule"> | number | null
+    maid_id?: IntNullableFilter<"CleaningSchedule"> | number | null
+    checkin_time?: StringNullableFilter<"CleaningSchedule"> | string | null
+    checkout_time?: StringNullableFilter<"CleaningSchedule"> | string | null
+    comment?: StringNullableFilter<"CleaningSchedule"> | string | null
+    included?: EnumThumblerFilter<"CleaningSchedule"> | $Enums.Thumbler
+    createdAt?: DateTimeFilter<"CleaningSchedule"> | Date | string
+    updatedAt?: DateTimeFilter<"CleaningSchedule"> | Date | string
+  }, "id" | "cabinetid_objectid_date">
+
+  export type CleaningScheduleOrderByWithAggregationInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    objectid?: SortOrder
+    date?: SortOrder
+    booking_id?: SortOrderInput | SortOrder
+    maid_id?: SortOrderInput | SortOrder
+    checkin_time?: SortOrderInput | SortOrder
+    checkout_time?: SortOrderInput | SortOrder
+    comment?: SortOrderInput | SortOrder
+    included?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CleaningScheduleCountOrderByAggregateInput
+    _avg?: CleaningScheduleAvgOrderByAggregateInput
+    _max?: CleaningScheduleMaxOrderByAggregateInput
+    _min?: CleaningScheduleMinOrderByAggregateInput
+    _sum?: CleaningScheduleSumOrderByAggregateInput
+  }
+
+  export type CleaningScheduleScalarWhereWithAggregatesInput = {
+    AND?: CleaningScheduleScalarWhereWithAggregatesInput | CleaningScheduleScalarWhereWithAggregatesInput[]
+    OR?: CleaningScheduleScalarWhereWithAggregatesInput[]
+    NOT?: CleaningScheduleScalarWhereWithAggregatesInput | CleaningScheduleScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"CleaningSchedule"> | number
+    cabinetid?: IntWithAggregatesFilter<"CleaningSchedule"> | number
+    objectid?: IntWithAggregatesFilter<"CleaningSchedule"> | number
+    date?: StringWithAggregatesFilter<"CleaningSchedule"> | string
+    booking_id?: IntNullableWithAggregatesFilter<"CleaningSchedule"> | number | null
+    maid_id?: IntNullableWithAggregatesFilter<"CleaningSchedule"> | number | null
+    checkin_time?: StringNullableWithAggregatesFilter<"CleaningSchedule"> | string | null
+    checkout_time?: StringNullableWithAggregatesFilter<"CleaningSchedule"> | string | null
+    comment?: StringNullableWithAggregatesFilter<"CleaningSchedule"> | string | null
+    included?: EnumThumblerWithAggregatesFilter<"CleaningSchedule"> | $Enums.Thumbler
+    createdAt?: DateTimeWithAggregatesFilter<"CleaningSchedule"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CleaningSchedule"> | Date | string
+  }
+
   export type UserCreateInput = {
     login: string
     password: string
@@ -11169,6 +12475,11 @@ export namespace Prisma {
     tochkaPurpose?: string | null
     tochkaName?: string | null
     tochkaCustomerCode?: string | null
+    cleaningTemplate?: string | null
+    approxTimeMarker?: string | null
+    emptyStayMarker?: string | null
+    cleaningHeader?: string | null
+    cleaningFooter?: string | null
   }
 
   export type CabinetUncheckedCreateInput = {
@@ -11184,6 +12495,11 @@ export namespace Prisma {
     tochkaPurpose?: string | null
     tochkaName?: string | null
     tochkaCustomerCode?: string | null
+    cleaningTemplate?: string | null
+    approxTimeMarker?: string | null
+    emptyStayMarker?: string | null
+    cleaningHeader?: string | null
+    cleaningFooter?: string | null
   }
 
   export type CabinetUpdateInput = {
@@ -11198,6 +12514,11 @@ export namespace Prisma {
     tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaName?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaCustomerCode?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningTemplate?: NullableStringFieldUpdateOperationsInput | string | null
+    approxTimeMarker?: NullableStringFieldUpdateOperationsInput | string | null
+    emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningFooter?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CabinetUncheckedUpdateInput = {
@@ -11213,6 +12534,11 @@ export namespace Prisma {
     tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaName?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaCustomerCode?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningTemplate?: NullableStringFieldUpdateOperationsInput | string | null
+    approxTimeMarker?: NullableStringFieldUpdateOperationsInput | string | null
+    emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningFooter?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CabinetCreateManyInput = {
@@ -11228,6 +12554,11 @@ export namespace Prisma {
     tochkaPurpose?: string | null
     tochkaName?: string | null
     tochkaCustomerCode?: string | null
+    cleaningTemplate?: string | null
+    approxTimeMarker?: string | null
+    emptyStayMarker?: string | null
+    cleaningHeader?: string | null
+    cleaningFooter?: string | null
   }
 
   export type CabinetUpdateManyMutationInput = {
@@ -11242,6 +12573,11 @@ export namespace Prisma {
     tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaName?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaCustomerCode?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningTemplate?: NullableStringFieldUpdateOperationsInput | string | null
+    approxTimeMarker?: NullableStringFieldUpdateOperationsInput | string | null
+    emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningFooter?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CabinetUncheckedUpdateManyInput = {
@@ -11257,6 +12593,11 @@ export namespace Prisma {
     tochkaPurpose?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaName?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaCustomerCode?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningTemplate?: NullableStringFieldUpdateOperationsInput | string | null
+    approxTimeMarker?: NullableStringFieldUpdateOperationsInput | string | null
+    emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningHeader?: NullableStringFieldUpdateOperationsInput | string | null
+    cleaningFooter?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type LogsCreateInput = {
@@ -11914,6 +13255,108 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
   }
 
+  export type CleaningScheduleCreateInput = {
+    cabinetid: number
+    objectid: number
+    date: string
+    booking_id?: number | null
+    maid_id?: number | null
+    checkin_time?: string | null
+    checkout_time?: string | null
+    comment?: string | null
+    included?: $Enums.Thumbler
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CleaningScheduleUncheckedCreateInput = {
+    id?: number
+    cabinetid: number
+    objectid: number
+    date: string
+    booking_id?: number | null
+    maid_id?: number | null
+    checkin_time?: string | null
+    checkout_time?: string | null
+    comment?: string | null
+    included?: $Enums.Thumbler
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CleaningScheduleUpdateInput = {
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    objectid?: IntFieldUpdateOperationsInput | number
+    date?: StringFieldUpdateOperationsInput | string
+    booking_id?: NullableIntFieldUpdateOperationsInput | number | null
+    maid_id?: NullableIntFieldUpdateOperationsInput | number | null
+    checkin_time?: NullableStringFieldUpdateOperationsInput | string | null
+    checkout_time?: NullableStringFieldUpdateOperationsInput | string | null
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    included?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CleaningScheduleUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    objectid?: IntFieldUpdateOperationsInput | number
+    date?: StringFieldUpdateOperationsInput | string
+    booking_id?: NullableIntFieldUpdateOperationsInput | number | null
+    maid_id?: NullableIntFieldUpdateOperationsInput | number | null
+    checkin_time?: NullableStringFieldUpdateOperationsInput | string | null
+    checkout_time?: NullableStringFieldUpdateOperationsInput | string | null
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    included?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CleaningScheduleCreateManyInput = {
+    id?: number
+    cabinetid: number
+    objectid: number
+    date: string
+    booking_id?: number | null
+    maid_id?: number | null
+    checkin_time?: string | null
+    checkout_time?: string | null
+    comment?: string | null
+    included?: $Enums.Thumbler
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CleaningScheduleUpdateManyMutationInput = {
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    objectid?: IntFieldUpdateOperationsInput | number
+    date?: StringFieldUpdateOperationsInput | string
+    booking_id?: NullableIntFieldUpdateOperationsInput | number | null
+    maid_id?: NullableIntFieldUpdateOperationsInput | number | null
+    checkin_time?: NullableStringFieldUpdateOperationsInput | string | null
+    checkout_time?: NullableStringFieldUpdateOperationsInput | string | null
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    included?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CleaningScheduleUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    objectid?: IntFieldUpdateOperationsInput | number
+    date?: StringFieldUpdateOperationsInput | string
+    booking_id?: NullableIntFieldUpdateOperationsInput | number | null
+    maid_id?: NullableIntFieldUpdateOperationsInput | number | null
+    checkin_time?: NullableStringFieldUpdateOperationsInput | string | null
+    checkout_time?: NullableStringFieldUpdateOperationsInput | string | null
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    included?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[]
@@ -12194,6 +13637,11 @@ export namespace Prisma {
     tochkaPurpose?: SortOrder
     tochkaName?: SortOrder
     tochkaCustomerCode?: SortOrder
+    cleaningTemplate?: SortOrder
+    approxTimeMarker?: SortOrder
+    emptyStayMarker?: SortOrder
+    cleaningHeader?: SortOrder
+    cleaningFooter?: SortOrder
   }
 
   export type CabinetAvgOrderByAggregateInput = {
@@ -12211,6 +13659,11 @@ export namespace Prisma {
     tochkaPurpose?: SortOrder
     tochkaName?: SortOrder
     tochkaCustomerCode?: SortOrder
+    cleaningTemplate?: SortOrder
+    approxTimeMarker?: SortOrder
+    emptyStayMarker?: SortOrder
+    cleaningHeader?: SortOrder
+    cleaningFooter?: SortOrder
   }
 
   export type CabinetMinOrderByAggregateInput = {
@@ -12224,6 +13677,11 @@ export namespace Prisma {
     tochkaPurpose?: SortOrder
     tochkaName?: SortOrder
     tochkaCustomerCode?: SortOrder
+    cleaningTemplate?: SortOrder
+    approxTimeMarker?: SortOrder
+    emptyStayMarker?: SortOrder
+    cleaningHeader?: SortOrder
+    cleaningFooter?: SortOrder
   }
 
   export type CabinetSumOrderByAggregateInput = {
@@ -12866,6 +14324,79 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type CleaningScheduleOrderByRelevanceInput = {
+    fields: CleaningScheduleOrderByRelevanceFieldEnum | CleaningScheduleOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type CleaningScheduleCabinetidObjectidDateCompoundUniqueInput = {
+    cabinetid: number
+    objectid: number
+    date: string
+  }
+
+  export type CleaningScheduleCountOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    objectid?: SortOrder
+    date?: SortOrder
+    booking_id?: SortOrder
+    maid_id?: SortOrder
+    checkin_time?: SortOrder
+    checkout_time?: SortOrder
+    comment?: SortOrder
+    included?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CleaningScheduleAvgOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    objectid?: SortOrder
+    booking_id?: SortOrder
+    maid_id?: SortOrder
+  }
+
+  export type CleaningScheduleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    objectid?: SortOrder
+    date?: SortOrder
+    booking_id?: SortOrder
+    maid_id?: SortOrder
+    checkin_time?: SortOrder
+    checkout_time?: SortOrder
+    comment?: SortOrder
+    included?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CleaningScheduleMinOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    objectid?: SortOrder
+    date?: SortOrder
+    booking_id?: SortOrder
+    maid_id?: SortOrder
+    checkin_time?: SortOrder
+    checkout_time?: SortOrder
+    comment?: SortOrder
+    included?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CleaningScheduleSumOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    objectid?: SortOrder
+    booking_id?: SortOrder
+    maid_id?: SortOrder
   }
 
   export type StaffCreateNestedOneWithoutUserInput = {
