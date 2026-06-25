@@ -60,6 +60,7 @@ model Cabinet {
   emptyStayMarker     String?   @default("—")
   cleaningHeader      String?   @db.Text
   cleaningFooter      String?   @db.Text
+  balance             Float     @default(0.0)
 }
 
 enum Timezone {
@@ -207,6 +208,7 @@ model Bookings {
   maid_id               Int?
   review                Int?
   channel               String?    @default(" ")
+  deposit_payment_link  String?
 
   link                  String
 }
@@ -233,4 +235,49 @@ model CleaningSchedule {
   updatedAt     DateTime  @updatedAt
 
   @@unique([cabinetid, objectid, date])
+}
+
+model UnprocessedBooking {
+  id              Int       @id @default(autoincrement())
+  cabinetid       Int
+  bookingId       Int
+  action          String
+  failReason      String
+  failMessage     String?   @db.Text
+  realtyId        Int?
+  beginDate       String?
+  endDate         String?
+  bookingStatus   String?
+  source          String?
+  amount          Int?
+  notes           String?   @db.Text
+  prepayment      Int?
+  balanceToBePaid Int?
+  pricePerDay     Int?
+  deposit         Int?
+  clientId        Int?
+  fio             String?
+  email           String?
+  phone           String?
+  additionalPhone String?
+  resolved        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+}
+
+model BugReport {
+  id          Int      @id @default(autoincrement())
+  cabinetid   Int
+  userId      Int
+  message     String   @db.Text
+  page        String?
+  createdAt   DateTime @default(now())
+}
+
+model CabinetTemplate {
+  id        Int      @id @default(autoincrement())
+  cabinetid Int
+  name      String
+  body      String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -1,3 +1,5 @@
+const crypto = require('crypto')
+
 module.exports = async (fastify) => {
     // POST /bookings/get
     fastify.post('/get', async (req, reply) => {
@@ -193,6 +195,132 @@ module.exports = async (fastify) => {
             })
 
             return reply.send({ success: true })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
+    // GET /bookings/unprocessed
+    fastify.get('/unprocessed', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: req.user.id },
+                select: { cabinet: true }
+            })
+            if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
+
+            const items = await fastify.prisma.unprocessedBooking.findMany({
+                where: { cabinetid: user.cabinet, resolved: false },
+                orderBy: { createdAt: 'desc' }
+            })
+            return reply.send({ items })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
+    // POST /bookings/unprocessed/resolve
+    fastify.post('/unprocessed/resolve', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const { id, objectId } = req.body
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: req.user.id },
+                select: { cabinet: true }
+            })
+            if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
+
+            const item = await fastify.prisma.unprocessedBooking.findFirst({
+                where: { id: Number(id), cabinetid: user.cabinet, resolved: false }
+            })
+            if (!item) return reply.status(404).send({ error: 'Необработанная бронь не найдена' })
+
+            const link = crypto.randomBytes(6).toString('hex')
+
+            if (item.failReason === 'object_not_found') {
+                if (!objectId) return reply.status(400).send({ error: 'Не указан объект' })
+
+                const object = await fastify.prisma.objects.findFirst({
+                    where: { id: Number(objectId), cabinetid: user.cabinet },
+                    select: { realtyid: true }
+                })
+                if (!object) return reply.status(404).send({ error: 'Объект не найден' })
+
+                const existing = await fastify.prisma.bookings.findFirst({
+                    where: { id: item.bookingId, cabinet: user.cabinet }
+                })
+                if (existing) {
+                    return reply.status(400).send({ error: `Бронирование #${item.bookingId} уже существует в системе` })
+                }
+
+                await fastify.prisma.bookings.create({
+                    data: {
+                        id: item.bookingId,
+                        status: item.bookingStatus,
+                        begin_date: item.beginDate,
+                        end_date: item.endDate,
+                        realty_id: object.realtyid,
+                        amount: item.amount,
+                        notes: item.notes,
+                        source: item.source,
+                        prepayment: item.prepayment,
+                        balance_to_be_paid_1: item.balanceToBePaid,
+                        price_per_day: item.pricePerDay,
+                        deposit: item.deposit,
+                        client_id: item.clientId,
+                        fio: item.fio,
+                        email: item.email,
+                        phone: item.phone,
+                        additional_phone: item.additionalPhone,
+                        cabinet: user.cabinet,
+                        link
+                    }
+                })
+            } else if (item.failReason === 'booking_not_found') {
+                const existing = await fastify.prisma.bookings.findFirst({
+                    where: { id: item.bookingId, cabinet: user.cabinet }
+                })
+                if (existing) {
+                    return reply.status(400).send({ error: `Бронирование #${item.bookingId} уже существует в системе` })
+                }
+
+                await fastify.prisma.bookings.create({
+                    data: {
+                        id: item.bookingId,
+                        status: item.bookingStatus,
+                        begin_date: item.beginDate,
+                        end_date: item.endDate,
+                        realty_id: item.realtyId,
+                        amount: item.amount,
+                        notes: item.notes,
+                        source: item.source,
+                        prepayment: item.prepayment,
+                        balance_to_be_paid_1: item.balanceToBePaid,
+                        price_per_day: item.pricePerDay,
+                        deposit: item.deposit,
+                        client_id: item.clientId,
+                        fio: item.fio,
+                        email: item.email,
+                        phone: item.phone,
+                        additional_phone: item.additionalPhone,
+                        cabinet: user.cabinet,
+                        link
+                    }
+                })
+            } else {
+                return reply.status(400).send({ error: 'Нельзя разрешить эту ошибку автоматически' })
+            }
+
+            await fastify.prisma.unprocessedBooking.update({
+                where: { id: item.id },
+                data: { resolved: true }
+            })
+
+            return reply.send({ message: 'Бронирование перенесено' })
         } catch (err) {
             console.error(err)
             return reply.status(500).send({ error: 'Ошибка сервера' })

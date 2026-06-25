@@ -22,9 +22,6 @@ module.exports = async (fastify) => {
 
     // ── Timezone helpers ───────────────────────────────────────────────────
 
-    // Converts a date string + time string (local in `timezone`) to a UTC Date.
-    // Strategy: create estimate as if the time is UTC, check what it looks like
-    // in the target timezone, then shift by the difference.
     function localToUTC(dateStr, timeStr, timezone) {
         const [y, m, d] = dateStr.split('-').map(Number)
         const [h, mi]   = timeStr.split(':').map(Number)
@@ -44,26 +41,42 @@ module.exports = async (fastify) => {
         return new Date(estimate.getTime() + ((h - lh) * 60 + (mi - lm)) * 60000)
     }
 
-    // Returns true if the block should be visible now, based on ShowSettings enum.
-    function shouldShow(setting, beginDate, endDate, checkinTime, checkoutTime, timezone) {
-        if (!setting) return false
-        if (setting === 'IMMEDIATELY') return true
+    // Returns { active: bool, availableAt: Date|null } based on ShowSettings enum.
+    // availableAt is the UTC threshold Date when not yet active, or null when already active.
+    function getShowState(setting, beginDate, endDate, checkinTime, checkoutTime, timezone) {
+        if (!setting || setting === 'IMMEDIATELY') return { active: true, availableAt: null }
 
         const nowUTC = new Date()
         const bd = beginDate ? new Date(beginDate).toISOString().split('T')[0] : null
         const ed = endDate   ? new Date(endDate).toISOString().split('T')[0]   : null
 
+        let thresholdUTC = null
+
         if (setting === 'DAY_BEFORE' && bd) {
-            const checkinUTC = localToUTC(bd, checkinTime, timezone)
-            return nowUTC >= new Date(checkinUTC.getTime() - 24 * 60 * 60 * 1000)
+            thresholdUTC = new Date(localToUTC(bd, checkinTime, timezone).getTime() - 24 * 60 * 60 * 1000)
+        } else if (setting === 'AFTER_CHECKIN' && bd) {
+            thresholdUTC = localToUTC(bd, checkinTime, timezone)
+        } else if (setting === 'AFTER_CHECKOUT' && ed) {
+            thresholdUTC = localToUTC(ed, checkoutTime, timezone)
         }
-        if (setting === 'AFTER_CHECKIN' && bd) {
-            return nowUTC >= localToUTC(bd, checkinTime, timezone)
-        }
-        if (setting === 'AFTER_CHECKOUT' && ed) {
-            return nowUTC >= localToUTC(ed, checkoutTime, timezone)
-        }
-        return false
+
+        if (!thresholdUTC) return { active: false, availableAt: null }
+
+        const active = nowUTC >= thresholdUTC
+        return { active, availableAt: active ? null : thresholdUTC }
+    }
+
+    // Formats a UTC Date to a human-readable Russian string in the given timezone.
+    function formatAvailableAt(utcDate, timezone) {
+        if (!utcDate) return null
+        return new Intl.DateTimeFormat('ru-RU', {
+            timeZone: timezone,
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(utcDate)
     }
 
     // ── POST /guest/get ────────────────────────────────────────────────────
@@ -129,12 +142,10 @@ module.exports = async (fastify) => {
             })
             : []
 
-        const timezone    = TZ_MAP[cabinet?.Timezone] ?? 'Europe/Moscow'
+        const timezone     = TZ_MAP[cabinet?.Timezone] ?? 'Europe/Moscow'
         const checkinTime  = objects?.checkindef  ?? '14:00'
         const checkoutTime = objects?.checkoutdef ?? '12:00'
 
-        // Booking is "completed" if checkout time has passed OR it's cancelled/deleted
-        const cancelledOrDeleted = booking.status === 'canceled' || booking.status === 'deleted'
         const checkoutPassed = booking.end_date
             ? new Date() >= localToUTC(
                 new Date(booking.end_date).toISOString().split('T')[0],
@@ -143,35 +154,74 @@ module.exports = async (fastify) => {
               )
             : false
 
-        const completed = cancelledOrDeleted || checkoutPassed
+        const bookingState = booking.status  // booked | canceled | deleted | request
 
-        const show = objects ? {
-            // Payment & deposit: not shown for completed bookings
-            payanddeposit: !completed && shouldShow(
+        const isBlockedStatus = bookingState === 'canceled' || bookingState === 'deleted' || bookingState === 'request'
+        const completed = bookingState === 'booked' && checkoutPassed
+
+        let show = {}
+
+        if (objects && !isBlockedStatus) {
+            // Payment & deposit: always visible; payment buttons remain after completion; deposit button disappears
+            const payState = getShowState(
                 objects.sspayanddeposit,
                 booking.begin_date, booking.end_date,
                 checkinTime, checkoutTime, timezone
-            ),
-            instruction: shouldShow(
-                objects.ssinstruction,
-                booking.begin_date, booking.end_date,
-                checkinTime, checkoutTime, timezone
-            ),
-            // Contract: not shown for completed bookings
-            contract: !completed && shouldShow(
-                objects.sscontract,
-                booking.begin_date, booking.end_date,
-                checkinTime, checkoutTime, timezone
-            ),
-            // Review: always show for completed bookings, otherwise by schedule
-            rateclean: completed || shouldShow(
+            )
+            show.payanddeposit = {
+                visible:       true,
+                active:        payState.active,
+                depositActive: payState.active && !completed,
+                availableAt:   formatAvailableAt(payState.availableAt, timezone)
+            }
+
+            // Instruction: hidden after checkout; before that always visible with availableAt if not yet time
+            if (completed) {
+                show.instruction = { visible: false, active: false, availableAt: null }
+            } else {
+                const instrState = getShowState(
+                    objects.ssinstruction,
+                    booking.begin_date, booking.end_date,
+                    checkinTime, checkoutTime, timezone
+                )
+                show.instruction = {
+                    visible:     true,
+                    active:      instrState.active,
+                    availableAt: formatAvailableAt(instrState.availableAt, timezone)
+                }
+            }
+
+            // Contract: hidden only when no contract link (not provided); otherwise always visible including after completion
+            if (!booking.contract_link) {
+                show.contract = { visible: false, active: false, availableAt: null }
+            } else {
+                const contractState = getShowState(
+                    objects.sscontract,
+                    booking.begin_date, booking.end_date,
+                    checkinTime, checkoutTime, timezone
+                )
+                show.contract = {
+                    visible:     true,
+                    active:      contractState.active,
+                    availableAt: formatAvailableAt(contractState.availableAt, timezone)
+                }
+            }
+
+            // Review: always visible; active by schedule (also after completion); shows availableAt when not yet time
+            const rateState = getShowState(
                 objects.ssrateclean,
                 booking.begin_date, booking.end_date,
                 checkinTime, checkoutTime, timezone
-            ),
-        } : {}
+            )
+            const rateActive = completed || rateState.active
+            show.rateclean = {
+                visible:     true,
+                active:      rateActive,
+                availableAt: rateActive ? null : formatAvailableAt(rateState.availableAt, timezone)
+            }
+        }
 
-        return reply.send({ booking, objects, photos, show, completed })
+        return reply.send({ booking, objects, photos, show, bookingState, checkoutPassed })
     })
 
     // ── POST /guest/save-times ─────────────────────────────────────────────
@@ -180,10 +230,33 @@ module.exports = async (fastify) => {
 
         const booking = await fastify.prisma.bookings.findFirst({
             where:  { link: id },
-            select: { id: true }
+            select: { id: true, status: true, end_date: true, realty_id: true, cabinet: true }
         })
 
         if (!booking) return reply.status(404).send({ error: 'Booking not found' })
+
+        // Determine if checkout has passed — times cannot be changed after completion
+        const objects = await fastify.prisma.objects.findFirst({
+            where:  { realtyid: booking.realty_id },
+            select: { checkoutdef: true }
+        })
+        const cabinet = await fastify.prisma.cabinet.findFirst({
+            where:  { id: booking.cabinet },
+            select: { Timezone: true }
+        })
+        const timezone     = TZ_MAP[cabinet?.Timezone] ?? 'Europe/Moscow'
+        const checkoutTime = objects?.checkoutdef ?? '12:00'
+        const checkoutPassed = booking.end_date
+            ? new Date() >= localToUTC(
+                new Date(booking.end_date).toISOString().split('T')[0],
+                checkoutTime,
+                timezone
+              )
+            : false
+
+        if (booking.status !== 'booked' || checkoutPassed) {
+            return reply.status(403).send({ error: 'Нельзя изменить время после завершения брони' })
+        }
 
         await fastify.prisma.bookings.update({
             where: { id: booking.id },

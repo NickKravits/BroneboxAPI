@@ -72,6 +72,96 @@ module.exports = async (fastify) => {
         }
     })
 
+    // GET /cabinet/templates
+    fastify.get('/templates', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: req.user.id },
+                select: { cabinet: true }
+            })
+            if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
+
+            const templates = await fastify.prisma.cabinetTemplate.findMany({
+                where: { cabinetid: user.cabinet },
+                orderBy: { createdAt: 'asc' }
+            })
+            return reply.send({ templates })
+        } catch (err) {
+            return reply.status(401).send({ error: 'Неавторизованный доступ' })
+        }
+    })
+
+    // POST /cabinet/templates/save (create or update)
+    fastify.post('/templates/save', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const { id, name, body } = req.body
+
+            if (!name?.trim() || !body?.trim()) {
+                return reply.status(400).send({ error: 'Заполните название и текст шаблона' })
+            }
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: req.user.id },
+                select: { cabinet: true, role: true, staff: { select: { managetemplates: true } } }
+            })
+            if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
+
+            const allowed = user.role === 'ADMINISTRATOR' || user.staff?.managetemplates === 'YES'
+            if (!allowed) return reply.status(403).send({ error: 'Нет прав для редактирования шаблонов' })
+
+            if (id) {
+                const existing = await fastify.prisma.cabinetTemplate.findFirst({
+                    where: { id: Number(id), cabinetid: user.cabinet }
+                })
+                if (!existing) return reply.status(404).send({ error: 'Шаблон не найден' })
+
+                const updated = await fastify.prisma.cabinetTemplate.update({
+                    where: { id: Number(id) },
+                    data: { name: name.trim(), body: body.trim() }
+                })
+                return reply.send({ template: updated })
+            } else {
+                const created = await fastify.prisma.cabinetTemplate.create({
+                    data: { cabinetid: user.cabinet, name: name.trim(), body: body.trim() }
+                })
+                return reply.send({ template: created })
+            }
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
+    // POST /cabinet/templates/delete
+    fastify.post('/templates/delete', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const { id } = req.body
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: req.user.id },
+                select: { cabinet: true, role: true, staff: { select: { managetemplates: true } } }
+            })
+            if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
+
+            const allowed = user.role === 'ADMINISTRATOR' || user.staff?.managetemplates === 'YES'
+            if (!allowed) return reply.status(403).send({ error: 'Нет прав для удаления шаблонов' })
+
+            const existing = await fastify.prisma.cabinetTemplate.findFirst({
+                where: { id: Number(id), cabinetid: user.cabinet }
+            })
+            if (!existing) return reply.status(404).send({ error: 'Шаблон не найден' })
+
+            await fastify.prisma.cabinetTemplate.delete({ where: { id: Number(id) } })
+            return reply.send({ message: 'Шаблон удалён' })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
     // POST /cabinet/update-timezone
     fastify.post('/update-timezone', async (req, reply) => {
         try {

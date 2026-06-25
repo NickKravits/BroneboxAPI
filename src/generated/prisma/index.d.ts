@@ -58,6 +58,21 @@ export type Bookings = $Result.DefaultSelection<Prisma.$BookingsPayload>
  * 
  */
 export type CleaningSchedule = $Result.DefaultSelection<Prisma.$CleaningSchedulePayload>
+/**
+ * Model UnprocessedBooking
+ * 
+ */
+export type UnprocessedBooking = $Result.DefaultSelection<Prisma.$UnprocessedBookingPayload>
+/**
+ * Model BugReport
+ * 
+ */
+export type BugReport = $Result.DefaultSelection<Prisma.$BugReportPayload>
+/**
+ * Model CabinetTemplate
+ * 
+ */
+export type CabinetTemplate = $Result.DefaultSelection<Prisma.$CabinetTemplatePayload>
 
 /**
  * Enums
@@ -414,6 +429,36 @@ export class PrismaClient<
     * ```
     */
   get cleaningSchedule(): Prisma.CleaningScheduleDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.unprocessedBooking`: Exposes CRUD operations for the **UnprocessedBooking** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UnprocessedBookings
+    * const unprocessedBookings = await prisma.unprocessedBooking.findMany()
+    * ```
+    */
+  get unprocessedBooking(): Prisma.UnprocessedBookingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.bugReport`: Exposes CRUD operations for the **BugReport** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BugReports
+    * const bugReports = await prisma.bugReport.findMany()
+    * ```
+    */
+  get bugReport(): Prisma.BugReportDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.cabinetTemplate`: Exposes CRUD operations for the **CabinetTemplate** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CabinetTemplates
+    * const cabinetTemplates = await prisma.cabinetTemplate.findMany()
+    * ```
+    */
+  get cabinetTemplate(): Prisma.CabinetTemplateDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -856,7 +901,10 @@ export namespace Prisma {
     Objects: 'Objects',
     ObjectPhoto: 'ObjectPhoto',
     Bookings: 'Bookings',
-    CleaningSchedule: 'CleaningSchedule'
+    CleaningSchedule: 'CleaningSchedule',
+    UnprocessedBooking: 'UnprocessedBooking',
+    BugReport: 'BugReport',
+    CabinetTemplate: 'CabinetTemplate'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -872,7 +920,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "cabinet" | "logs" | "staff" | "maids" | "objects" | "objectPhoto" | "bookings" | "cleaningSchedule"
+      modelProps: "user" | "cabinet" | "logs" | "staff" | "maids" | "objects" | "objectPhoto" | "bookings" | "cleaningSchedule" | "unprocessedBooking" | "bugReport" | "cabinetTemplate"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1470,6 +1518,204 @@ export namespace Prisma {
           }
         }
       }
+      UnprocessedBooking: {
+        payload: Prisma.$UnprocessedBookingPayload<ExtArgs>
+        fields: Prisma.UnprocessedBookingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UnprocessedBookingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UnprocessedBookingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UnprocessedBookingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UnprocessedBookingPayload>
+          }
+          findFirst: {
+            args: Prisma.UnprocessedBookingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UnprocessedBookingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UnprocessedBookingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UnprocessedBookingPayload>
+          }
+          findMany: {
+            args: Prisma.UnprocessedBookingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UnprocessedBookingPayload>[]
+          }
+          create: {
+            args: Prisma.UnprocessedBookingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UnprocessedBookingPayload>
+          }
+          createMany: {
+            args: Prisma.UnprocessedBookingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.UnprocessedBookingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UnprocessedBookingPayload>
+          }
+          update: {
+            args: Prisma.UnprocessedBookingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UnprocessedBookingPayload>
+          }
+          deleteMany: {
+            args: Prisma.UnprocessedBookingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UnprocessedBookingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.UnprocessedBookingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UnprocessedBookingPayload>
+          }
+          aggregate: {
+            args: Prisma.UnprocessedBookingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUnprocessedBooking>
+          }
+          groupBy: {
+            args: Prisma.UnprocessedBookingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UnprocessedBookingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UnprocessedBookingCountArgs<ExtArgs>
+            result: $Utils.Optional<UnprocessedBookingCountAggregateOutputType> | number
+          }
+        }
+      }
+      BugReport: {
+        payload: Prisma.$BugReportPayload<ExtArgs>
+        fields: Prisma.BugReportFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BugReportFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BugReportPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BugReportFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BugReportPayload>
+          }
+          findFirst: {
+            args: Prisma.BugReportFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BugReportPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BugReportFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BugReportPayload>
+          }
+          findMany: {
+            args: Prisma.BugReportFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BugReportPayload>[]
+          }
+          create: {
+            args: Prisma.BugReportCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BugReportPayload>
+          }
+          createMany: {
+            args: Prisma.BugReportCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.BugReportDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BugReportPayload>
+          }
+          update: {
+            args: Prisma.BugReportUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BugReportPayload>
+          }
+          deleteMany: {
+            args: Prisma.BugReportDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BugReportUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.BugReportUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BugReportPayload>
+          }
+          aggregate: {
+            args: Prisma.BugReportAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBugReport>
+          }
+          groupBy: {
+            args: Prisma.BugReportGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BugReportGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BugReportCountArgs<ExtArgs>
+            result: $Utils.Optional<BugReportCountAggregateOutputType> | number
+          }
+        }
+      }
+      CabinetTemplate: {
+        payload: Prisma.$CabinetTemplatePayload<ExtArgs>
+        fields: Prisma.CabinetTemplateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CabinetTemplateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabinetTemplatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CabinetTemplateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabinetTemplatePayload>
+          }
+          findFirst: {
+            args: Prisma.CabinetTemplateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabinetTemplatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CabinetTemplateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabinetTemplatePayload>
+          }
+          findMany: {
+            args: Prisma.CabinetTemplateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabinetTemplatePayload>[]
+          }
+          create: {
+            args: Prisma.CabinetTemplateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabinetTemplatePayload>
+          }
+          createMany: {
+            args: Prisma.CabinetTemplateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.CabinetTemplateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabinetTemplatePayload>
+          }
+          update: {
+            args: Prisma.CabinetTemplateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabinetTemplatePayload>
+          }
+          deleteMany: {
+            args: Prisma.CabinetTemplateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CabinetTemplateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.CabinetTemplateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CabinetTemplatePayload>
+          }
+          aggregate: {
+            args: Prisma.CabinetTemplateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCabinetTemplate>
+          }
+          groupBy: {
+            args: Prisma.CabinetTemplateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CabinetTemplateGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CabinetTemplateCountArgs<ExtArgs>
+            result: $Utils.Optional<CabinetTemplateCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1587,6 +1833,9 @@ export namespace Prisma {
     objectPhoto?: ObjectPhotoOmit
     bookings?: BookingsOmit
     cleaningSchedule?: CleaningScheduleOmit
+    unprocessedBooking?: UnprocessedBookingOmit
+    bugReport?: BugReportOmit
+    cabinetTemplate?: CabinetTemplateOmit
   }
 
   /* Types for Logging */
@@ -2746,10 +2995,12 @@ export namespace Prisma {
 
   export type CabinetAvgAggregateOutputType = {
     id: number | null
+    balance: number | null
   }
 
   export type CabinetSumAggregateOutputType = {
     id: number | null
+    balance: number | null
   }
 
   export type CabinetMinAggregateOutputType = {
@@ -2768,6 +3019,7 @@ export namespace Prisma {
     emptyStayMarker: string | null
     cleaningHeader: string | null
     cleaningFooter: string | null
+    balance: number | null
   }
 
   export type CabinetMaxAggregateOutputType = {
@@ -2786,6 +3038,7 @@ export namespace Prisma {
     emptyStayMarker: string | null
     cleaningHeader: string | null
     cleaningFooter: string | null
+    balance: number | null
   }
 
   export type CabinetCountAggregateOutputType = {
@@ -2806,16 +3059,19 @@ export namespace Prisma {
     emptyStayMarker: number
     cleaningHeader: number
     cleaningFooter: number
+    balance: number
     _all: number
   }
 
 
   export type CabinetAvgAggregateInputType = {
     id?: true
+    balance?: true
   }
 
   export type CabinetSumAggregateInputType = {
     id?: true
+    balance?: true
   }
 
   export type CabinetMinAggregateInputType = {
@@ -2834,6 +3090,7 @@ export namespace Prisma {
     emptyStayMarker?: true
     cleaningHeader?: true
     cleaningFooter?: true
+    balance?: true
   }
 
   export type CabinetMaxAggregateInputType = {
@@ -2852,6 +3109,7 @@ export namespace Prisma {
     emptyStayMarker?: true
     cleaningHeader?: true
     cleaningFooter?: true
+    balance?: true
   }
 
   export type CabinetCountAggregateInputType = {
@@ -2872,6 +3130,7 @@ export namespace Prisma {
     emptyStayMarker?: true
     cleaningHeader?: true
     cleaningFooter?: true
+    balance?: true
     _all?: true
   }
 
@@ -2979,6 +3238,7 @@ export namespace Prisma {
     emptyStayMarker: string | null
     cleaningHeader: string | null
     cleaningFooter: string | null
+    balance: number
     _count: CabinetCountAggregateOutputType | null
     _avg: CabinetAvgAggregateOutputType | null
     _sum: CabinetSumAggregateOutputType | null
@@ -3018,6 +3278,7 @@ export namespace Prisma {
     emptyStayMarker?: boolean
     cleaningHeader?: boolean
     cleaningFooter?: boolean
+    balance?: boolean
   }, ExtArgs["result"]["cabinet"]>
 
 
@@ -3040,9 +3301,10 @@ export namespace Prisma {
     emptyStayMarker?: boolean
     cleaningHeader?: boolean
     cleaningFooter?: boolean
+    balance?: boolean
   }
 
-  export type CabinetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "Timezone" | "realtycalendarid" | "okidokiapi" | "tochkaPhone" | "tochkaApiKey" | "tochkaMerchantId" | "tochkaPaymentMode" | "tochkaVatType" | "tochkaPurpose" | "tochkaName" | "tochkaCustomerCode" | "cleaningTemplate" | "approxTimeMarker" | "emptyStayMarker" | "cleaningHeader" | "cleaningFooter", ExtArgs["result"]["cabinet"]>
+  export type CabinetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "Timezone" | "realtycalendarid" | "okidokiapi" | "tochkaPhone" | "tochkaApiKey" | "tochkaMerchantId" | "tochkaPaymentMode" | "tochkaVatType" | "tochkaPurpose" | "tochkaName" | "tochkaCustomerCode" | "cleaningTemplate" | "approxTimeMarker" | "emptyStayMarker" | "cleaningHeader" | "cleaningFooter" | "balance", ExtArgs["result"]["cabinet"]>
 
   export type $CabinetPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Cabinet"
@@ -3065,6 +3327,7 @@ export namespace Prisma {
       emptyStayMarker: string | null
       cleaningHeader: string | null
       cleaningFooter: string | null
+      balance: number
     }, ExtArgs["result"]["cabinet"]>
     composites: {}
   }
@@ -3451,6 +3714,7 @@ export namespace Prisma {
     readonly emptyStayMarker: FieldRef<"Cabinet", 'String'>
     readonly cleaningHeader: FieldRef<"Cabinet", 'String'>
     readonly cleaningFooter: FieldRef<"Cabinet", 'String'>
+    readonly balance: FieldRef<"Cabinet", 'Float'>
   }
     
 
@@ -8893,6 +9157,7 @@ export namespace Prisma {
     maid_id: number | null
     review: number | null
     channel: string | null
+    deposit_payment_link: string | null
     link: string | null
   }
 
@@ -8926,6 +9191,7 @@ export namespace Prisma {
     maid_id: number | null
     review: number | null
     channel: string | null
+    deposit_payment_link: string | null
     link: string | null
   }
 
@@ -8959,6 +9225,7 @@ export namespace Prisma {
     maid_id: number
     review: number
     channel: number
+    deposit_payment_link: number
     link: number
     _all: number
   }
@@ -9026,6 +9293,7 @@ export namespace Prisma {
     maid_id?: true
     review?: true
     channel?: true
+    deposit_payment_link?: true
     link?: true
   }
 
@@ -9059,6 +9327,7 @@ export namespace Prisma {
     maid_id?: true
     review?: true
     channel?: true
+    deposit_payment_link?: true
     link?: true
   }
 
@@ -9092,6 +9361,7 @@ export namespace Prisma {
     maid_id?: true
     review?: true
     channel?: true
+    deposit_payment_link?: true
     link?: true
     _all?: true
   }
@@ -9212,6 +9482,7 @@ export namespace Prisma {
     maid_id: number | null
     review: number | null
     channel: string | null
+    deposit_payment_link: string | null
     link: string
     _count: BookingsCountAggregateOutputType | null
     _avg: BookingsAvgAggregateOutputType | null
@@ -9264,6 +9535,7 @@ export namespace Prisma {
     maid_id?: boolean
     review?: boolean
     channel?: boolean
+    deposit_payment_link?: boolean
     link?: boolean
   }, ExtArgs["result"]["bookings"]>
 
@@ -9299,10 +9571,11 @@ export namespace Prisma {
     maid_id?: boolean
     review?: boolean
     channel?: boolean
+    deposit_payment_link?: boolean
     link?: boolean
   }
 
-  export type BookingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"status" | "id" | "begin_date" | "end_date" | "realty_id" | "created_at" | "updated_at" | "amount" | "notes" | "source" | "prepayment" | "balance_to_be_paid_1" | "price_per_day" | "deposit" | "client_id" | "fio" | "email" | "phone" | "additional_phone" | "cabinet" | "tochka_id_pay" | "tochka_id_deposit" | "begin_time" | "end_time" | "contract_id" | "contract_link" | "maid_id" | "review" | "channel" | "link", ExtArgs["result"]["bookings"]>
+  export type BookingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"status" | "id" | "begin_date" | "end_date" | "realty_id" | "created_at" | "updated_at" | "amount" | "notes" | "source" | "prepayment" | "balance_to_be_paid_1" | "price_per_day" | "deposit" | "client_id" | "fio" | "email" | "phone" | "additional_phone" | "cabinet" | "tochka_id_pay" | "tochka_id_deposit" | "begin_time" | "end_time" | "contract_id" | "contract_link" | "maid_id" | "review" | "channel" | "deposit_payment_link" | "link", ExtArgs["result"]["bookings"]>
 
   export type $BookingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Bookings"
@@ -9337,6 +9610,7 @@ export namespace Prisma {
       maid_id: number | null
       review: number | null
       channel: string | null
+      deposit_payment_link: string | null
       link: string
     }, ExtArgs["result"]["bookings"]>
     composites: {}
@@ -9736,6 +10010,7 @@ export namespace Prisma {
     readonly maid_id: FieldRef<"Bookings", 'Int'>
     readonly review: FieldRef<"Bookings", 'Int'>
     readonly channel: FieldRef<"Bookings", 'String'>
+    readonly deposit_payment_link: FieldRef<"Bookings", 'String'>
     readonly link: FieldRef<"Bookings", 'String'>
   }
     
@@ -11078,6 +11353,3048 @@ export namespace Prisma {
 
 
   /**
+   * Model UnprocessedBooking
+   */
+
+  export type AggregateUnprocessedBooking = {
+    _count: UnprocessedBookingCountAggregateOutputType | null
+    _avg: UnprocessedBookingAvgAggregateOutputType | null
+    _sum: UnprocessedBookingSumAggregateOutputType | null
+    _min: UnprocessedBookingMinAggregateOutputType | null
+    _max: UnprocessedBookingMaxAggregateOutputType | null
+  }
+
+  export type UnprocessedBookingAvgAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    bookingId: number | null
+    realtyId: number | null
+    amount: number | null
+    prepayment: number | null
+    balanceToBePaid: number | null
+    pricePerDay: number | null
+    deposit: number | null
+    clientId: number | null
+  }
+
+  export type UnprocessedBookingSumAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    bookingId: number | null
+    realtyId: number | null
+    amount: number | null
+    prepayment: number | null
+    balanceToBePaid: number | null
+    pricePerDay: number | null
+    deposit: number | null
+    clientId: number | null
+  }
+
+  export type UnprocessedBookingMinAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    bookingId: number | null
+    action: string | null
+    failReason: string | null
+    failMessage: string | null
+    realtyId: number | null
+    beginDate: string | null
+    endDate: string | null
+    bookingStatus: string | null
+    source: string | null
+    amount: number | null
+    notes: string | null
+    prepayment: number | null
+    balanceToBePaid: number | null
+    pricePerDay: number | null
+    deposit: number | null
+    clientId: number | null
+    fio: string | null
+    email: string | null
+    phone: string | null
+    additionalPhone: string | null
+    resolved: boolean | null
+    createdAt: Date | null
+  }
+
+  export type UnprocessedBookingMaxAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    bookingId: number | null
+    action: string | null
+    failReason: string | null
+    failMessage: string | null
+    realtyId: number | null
+    beginDate: string | null
+    endDate: string | null
+    bookingStatus: string | null
+    source: string | null
+    amount: number | null
+    notes: string | null
+    prepayment: number | null
+    balanceToBePaid: number | null
+    pricePerDay: number | null
+    deposit: number | null
+    clientId: number | null
+    fio: string | null
+    email: string | null
+    phone: string | null
+    additionalPhone: string | null
+    resolved: boolean | null
+    createdAt: Date | null
+  }
+
+  export type UnprocessedBookingCountAggregateOutputType = {
+    id: number
+    cabinetid: number
+    bookingId: number
+    action: number
+    failReason: number
+    failMessage: number
+    realtyId: number
+    beginDate: number
+    endDate: number
+    bookingStatus: number
+    source: number
+    amount: number
+    notes: number
+    prepayment: number
+    balanceToBePaid: number
+    pricePerDay: number
+    deposit: number
+    clientId: number
+    fio: number
+    email: number
+    phone: number
+    additionalPhone: number
+    resolved: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type UnprocessedBookingAvgAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    bookingId?: true
+    realtyId?: true
+    amount?: true
+    prepayment?: true
+    balanceToBePaid?: true
+    pricePerDay?: true
+    deposit?: true
+    clientId?: true
+  }
+
+  export type UnprocessedBookingSumAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    bookingId?: true
+    realtyId?: true
+    amount?: true
+    prepayment?: true
+    balanceToBePaid?: true
+    pricePerDay?: true
+    deposit?: true
+    clientId?: true
+  }
+
+  export type UnprocessedBookingMinAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    bookingId?: true
+    action?: true
+    failReason?: true
+    failMessage?: true
+    realtyId?: true
+    beginDate?: true
+    endDate?: true
+    bookingStatus?: true
+    source?: true
+    amount?: true
+    notes?: true
+    prepayment?: true
+    balanceToBePaid?: true
+    pricePerDay?: true
+    deposit?: true
+    clientId?: true
+    fio?: true
+    email?: true
+    phone?: true
+    additionalPhone?: true
+    resolved?: true
+    createdAt?: true
+  }
+
+  export type UnprocessedBookingMaxAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    bookingId?: true
+    action?: true
+    failReason?: true
+    failMessage?: true
+    realtyId?: true
+    beginDate?: true
+    endDate?: true
+    bookingStatus?: true
+    source?: true
+    amount?: true
+    notes?: true
+    prepayment?: true
+    balanceToBePaid?: true
+    pricePerDay?: true
+    deposit?: true
+    clientId?: true
+    fio?: true
+    email?: true
+    phone?: true
+    additionalPhone?: true
+    resolved?: true
+    createdAt?: true
+  }
+
+  export type UnprocessedBookingCountAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    bookingId?: true
+    action?: true
+    failReason?: true
+    failMessage?: true
+    realtyId?: true
+    beginDate?: true
+    endDate?: true
+    bookingStatus?: true
+    source?: true
+    amount?: true
+    notes?: true
+    prepayment?: true
+    balanceToBePaid?: true
+    pricePerDay?: true
+    deposit?: true
+    clientId?: true
+    fio?: true
+    email?: true
+    phone?: true
+    additionalPhone?: true
+    resolved?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type UnprocessedBookingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UnprocessedBooking to aggregate.
+     */
+    where?: UnprocessedBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UnprocessedBookings to fetch.
+     */
+    orderBy?: UnprocessedBookingOrderByWithRelationInput | UnprocessedBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UnprocessedBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UnprocessedBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UnprocessedBookings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UnprocessedBookings
+    **/
+    _count?: true | UnprocessedBookingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: UnprocessedBookingAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UnprocessedBookingSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UnprocessedBookingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UnprocessedBookingMaxAggregateInputType
+  }
+
+  export type GetUnprocessedBookingAggregateType<T extends UnprocessedBookingAggregateArgs> = {
+        [P in keyof T & keyof AggregateUnprocessedBooking]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUnprocessedBooking[P]>
+      : GetScalarType<T[P], AggregateUnprocessedBooking[P]>
+  }
+
+
+
+
+  export type UnprocessedBookingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UnprocessedBookingWhereInput
+    orderBy?: UnprocessedBookingOrderByWithAggregationInput | UnprocessedBookingOrderByWithAggregationInput[]
+    by: UnprocessedBookingScalarFieldEnum[] | UnprocessedBookingScalarFieldEnum
+    having?: UnprocessedBookingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UnprocessedBookingCountAggregateInputType | true
+    _avg?: UnprocessedBookingAvgAggregateInputType
+    _sum?: UnprocessedBookingSumAggregateInputType
+    _min?: UnprocessedBookingMinAggregateInputType
+    _max?: UnprocessedBookingMaxAggregateInputType
+  }
+
+  export type UnprocessedBookingGroupByOutputType = {
+    id: number
+    cabinetid: number
+    bookingId: number
+    action: string
+    failReason: string
+    failMessage: string | null
+    realtyId: number | null
+    beginDate: string | null
+    endDate: string | null
+    bookingStatus: string | null
+    source: string | null
+    amount: number | null
+    notes: string | null
+    prepayment: number | null
+    balanceToBePaid: number | null
+    pricePerDay: number | null
+    deposit: number | null
+    clientId: number | null
+    fio: string | null
+    email: string | null
+    phone: string | null
+    additionalPhone: string | null
+    resolved: boolean
+    createdAt: Date
+    _count: UnprocessedBookingCountAggregateOutputType | null
+    _avg: UnprocessedBookingAvgAggregateOutputType | null
+    _sum: UnprocessedBookingSumAggregateOutputType | null
+    _min: UnprocessedBookingMinAggregateOutputType | null
+    _max: UnprocessedBookingMaxAggregateOutputType | null
+  }
+
+  type GetUnprocessedBookingGroupByPayload<T extends UnprocessedBookingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UnprocessedBookingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UnprocessedBookingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UnprocessedBookingGroupByOutputType[P]>
+            : GetScalarType<T[P], UnprocessedBookingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UnprocessedBookingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    cabinetid?: boolean
+    bookingId?: boolean
+    action?: boolean
+    failReason?: boolean
+    failMessage?: boolean
+    realtyId?: boolean
+    beginDate?: boolean
+    endDate?: boolean
+    bookingStatus?: boolean
+    source?: boolean
+    amount?: boolean
+    notes?: boolean
+    prepayment?: boolean
+    balanceToBePaid?: boolean
+    pricePerDay?: boolean
+    deposit?: boolean
+    clientId?: boolean
+    fio?: boolean
+    email?: boolean
+    phone?: boolean
+    additionalPhone?: boolean
+    resolved?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["unprocessedBooking"]>
+
+
+
+  export type UnprocessedBookingSelectScalar = {
+    id?: boolean
+    cabinetid?: boolean
+    bookingId?: boolean
+    action?: boolean
+    failReason?: boolean
+    failMessage?: boolean
+    realtyId?: boolean
+    beginDate?: boolean
+    endDate?: boolean
+    bookingStatus?: boolean
+    source?: boolean
+    amount?: boolean
+    notes?: boolean
+    prepayment?: boolean
+    balanceToBePaid?: boolean
+    pricePerDay?: boolean
+    deposit?: boolean
+    clientId?: boolean
+    fio?: boolean
+    email?: boolean
+    phone?: boolean
+    additionalPhone?: boolean
+    resolved?: boolean
+    createdAt?: boolean
+  }
+
+  export type UnprocessedBookingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cabinetid" | "bookingId" | "action" | "failReason" | "failMessage" | "realtyId" | "beginDate" | "endDate" | "bookingStatus" | "source" | "amount" | "notes" | "prepayment" | "balanceToBePaid" | "pricePerDay" | "deposit" | "clientId" | "fio" | "email" | "phone" | "additionalPhone" | "resolved" | "createdAt", ExtArgs["result"]["unprocessedBooking"]>
+
+  export type $UnprocessedBookingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UnprocessedBooking"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      cabinetid: number
+      bookingId: number
+      action: string
+      failReason: string
+      failMessage: string | null
+      realtyId: number | null
+      beginDate: string | null
+      endDate: string | null
+      bookingStatus: string | null
+      source: string | null
+      amount: number | null
+      notes: string | null
+      prepayment: number | null
+      balanceToBePaid: number | null
+      pricePerDay: number | null
+      deposit: number | null
+      clientId: number | null
+      fio: string | null
+      email: string | null
+      phone: string | null
+      additionalPhone: string | null
+      resolved: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["unprocessedBooking"]>
+    composites: {}
+  }
+
+  type UnprocessedBookingGetPayload<S extends boolean | null | undefined | UnprocessedBookingDefaultArgs> = $Result.GetResult<Prisma.$UnprocessedBookingPayload, S>
+
+  type UnprocessedBookingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UnprocessedBookingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UnprocessedBookingCountAggregateInputType | true
+    }
+
+  export interface UnprocessedBookingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UnprocessedBooking'], meta: { name: 'UnprocessedBooking' } }
+    /**
+     * Find zero or one UnprocessedBooking that matches the filter.
+     * @param {UnprocessedBookingFindUniqueArgs} args - Arguments to find a UnprocessedBooking
+     * @example
+     * // Get one UnprocessedBooking
+     * const unprocessedBooking = await prisma.unprocessedBooking.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UnprocessedBookingFindUniqueArgs>(args: SelectSubset<T, UnprocessedBookingFindUniqueArgs<ExtArgs>>): Prisma__UnprocessedBookingClient<$Result.GetResult<Prisma.$UnprocessedBookingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UnprocessedBooking that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UnprocessedBookingFindUniqueOrThrowArgs} args - Arguments to find a UnprocessedBooking
+     * @example
+     * // Get one UnprocessedBooking
+     * const unprocessedBooking = await prisma.unprocessedBooking.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UnprocessedBookingFindUniqueOrThrowArgs>(args: SelectSubset<T, UnprocessedBookingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UnprocessedBookingClient<$Result.GetResult<Prisma.$UnprocessedBookingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UnprocessedBooking that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UnprocessedBookingFindFirstArgs} args - Arguments to find a UnprocessedBooking
+     * @example
+     * // Get one UnprocessedBooking
+     * const unprocessedBooking = await prisma.unprocessedBooking.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UnprocessedBookingFindFirstArgs>(args?: SelectSubset<T, UnprocessedBookingFindFirstArgs<ExtArgs>>): Prisma__UnprocessedBookingClient<$Result.GetResult<Prisma.$UnprocessedBookingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UnprocessedBooking that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UnprocessedBookingFindFirstOrThrowArgs} args - Arguments to find a UnprocessedBooking
+     * @example
+     * // Get one UnprocessedBooking
+     * const unprocessedBooking = await prisma.unprocessedBooking.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UnprocessedBookingFindFirstOrThrowArgs>(args?: SelectSubset<T, UnprocessedBookingFindFirstOrThrowArgs<ExtArgs>>): Prisma__UnprocessedBookingClient<$Result.GetResult<Prisma.$UnprocessedBookingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UnprocessedBookings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UnprocessedBookingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UnprocessedBookings
+     * const unprocessedBookings = await prisma.unprocessedBooking.findMany()
+     * 
+     * // Get first 10 UnprocessedBookings
+     * const unprocessedBookings = await prisma.unprocessedBooking.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const unprocessedBookingWithIdOnly = await prisma.unprocessedBooking.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UnprocessedBookingFindManyArgs>(args?: SelectSubset<T, UnprocessedBookingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UnprocessedBookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UnprocessedBooking.
+     * @param {UnprocessedBookingCreateArgs} args - Arguments to create a UnprocessedBooking.
+     * @example
+     * // Create one UnprocessedBooking
+     * const UnprocessedBooking = await prisma.unprocessedBooking.create({
+     *   data: {
+     *     // ... data to create a UnprocessedBooking
+     *   }
+     * })
+     * 
+     */
+    create<T extends UnprocessedBookingCreateArgs>(args: SelectSubset<T, UnprocessedBookingCreateArgs<ExtArgs>>): Prisma__UnprocessedBookingClient<$Result.GetResult<Prisma.$UnprocessedBookingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UnprocessedBookings.
+     * @param {UnprocessedBookingCreateManyArgs} args - Arguments to create many UnprocessedBookings.
+     * @example
+     * // Create many UnprocessedBookings
+     * const unprocessedBooking = await prisma.unprocessedBooking.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UnprocessedBookingCreateManyArgs>(args?: SelectSubset<T, UnprocessedBookingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a UnprocessedBooking.
+     * @param {UnprocessedBookingDeleteArgs} args - Arguments to delete one UnprocessedBooking.
+     * @example
+     * // Delete one UnprocessedBooking
+     * const UnprocessedBooking = await prisma.unprocessedBooking.delete({
+     *   where: {
+     *     // ... filter to delete one UnprocessedBooking
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UnprocessedBookingDeleteArgs>(args: SelectSubset<T, UnprocessedBookingDeleteArgs<ExtArgs>>): Prisma__UnprocessedBookingClient<$Result.GetResult<Prisma.$UnprocessedBookingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UnprocessedBooking.
+     * @param {UnprocessedBookingUpdateArgs} args - Arguments to update one UnprocessedBooking.
+     * @example
+     * // Update one UnprocessedBooking
+     * const unprocessedBooking = await prisma.unprocessedBooking.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UnprocessedBookingUpdateArgs>(args: SelectSubset<T, UnprocessedBookingUpdateArgs<ExtArgs>>): Prisma__UnprocessedBookingClient<$Result.GetResult<Prisma.$UnprocessedBookingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UnprocessedBookings.
+     * @param {UnprocessedBookingDeleteManyArgs} args - Arguments to filter UnprocessedBookings to delete.
+     * @example
+     * // Delete a few UnprocessedBookings
+     * const { count } = await prisma.unprocessedBooking.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UnprocessedBookingDeleteManyArgs>(args?: SelectSubset<T, UnprocessedBookingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UnprocessedBookings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UnprocessedBookingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UnprocessedBookings
+     * const unprocessedBooking = await prisma.unprocessedBooking.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UnprocessedBookingUpdateManyArgs>(args: SelectSubset<T, UnprocessedBookingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one UnprocessedBooking.
+     * @param {UnprocessedBookingUpsertArgs} args - Arguments to update or create a UnprocessedBooking.
+     * @example
+     * // Update or create a UnprocessedBooking
+     * const unprocessedBooking = await prisma.unprocessedBooking.upsert({
+     *   create: {
+     *     // ... data to create a UnprocessedBooking
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UnprocessedBooking we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UnprocessedBookingUpsertArgs>(args: SelectSubset<T, UnprocessedBookingUpsertArgs<ExtArgs>>): Prisma__UnprocessedBookingClient<$Result.GetResult<Prisma.$UnprocessedBookingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of UnprocessedBookings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UnprocessedBookingCountArgs} args - Arguments to filter UnprocessedBookings to count.
+     * @example
+     * // Count the number of UnprocessedBookings
+     * const count = await prisma.unprocessedBooking.count({
+     *   where: {
+     *     // ... the filter for the UnprocessedBookings we want to count
+     *   }
+     * })
+    **/
+    count<T extends UnprocessedBookingCountArgs>(
+      args?: Subset<T, UnprocessedBookingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UnprocessedBookingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UnprocessedBooking.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UnprocessedBookingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UnprocessedBookingAggregateArgs>(args: Subset<T, UnprocessedBookingAggregateArgs>): Prisma.PrismaPromise<GetUnprocessedBookingAggregateType<T>>
+
+    /**
+     * Group by UnprocessedBooking.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UnprocessedBookingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UnprocessedBookingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UnprocessedBookingGroupByArgs['orderBy'] }
+        : { orderBy?: UnprocessedBookingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UnprocessedBookingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUnprocessedBookingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UnprocessedBooking model
+   */
+  readonly fields: UnprocessedBookingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UnprocessedBooking.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UnprocessedBookingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UnprocessedBooking model
+   */
+  interface UnprocessedBookingFieldRefs {
+    readonly id: FieldRef<"UnprocessedBooking", 'Int'>
+    readonly cabinetid: FieldRef<"UnprocessedBooking", 'Int'>
+    readonly bookingId: FieldRef<"UnprocessedBooking", 'Int'>
+    readonly action: FieldRef<"UnprocessedBooking", 'String'>
+    readonly failReason: FieldRef<"UnprocessedBooking", 'String'>
+    readonly failMessage: FieldRef<"UnprocessedBooking", 'String'>
+    readonly realtyId: FieldRef<"UnprocessedBooking", 'Int'>
+    readonly beginDate: FieldRef<"UnprocessedBooking", 'String'>
+    readonly endDate: FieldRef<"UnprocessedBooking", 'String'>
+    readonly bookingStatus: FieldRef<"UnprocessedBooking", 'String'>
+    readonly source: FieldRef<"UnprocessedBooking", 'String'>
+    readonly amount: FieldRef<"UnprocessedBooking", 'Int'>
+    readonly notes: FieldRef<"UnprocessedBooking", 'String'>
+    readonly prepayment: FieldRef<"UnprocessedBooking", 'Int'>
+    readonly balanceToBePaid: FieldRef<"UnprocessedBooking", 'Int'>
+    readonly pricePerDay: FieldRef<"UnprocessedBooking", 'Int'>
+    readonly deposit: FieldRef<"UnprocessedBooking", 'Int'>
+    readonly clientId: FieldRef<"UnprocessedBooking", 'Int'>
+    readonly fio: FieldRef<"UnprocessedBooking", 'String'>
+    readonly email: FieldRef<"UnprocessedBooking", 'String'>
+    readonly phone: FieldRef<"UnprocessedBooking", 'String'>
+    readonly additionalPhone: FieldRef<"UnprocessedBooking", 'String'>
+    readonly resolved: FieldRef<"UnprocessedBooking", 'Boolean'>
+    readonly createdAt: FieldRef<"UnprocessedBooking", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UnprocessedBooking findUnique
+   */
+  export type UnprocessedBookingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UnprocessedBooking
+     */
+    select?: UnprocessedBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UnprocessedBooking
+     */
+    omit?: UnprocessedBookingOmit<ExtArgs> | null
+    /**
+     * Filter, which UnprocessedBooking to fetch.
+     */
+    where: UnprocessedBookingWhereUniqueInput
+  }
+
+  /**
+   * UnprocessedBooking findUniqueOrThrow
+   */
+  export type UnprocessedBookingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UnprocessedBooking
+     */
+    select?: UnprocessedBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UnprocessedBooking
+     */
+    omit?: UnprocessedBookingOmit<ExtArgs> | null
+    /**
+     * Filter, which UnprocessedBooking to fetch.
+     */
+    where: UnprocessedBookingWhereUniqueInput
+  }
+
+  /**
+   * UnprocessedBooking findFirst
+   */
+  export type UnprocessedBookingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UnprocessedBooking
+     */
+    select?: UnprocessedBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UnprocessedBooking
+     */
+    omit?: UnprocessedBookingOmit<ExtArgs> | null
+    /**
+     * Filter, which UnprocessedBooking to fetch.
+     */
+    where?: UnprocessedBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UnprocessedBookings to fetch.
+     */
+    orderBy?: UnprocessedBookingOrderByWithRelationInput | UnprocessedBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UnprocessedBookings.
+     */
+    cursor?: UnprocessedBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UnprocessedBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UnprocessedBookings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UnprocessedBookings.
+     */
+    distinct?: UnprocessedBookingScalarFieldEnum | UnprocessedBookingScalarFieldEnum[]
+  }
+
+  /**
+   * UnprocessedBooking findFirstOrThrow
+   */
+  export type UnprocessedBookingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UnprocessedBooking
+     */
+    select?: UnprocessedBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UnprocessedBooking
+     */
+    omit?: UnprocessedBookingOmit<ExtArgs> | null
+    /**
+     * Filter, which UnprocessedBooking to fetch.
+     */
+    where?: UnprocessedBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UnprocessedBookings to fetch.
+     */
+    orderBy?: UnprocessedBookingOrderByWithRelationInput | UnprocessedBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UnprocessedBookings.
+     */
+    cursor?: UnprocessedBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UnprocessedBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UnprocessedBookings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UnprocessedBookings.
+     */
+    distinct?: UnprocessedBookingScalarFieldEnum | UnprocessedBookingScalarFieldEnum[]
+  }
+
+  /**
+   * UnprocessedBooking findMany
+   */
+  export type UnprocessedBookingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UnprocessedBooking
+     */
+    select?: UnprocessedBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UnprocessedBooking
+     */
+    omit?: UnprocessedBookingOmit<ExtArgs> | null
+    /**
+     * Filter, which UnprocessedBookings to fetch.
+     */
+    where?: UnprocessedBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UnprocessedBookings to fetch.
+     */
+    orderBy?: UnprocessedBookingOrderByWithRelationInput | UnprocessedBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UnprocessedBookings.
+     */
+    cursor?: UnprocessedBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UnprocessedBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UnprocessedBookings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UnprocessedBookings.
+     */
+    distinct?: UnprocessedBookingScalarFieldEnum | UnprocessedBookingScalarFieldEnum[]
+  }
+
+  /**
+   * UnprocessedBooking create
+   */
+  export type UnprocessedBookingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UnprocessedBooking
+     */
+    select?: UnprocessedBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UnprocessedBooking
+     */
+    omit?: UnprocessedBookingOmit<ExtArgs> | null
+    /**
+     * The data needed to create a UnprocessedBooking.
+     */
+    data: XOR<UnprocessedBookingCreateInput, UnprocessedBookingUncheckedCreateInput>
+  }
+
+  /**
+   * UnprocessedBooking createMany
+   */
+  export type UnprocessedBookingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UnprocessedBookings.
+     */
+    data: UnprocessedBookingCreateManyInput | UnprocessedBookingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UnprocessedBooking update
+   */
+  export type UnprocessedBookingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UnprocessedBooking
+     */
+    select?: UnprocessedBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UnprocessedBooking
+     */
+    omit?: UnprocessedBookingOmit<ExtArgs> | null
+    /**
+     * The data needed to update a UnprocessedBooking.
+     */
+    data: XOR<UnprocessedBookingUpdateInput, UnprocessedBookingUncheckedUpdateInput>
+    /**
+     * Choose, which UnprocessedBooking to update.
+     */
+    where: UnprocessedBookingWhereUniqueInput
+  }
+
+  /**
+   * UnprocessedBooking updateMany
+   */
+  export type UnprocessedBookingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UnprocessedBookings.
+     */
+    data: XOR<UnprocessedBookingUpdateManyMutationInput, UnprocessedBookingUncheckedUpdateManyInput>
+    /**
+     * Filter which UnprocessedBookings to update
+     */
+    where?: UnprocessedBookingWhereInput
+    /**
+     * Limit how many UnprocessedBookings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UnprocessedBooking upsert
+   */
+  export type UnprocessedBookingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UnprocessedBooking
+     */
+    select?: UnprocessedBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UnprocessedBooking
+     */
+    omit?: UnprocessedBookingOmit<ExtArgs> | null
+    /**
+     * The filter to search for the UnprocessedBooking to update in case it exists.
+     */
+    where: UnprocessedBookingWhereUniqueInput
+    /**
+     * In case the UnprocessedBooking found by the `where` argument doesn't exist, create a new UnprocessedBooking with this data.
+     */
+    create: XOR<UnprocessedBookingCreateInput, UnprocessedBookingUncheckedCreateInput>
+    /**
+     * In case the UnprocessedBooking was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UnprocessedBookingUpdateInput, UnprocessedBookingUncheckedUpdateInput>
+  }
+
+  /**
+   * UnprocessedBooking delete
+   */
+  export type UnprocessedBookingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UnprocessedBooking
+     */
+    select?: UnprocessedBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UnprocessedBooking
+     */
+    omit?: UnprocessedBookingOmit<ExtArgs> | null
+    /**
+     * Filter which UnprocessedBooking to delete.
+     */
+    where: UnprocessedBookingWhereUniqueInput
+  }
+
+  /**
+   * UnprocessedBooking deleteMany
+   */
+  export type UnprocessedBookingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UnprocessedBookings to delete
+     */
+    where?: UnprocessedBookingWhereInput
+    /**
+     * Limit how many UnprocessedBookings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UnprocessedBooking without action
+   */
+  export type UnprocessedBookingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UnprocessedBooking
+     */
+    select?: UnprocessedBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UnprocessedBooking
+     */
+    omit?: UnprocessedBookingOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model BugReport
+   */
+
+  export type AggregateBugReport = {
+    _count: BugReportCountAggregateOutputType | null
+    _avg: BugReportAvgAggregateOutputType | null
+    _sum: BugReportSumAggregateOutputType | null
+    _min: BugReportMinAggregateOutputType | null
+    _max: BugReportMaxAggregateOutputType | null
+  }
+
+  export type BugReportAvgAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    userId: number | null
+  }
+
+  export type BugReportSumAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    userId: number | null
+  }
+
+  export type BugReportMinAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    userId: number | null
+    message: string | null
+    page: string | null
+    createdAt: Date | null
+  }
+
+  export type BugReportMaxAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    userId: number | null
+    message: string | null
+    page: string | null
+    createdAt: Date | null
+  }
+
+  export type BugReportCountAggregateOutputType = {
+    id: number
+    cabinetid: number
+    userId: number
+    message: number
+    page: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type BugReportAvgAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    userId?: true
+  }
+
+  export type BugReportSumAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    userId?: true
+  }
+
+  export type BugReportMinAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    userId?: true
+    message?: true
+    page?: true
+    createdAt?: true
+  }
+
+  export type BugReportMaxAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    userId?: true
+    message?: true
+    page?: true
+    createdAt?: true
+  }
+
+  export type BugReportCountAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    userId?: true
+    message?: true
+    page?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type BugReportAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BugReport to aggregate.
+     */
+    where?: BugReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BugReports to fetch.
+     */
+    orderBy?: BugReportOrderByWithRelationInput | BugReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BugReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BugReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BugReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BugReports
+    **/
+    _count?: true | BugReportCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BugReportAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BugReportSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BugReportMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BugReportMaxAggregateInputType
+  }
+
+  export type GetBugReportAggregateType<T extends BugReportAggregateArgs> = {
+        [P in keyof T & keyof AggregateBugReport]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBugReport[P]>
+      : GetScalarType<T[P], AggregateBugReport[P]>
+  }
+
+
+
+
+  export type BugReportGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BugReportWhereInput
+    orderBy?: BugReportOrderByWithAggregationInput | BugReportOrderByWithAggregationInput[]
+    by: BugReportScalarFieldEnum[] | BugReportScalarFieldEnum
+    having?: BugReportScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BugReportCountAggregateInputType | true
+    _avg?: BugReportAvgAggregateInputType
+    _sum?: BugReportSumAggregateInputType
+    _min?: BugReportMinAggregateInputType
+    _max?: BugReportMaxAggregateInputType
+  }
+
+  export type BugReportGroupByOutputType = {
+    id: number
+    cabinetid: number
+    userId: number
+    message: string
+    page: string | null
+    createdAt: Date
+    _count: BugReportCountAggregateOutputType | null
+    _avg: BugReportAvgAggregateOutputType | null
+    _sum: BugReportSumAggregateOutputType | null
+    _min: BugReportMinAggregateOutputType | null
+    _max: BugReportMaxAggregateOutputType | null
+  }
+
+  type GetBugReportGroupByPayload<T extends BugReportGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BugReportGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BugReportGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BugReportGroupByOutputType[P]>
+            : GetScalarType<T[P], BugReportGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BugReportSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    cabinetid?: boolean
+    userId?: boolean
+    message?: boolean
+    page?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["bugReport"]>
+
+
+
+  export type BugReportSelectScalar = {
+    id?: boolean
+    cabinetid?: boolean
+    userId?: boolean
+    message?: boolean
+    page?: boolean
+    createdAt?: boolean
+  }
+
+  export type BugReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cabinetid" | "userId" | "message" | "page" | "createdAt", ExtArgs["result"]["bugReport"]>
+
+  export type $BugReportPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BugReport"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      cabinetid: number
+      userId: number
+      message: string
+      page: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["bugReport"]>
+    composites: {}
+  }
+
+  type BugReportGetPayload<S extends boolean | null | undefined | BugReportDefaultArgs> = $Result.GetResult<Prisma.$BugReportPayload, S>
+
+  type BugReportCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BugReportFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BugReportCountAggregateInputType | true
+    }
+
+  export interface BugReportDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BugReport'], meta: { name: 'BugReport' } }
+    /**
+     * Find zero or one BugReport that matches the filter.
+     * @param {BugReportFindUniqueArgs} args - Arguments to find a BugReport
+     * @example
+     * // Get one BugReport
+     * const bugReport = await prisma.bugReport.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BugReportFindUniqueArgs>(args: SelectSubset<T, BugReportFindUniqueArgs<ExtArgs>>): Prisma__BugReportClient<$Result.GetResult<Prisma.$BugReportPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BugReport that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BugReportFindUniqueOrThrowArgs} args - Arguments to find a BugReport
+     * @example
+     * // Get one BugReport
+     * const bugReport = await prisma.bugReport.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BugReportFindUniqueOrThrowArgs>(args: SelectSubset<T, BugReportFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BugReportClient<$Result.GetResult<Prisma.$BugReportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BugReport that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BugReportFindFirstArgs} args - Arguments to find a BugReport
+     * @example
+     * // Get one BugReport
+     * const bugReport = await prisma.bugReport.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BugReportFindFirstArgs>(args?: SelectSubset<T, BugReportFindFirstArgs<ExtArgs>>): Prisma__BugReportClient<$Result.GetResult<Prisma.$BugReportPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BugReport that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BugReportFindFirstOrThrowArgs} args - Arguments to find a BugReport
+     * @example
+     * // Get one BugReport
+     * const bugReport = await prisma.bugReport.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BugReportFindFirstOrThrowArgs>(args?: SelectSubset<T, BugReportFindFirstOrThrowArgs<ExtArgs>>): Prisma__BugReportClient<$Result.GetResult<Prisma.$BugReportPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BugReports that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BugReportFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BugReports
+     * const bugReports = await prisma.bugReport.findMany()
+     * 
+     * // Get first 10 BugReports
+     * const bugReports = await prisma.bugReport.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const bugReportWithIdOnly = await prisma.bugReport.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BugReportFindManyArgs>(args?: SelectSubset<T, BugReportFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BugReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BugReport.
+     * @param {BugReportCreateArgs} args - Arguments to create a BugReport.
+     * @example
+     * // Create one BugReport
+     * const BugReport = await prisma.bugReport.create({
+     *   data: {
+     *     // ... data to create a BugReport
+     *   }
+     * })
+     * 
+     */
+    create<T extends BugReportCreateArgs>(args: SelectSubset<T, BugReportCreateArgs<ExtArgs>>): Prisma__BugReportClient<$Result.GetResult<Prisma.$BugReportPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BugReports.
+     * @param {BugReportCreateManyArgs} args - Arguments to create many BugReports.
+     * @example
+     * // Create many BugReports
+     * const bugReport = await prisma.bugReport.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BugReportCreateManyArgs>(args?: SelectSubset<T, BugReportCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a BugReport.
+     * @param {BugReportDeleteArgs} args - Arguments to delete one BugReport.
+     * @example
+     * // Delete one BugReport
+     * const BugReport = await prisma.bugReport.delete({
+     *   where: {
+     *     // ... filter to delete one BugReport
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BugReportDeleteArgs>(args: SelectSubset<T, BugReportDeleteArgs<ExtArgs>>): Prisma__BugReportClient<$Result.GetResult<Prisma.$BugReportPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BugReport.
+     * @param {BugReportUpdateArgs} args - Arguments to update one BugReport.
+     * @example
+     * // Update one BugReport
+     * const bugReport = await prisma.bugReport.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BugReportUpdateArgs>(args: SelectSubset<T, BugReportUpdateArgs<ExtArgs>>): Prisma__BugReportClient<$Result.GetResult<Prisma.$BugReportPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BugReports.
+     * @param {BugReportDeleteManyArgs} args - Arguments to filter BugReports to delete.
+     * @example
+     * // Delete a few BugReports
+     * const { count } = await prisma.bugReport.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BugReportDeleteManyArgs>(args?: SelectSubset<T, BugReportDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BugReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BugReportUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BugReports
+     * const bugReport = await prisma.bugReport.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BugReportUpdateManyArgs>(args: SelectSubset<T, BugReportUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one BugReport.
+     * @param {BugReportUpsertArgs} args - Arguments to update or create a BugReport.
+     * @example
+     * // Update or create a BugReport
+     * const bugReport = await prisma.bugReport.upsert({
+     *   create: {
+     *     // ... data to create a BugReport
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BugReport we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BugReportUpsertArgs>(args: SelectSubset<T, BugReportUpsertArgs<ExtArgs>>): Prisma__BugReportClient<$Result.GetResult<Prisma.$BugReportPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BugReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BugReportCountArgs} args - Arguments to filter BugReports to count.
+     * @example
+     * // Count the number of BugReports
+     * const count = await prisma.bugReport.count({
+     *   where: {
+     *     // ... the filter for the BugReports we want to count
+     *   }
+     * })
+    **/
+    count<T extends BugReportCountArgs>(
+      args?: Subset<T, BugReportCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BugReportCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BugReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BugReportAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BugReportAggregateArgs>(args: Subset<T, BugReportAggregateArgs>): Prisma.PrismaPromise<GetBugReportAggregateType<T>>
+
+    /**
+     * Group by BugReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BugReportGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BugReportGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BugReportGroupByArgs['orderBy'] }
+        : { orderBy?: BugReportGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BugReportGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBugReportGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BugReport model
+   */
+  readonly fields: BugReportFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BugReport.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BugReportClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BugReport model
+   */
+  interface BugReportFieldRefs {
+    readonly id: FieldRef<"BugReport", 'Int'>
+    readonly cabinetid: FieldRef<"BugReport", 'Int'>
+    readonly userId: FieldRef<"BugReport", 'Int'>
+    readonly message: FieldRef<"BugReport", 'String'>
+    readonly page: FieldRef<"BugReport", 'String'>
+    readonly createdAt: FieldRef<"BugReport", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BugReport findUnique
+   */
+  export type BugReportFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BugReport
+     */
+    select?: BugReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BugReport
+     */
+    omit?: BugReportOmit<ExtArgs> | null
+    /**
+     * Filter, which BugReport to fetch.
+     */
+    where: BugReportWhereUniqueInput
+  }
+
+  /**
+   * BugReport findUniqueOrThrow
+   */
+  export type BugReportFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BugReport
+     */
+    select?: BugReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BugReport
+     */
+    omit?: BugReportOmit<ExtArgs> | null
+    /**
+     * Filter, which BugReport to fetch.
+     */
+    where: BugReportWhereUniqueInput
+  }
+
+  /**
+   * BugReport findFirst
+   */
+  export type BugReportFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BugReport
+     */
+    select?: BugReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BugReport
+     */
+    omit?: BugReportOmit<ExtArgs> | null
+    /**
+     * Filter, which BugReport to fetch.
+     */
+    where?: BugReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BugReports to fetch.
+     */
+    orderBy?: BugReportOrderByWithRelationInput | BugReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BugReports.
+     */
+    cursor?: BugReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BugReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BugReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BugReports.
+     */
+    distinct?: BugReportScalarFieldEnum | BugReportScalarFieldEnum[]
+  }
+
+  /**
+   * BugReport findFirstOrThrow
+   */
+  export type BugReportFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BugReport
+     */
+    select?: BugReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BugReport
+     */
+    omit?: BugReportOmit<ExtArgs> | null
+    /**
+     * Filter, which BugReport to fetch.
+     */
+    where?: BugReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BugReports to fetch.
+     */
+    orderBy?: BugReportOrderByWithRelationInput | BugReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BugReports.
+     */
+    cursor?: BugReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BugReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BugReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BugReports.
+     */
+    distinct?: BugReportScalarFieldEnum | BugReportScalarFieldEnum[]
+  }
+
+  /**
+   * BugReport findMany
+   */
+  export type BugReportFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BugReport
+     */
+    select?: BugReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BugReport
+     */
+    omit?: BugReportOmit<ExtArgs> | null
+    /**
+     * Filter, which BugReports to fetch.
+     */
+    where?: BugReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BugReports to fetch.
+     */
+    orderBy?: BugReportOrderByWithRelationInput | BugReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BugReports.
+     */
+    cursor?: BugReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BugReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BugReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BugReports.
+     */
+    distinct?: BugReportScalarFieldEnum | BugReportScalarFieldEnum[]
+  }
+
+  /**
+   * BugReport create
+   */
+  export type BugReportCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BugReport
+     */
+    select?: BugReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BugReport
+     */
+    omit?: BugReportOmit<ExtArgs> | null
+    /**
+     * The data needed to create a BugReport.
+     */
+    data: XOR<BugReportCreateInput, BugReportUncheckedCreateInput>
+  }
+
+  /**
+   * BugReport createMany
+   */
+  export type BugReportCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BugReports.
+     */
+    data: BugReportCreateManyInput | BugReportCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BugReport update
+   */
+  export type BugReportUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BugReport
+     */
+    select?: BugReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BugReport
+     */
+    omit?: BugReportOmit<ExtArgs> | null
+    /**
+     * The data needed to update a BugReport.
+     */
+    data: XOR<BugReportUpdateInput, BugReportUncheckedUpdateInput>
+    /**
+     * Choose, which BugReport to update.
+     */
+    where: BugReportWhereUniqueInput
+  }
+
+  /**
+   * BugReport updateMany
+   */
+  export type BugReportUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BugReports.
+     */
+    data: XOR<BugReportUpdateManyMutationInput, BugReportUncheckedUpdateManyInput>
+    /**
+     * Filter which BugReports to update
+     */
+    where?: BugReportWhereInput
+    /**
+     * Limit how many BugReports to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BugReport upsert
+   */
+  export type BugReportUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BugReport
+     */
+    select?: BugReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BugReport
+     */
+    omit?: BugReportOmit<ExtArgs> | null
+    /**
+     * The filter to search for the BugReport to update in case it exists.
+     */
+    where: BugReportWhereUniqueInput
+    /**
+     * In case the BugReport found by the `where` argument doesn't exist, create a new BugReport with this data.
+     */
+    create: XOR<BugReportCreateInput, BugReportUncheckedCreateInput>
+    /**
+     * In case the BugReport was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BugReportUpdateInput, BugReportUncheckedUpdateInput>
+  }
+
+  /**
+   * BugReport delete
+   */
+  export type BugReportDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BugReport
+     */
+    select?: BugReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BugReport
+     */
+    omit?: BugReportOmit<ExtArgs> | null
+    /**
+     * Filter which BugReport to delete.
+     */
+    where: BugReportWhereUniqueInput
+  }
+
+  /**
+   * BugReport deleteMany
+   */
+  export type BugReportDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BugReports to delete
+     */
+    where?: BugReportWhereInput
+    /**
+     * Limit how many BugReports to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BugReport without action
+   */
+  export type BugReportDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BugReport
+     */
+    select?: BugReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BugReport
+     */
+    omit?: BugReportOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CabinetTemplate
+   */
+
+  export type AggregateCabinetTemplate = {
+    _count: CabinetTemplateCountAggregateOutputType | null
+    _avg: CabinetTemplateAvgAggregateOutputType | null
+    _sum: CabinetTemplateSumAggregateOutputType | null
+    _min: CabinetTemplateMinAggregateOutputType | null
+    _max: CabinetTemplateMaxAggregateOutputType | null
+  }
+
+  export type CabinetTemplateAvgAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+  }
+
+  export type CabinetTemplateSumAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+  }
+
+  export type CabinetTemplateMinAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    name: string | null
+    body: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CabinetTemplateMaxAggregateOutputType = {
+    id: number | null
+    cabinetid: number | null
+    name: string | null
+    body: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CabinetTemplateCountAggregateOutputType = {
+    id: number
+    cabinetid: number
+    name: number
+    body: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CabinetTemplateAvgAggregateInputType = {
+    id?: true
+    cabinetid?: true
+  }
+
+  export type CabinetTemplateSumAggregateInputType = {
+    id?: true
+    cabinetid?: true
+  }
+
+  export type CabinetTemplateMinAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    name?: true
+    body?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CabinetTemplateMaxAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    name?: true
+    body?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CabinetTemplateCountAggregateInputType = {
+    id?: true
+    cabinetid?: true
+    name?: true
+    body?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CabinetTemplateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CabinetTemplate to aggregate.
+     */
+    where?: CabinetTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CabinetTemplates to fetch.
+     */
+    orderBy?: CabinetTemplateOrderByWithRelationInput | CabinetTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CabinetTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CabinetTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CabinetTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CabinetTemplates
+    **/
+    _count?: true | CabinetTemplateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CabinetTemplateAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CabinetTemplateSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CabinetTemplateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CabinetTemplateMaxAggregateInputType
+  }
+
+  export type GetCabinetTemplateAggregateType<T extends CabinetTemplateAggregateArgs> = {
+        [P in keyof T & keyof AggregateCabinetTemplate]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCabinetTemplate[P]>
+      : GetScalarType<T[P], AggregateCabinetTemplate[P]>
+  }
+
+
+
+
+  export type CabinetTemplateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CabinetTemplateWhereInput
+    orderBy?: CabinetTemplateOrderByWithAggregationInput | CabinetTemplateOrderByWithAggregationInput[]
+    by: CabinetTemplateScalarFieldEnum[] | CabinetTemplateScalarFieldEnum
+    having?: CabinetTemplateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CabinetTemplateCountAggregateInputType | true
+    _avg?: CabinetTemplateAvgAggregateInputType
+    _sum?: CabinetTemplateSumAggregateInputType
+    _min?: CabinetTemplateMinAggregateInputType
+    _max?: CabinetTemplateMaxAggregateInputType
+  }
+
+  export type CabinetTemplateGroupByOutputType = {
+    id: number
+    cabinetid: number
+    name: string
+    body: string
+    createdAt: Date
+    updatedAt: Date
+    _count: CabinetTemplateCountAggregateOutputType | null
+    _avg: CabinetTemplateAvgAggregateOutputType | null
+    _sum: CabinetTemplateSumAggregateOutputType | null
+    _min: CabinetTemplateMinAggregateOutputType | null
+    _max: CabinetTemplateMaxAggregateOutputType | null
+  }
+
+  type GetCabinetTemplateGroupByPayload<T extends CabinetTemplateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CabinetTemplateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CabinetTemplateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CabinetTemplateGroupByOutputType[P]>
+            : GetScalarType<T[P], CabinetTemplateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CabinetTemplateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    cabinetid?: boolean
+    name?: boolean
+    body?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["cabinetTemplate"]>
+
+
+
+  export type CabinetTemplateSelectScalar = {
+    id?: boolean
+    cabinetid?: boolean
+    name?: boolean
+    body?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CabinetTemplateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cabinetid" | "name" | "body" | "createdAt" | "updatedAt", ExtArgs["result"]["cabinetTemplate"]>
+
+  export type $CabinetTemplatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CabinetTemplate"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      cabinetid: number
+      name: string
+      body: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["cabinetTemplate"]>
+    composites: {}
+  }
+
+  type CabinetTemplateGetPayload<S extends boolean | null | undefined | CabinetTemplateDefaultArgs> = $Result.GetResult<Prisma.$CabinetTemplatePayload, S>
+
+  type CabinetTemplateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CabinetTemplateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CabinetTemplateCountAggregateInputType | true
+    }
+
+  export interface CabinetTemplateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CabinetTemplate'], meta: { name: 'CabinetTemplate' } }
+    /**
+     * Find zero or one CabinetTemplate that matches the filter.
+     * @param {CabinetTemplateFindUniqueArgs} args - Arguments to find a CabinetTemplate
+     * @example
+     * // Get one CabinetTemplate
+     * const cabinetTemplate = await prisma.cabinetTemplate.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CabinetTemplateFindUniqueArgs>(args: SelectSubset<T, CabinetTemplateFindUniqueArgs<ExtArgs>>): Prisma__CabinetTemplateClient<$Result.GetResult<Prisma.$CabinetTemplatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CabinetTemplate that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CabinetTemplateFindUniqueOrThrowArgs} args - Arguments to find a CabinetTemplate
+     * @example
+     * // Get one CabinetTemplate
+     * const cabinetTemplate = await prisma.cabinetTemplate.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CabinetTemplateFindUniqueOrThrowArgs>(args: SelectSubset<T, CabinetTemplateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CabinetTemplateClient<$Result.GetResult<Prisma.$CabinetTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CabinetTemplate that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabinetTemplateFindFirstArgs} args - Arguments to find a CabinetTemplate
+     * @example
+     * // Get one CabinetTemplate
+     * const cabinetTemplate = await prisma.cabinetTemplate.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CabinetTemplateFindFirstArgs>(args?: SelectSubset<T, CabinetTemplateFindFirstArgs<ExtArgs>>): Prisma__CabinetTemplateClient<$Result.GetResult<Prisma.$CabinetTemplatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CabinetTemplate that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabinetTemplateFindFirstOrThrowArgs} args - Arguments to find a CabinetTemplate
+     * @example
+     * // Get one CabinetTemplate
+     * const cabinetTemplate = await prisma.cabinetTemplate.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CabinetTemplateFindFirstOrThrowArgs>(args?: SelectSubset<T, CabinetTemplateFindFirstOrThrowArgs<ExtArgs>>): Prisma__CabinetTemplateClient<$Result.GetResult<Prisma.$CabinetTemplatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CabinetTemplates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabinetTemplateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CabinetTemplates
+     * const cabinetTemplates = await prisma.cabinetTemplate.findMany()
+     * 
+     * // Get first 10 CabinetTemplates
+     * const cabinetTemplates = await prisma.cabinetTemplate.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const cabinetTemplateWithIdOnly = await prisma.cabinetTemplate.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CabinetTemplateFindManyArgs>(args?: SelectSubset<T, CabinetTemplateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CabinetTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CabinetTemplate.
+     * @param {CabinetTemplateCreateArgs} args - Arguments to create a CabinetTemplate.
+     * @example
+     * // Create one CabinetTemplate
+     * const CabinetTemplate = await prisma.cabinetTemplate.create({
+     *   data: {
+     *     // ... data to create a CabinetTemplate
+     *   }
+     * })
+     * 
+     */
+    create<T extends CabinetTemplateCreateArgs>(args: SelectSubset<T, CabinetTemplateCreateArgs<ExtArgs>>): Prisma__CabinetTemplateClient<$Result.GetResult<Prisma.$CabinetTemplatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CabinetTemplates.
+     * @param {CabinetTemplateCreateManyArgs} args - Arguments to create many CabinetTemplates.
+     * @example
+     * // Create many CabinetTemplates
+     * const cabinetTemplate = await prisma.cabinetTemplate.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CabinetTemplateCreateManyArgs>(args?: SelectSubset<T, CabinetTemplateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a CabinetTemplate.
+     * @param {CabinetTemplateDeleteArgs} args - Arguments to delete one CabinetTemplate.
+     * @example
+     * // Delete one CabinetTemplate
+     * const CabinetTemplate = await prisma.cabinetTemplate.delete({
+     *   where: {
+     *     // ... filter to delete one CabinetTemplate
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CabinetTemplateDeleteArgs>(args: SelectSubset<T, CabinetTemplateDeleteArgs<ExtArgs>>): Prisma__CabinetTemplateClient<$Result.GetResult<Prisma.$CabinetTemplatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CabinetTemplate.
+     * @param {CabinetTemplateUpdateArgs} args - Arguments to update one CabinetTemplate.
+     * @example
+     * // Update one CabinetTemplate
+     * const cabinetTemplate = await prisma.cabinetTemplate.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CabinetTemplateUpdateArgs>(args: SelectSubset<T, CabinetTemplateUpdateArgs<ExtArgs>>): Prisma__CabinetTemplateClient<$Result.GetResult<Prisma.$CabinetTemplatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CabinetTemplates.
+     * @param {CabinetTemplateDeleteManyArgs} args - Arguments to filter CabinetTemplates to delete.
+     * @example
+     * // Delete a few CabinetTemplates
+     * const { count } = await prisma.cabinetTemplate.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CabinetTemplateDeleteManyArgs>(args?: SelectSubset<T, CabinetTemplateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CabinetTemplates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabinetTemplateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CabinetTemplates
+     * const cabinetTemplate = await prisma.cabinetTemplate.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CabinetTemplateUpdateManyArgs>(args: SelectSubset<T, CabinetTemplateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one CabinetTemplate.
+     * @param {CabinetTemplateUpsertArgs} args - Arguments to update or create a CabinetTemplate.
+     * @example
+     * // Update or create a CabinetTemplate
+     * const cabinetTemplate = await prisma.cabinetTemplate.upsert({
+     *   create: {
+     *     // ... data to create a CabinetTemplate
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CabinetTemplate we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CabinetTemplateUpsertArgs>(args: SelectSubset<T, CabinetTemplateUpsertArgs<ExtArgs>>): Prisma__CabinetTemplateClient<$Result.GetResult<Prisma.$CabinetTemplatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CabinetTemplates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabinetTemplateCountArgs} args - Arguments to filter CabinetTemplates to count.
+     * @example
+     * // Count the number of CabinetTemplates
+     * const count = await prisma.cabinetTemplate.count({
+     *   where: {
+     *     // ... the filter for the CabinetTemplates we want to count
+     *   }
+     * })
+    **/
+    count<T extends CabinetTemplateCountArgs>(
+      args?: Subset<T, CabinetTemplateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CabinetTemplateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CabinetTemplate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabinetTemplateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CabinetTemplateAggregateArgs>(args: Subset<T, CabinetTemplateAggregateArgs>): Prisma.PrismaPromise<GetCabinetTemplateAggregateType<T>>
+
+    /**
+     * Group by CabinetTemplate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CabinetTemplateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CabinetTemplateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CabinetTemplateGroupByArgs['orderBy'] }
+        : { orderBy?: CabinetTemplateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CabinetTemplateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCabinetTemplateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CabinetTemplate model
+   */
+  readonly fields: CabinetTemplateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CabinetTemplate.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CabinetTemplateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CabinetTemplate model
+   */
+  interface CabinetTemplateFieldRefs {
+    readonly id: FieldRef<"CabinetTemplate", 'Int'>
+    readonly cabinetid: FieldRef<"CabinetTemplate", 'Int'>
+    readonly name: FieldRef<"CabinetTemplate", 'String'>
+    readonly body: FieldRef<"CabinetTemplate", 'String'>
+    readonly createdAt: FieldRef<"CabinetTemplate", 'DateTime'>
+    readonly updatedAt: FieldRef<"CabinetTemplate", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CabinetTemplate findUnique
+   */
+  export type CabinetTemplateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabinetTemplate
+     */
+    select?: CabinetTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabinetTemplate
+     */
+    omit?: CabinetTemplateOmit<ExtArgs> | null
+    /**
+     * Filter, which CabinetTemplate to fetch.
+     */
+    where: CabinetTemplateWhereUniqueInput
+  }
+
+  /**
+   * CabinetTemplate findUniqueOrThrow
+   */
+  export type CabinetTemplateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabinetTemplate
+     */
+    select?: CabinetTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabinetTemplate
+     */
+    omit?: CabinetTemplateOmit<ExtArgs> | null
+    /**
+     * Filter, which CabinetTemplate to fetch.
+     */
+    where: CabinetTemplateWhereUniqueInput
+  }
+
+  /**
+   * CabinetTemplate findFirst
+   */
+  export type CabinetTemplateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabinetTemplate
+     */
+    select?: CabinetTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabinetTemplate
+     */
+    omit?: CabinetTemplateOmit<ExtArgs> | null
+    /**
+     * Filter, which CabinetTemplate to fetch.
+     */
+    where?: CabinetTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CabinetTemplates to fetch.
+     */
+    orderBy?: CabinetTemplateOrderByWithRelationInput | CabinetTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CabinetTemplates.
+     */
+    cursor?: CabinetTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CabinetTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CabinetTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CabinetTemplates.
+     */
+    distinct?: CabinetTemplateScalarFieldEnum | CabinetTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * CabinetTemplate findFirstOrThrow
+   */
+  export type CabinetTemplateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabinetTemplate
+     */
+    select?: CabinetTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabinetTemplate
+     */
+    omit?: CabinetTemplateOmit<ExtArgs> | null
+    /**
+     * Filter, which CabinetTemplate to fetch.
+     */
+    where?: CabinetTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CabinetTemplates to fetch.
+     */
+    orderBy?: CabinetTemplateOrderByWithRelationInput | CabinetTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CabinetTemplates.
+     */
+    cursor?: CabinetTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CabinetTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CabinetTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CabinetTemplates.
+     */
+    distinct?: CabinetTemplateScalarFieldEnum | CabinetTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * CabinetTemplate findMany
+   */
+  export type CabinetTemplateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabinetTemplate
+     */
+    select?: CabinetTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabinetTemplate
+     */
+    omit?: CabinetTemplateOmit<ExtArgs> | null
+    /**
+     * Filter, which CabinetTemplates to fetch.
+     */
+    where?: CabinetTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CabinetTemplates to fetch.
+     */
+    orderBy?: CabinetTemplateOrderByWithRelationInput | CabinetTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CabinetTemplates.
+     */
+    cursor?: CabinetTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CabinetTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CabinetTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CabinetTemplates.
+     */
+    distinct?: CabinetTemplateScalarFieldEnum | CabinetTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * CabinetTemplate create
+   */
+  export type CabinetTemplateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabinetTemplate
+     */
+    select?: CabinetTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabinetTemplate
+     */
+    omit?: CabinetTemplateOmit<ExtArgs> | null
+    /**
+     * The data needed to create a CabinetTemplate.
+     */
+    data: XOR<CabinetTemplateCreateInput, CabinetTemplateUncheckedCreateInput>
+  }
+
+  /**
+   * CabinetTemplate createMany
+   */
+  export type CabinetTemplateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CabinetTemplates.
+     */
+    data: CabinetTemplateCreateManyInput | CabinetTemplateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CabinetTemplate update
+   */
+  export type CabinetTemplateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabinetTemplate
+     */
+    select?: CabinetTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabinetTemplate
+     */
+    omit?: CabinetTemplateOmit<ExtArgs> | null
+    /**
+     * The data needed to update a CabinetTemplate.
+     */
+    data: XOR<CabinetTemplateUpdateInput, CabinetTemplateUncheckedUpdateInput>
+    /**
+     * Choose, which CabinetTemplate to update.
+     */
+    where: CabinetTemplateWhereUniqueInput
+  }
+
+  /**
+   * CabinetTemplate updateMany
+   */
+  export type CabinetTemplateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CabinetTemplates.
+     */
+    data: XOR<CabinetTemplateUpdateManyMutationInput, CabinetTemplateUncheckedUpdateManyInput>
+    /**
+     * Filter which CabinetTemplates to update
+     */
+    where?: CabinetTemplateWhereInput
+    /**
+     * Limit how many CabinetTemplates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CabinetTemplate upsert
+   */
+  export type CabinetTemplateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabinetTemplate
+     */
+    select?: CabinetTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabinetTemplate
+     */
+    omit?: CabinetTemplateOmit<ExtArgs> | null
+    /**
+     * The filter to search for the CabinetTemplate to update in case it exists.
+     */
+    where: CabinetTemplateWhereUniqueInput
+    /**
+     * In case the CabinetTemplate found by the `where` argument doesn't exist, create a new CabinetTemplate with this data.
+     */
+    create: XOR<CabinetTemplateCreateInput, CabinetTemplateUncheckedCreateInput>
+    /**
+     * In case the CabinetTemplate was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CabinetTemplateUpdateInput, CabinetTemplateUncheckedUpdateInput>
+  }
+
+  /**
+   * CabinetTemplate delete
+   */
+  export type CabinetTemplateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabinetTemplate
+     */
+    select?: CabinetTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabinetTemplate
+     */
+    omit?: CabinetTemplateOmit<ExtArgs> | null
+    /**
+     * Filter which CabinetTemplate to delete.
+     */
+    where: CabinetTemplateWhereUniqueInput
+  }
+
+  /**
+   * CabinetTemplate deleteMany
+   */
+  export type CabinetTemplateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CabinetTemplates to delete
+     */
+    where?: CabinetTemplateWhereInput
+    /**
+     * Limit how many CabinetTemplates to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CabinetTemplate without action
+   */
+  export type CabinetTemplateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CabinetTemplate
+     */
+    select?: CabinetTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CabinetTemplate
+     */
+    omit?: CabinetTemplateOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -11123,7 +14440,8 @@ export namespace Prisma {
     approxTimeMarker: 'approxTimeMarker',
     emptyStayMarker: 'emptyStayMarker',
     cleaningHeader: 'cleaningHeader',
-    cleaningFooter: 'cleaningFooter'
+    cleaningFooter: 'cleaningFooter',
+    balance: 'balance'
   };
 
   export type CabinetScalarFieldEnum = (typeof CabinetScalarFieldEnum)[keyof typeof CabinetScalarFieldEnum]
@@ -11236,6 +14554,7 @@ export namespace Prisma {
     maid_id: 'maid_id',
     review: 'review',
     channel: 'channel',
+    deposit_payment_link: 'deposit_payment_link',
     link: 'link'
   };
 
@@ -11258,6 +14577,60 @@ export namespace Prisma {
   };
 
   export type CleaningScheduleScalarFieldEnum = (typeof CleaningScheduleScalarFieldEnum)[keyof typeof CleaningScheduleScalarFieldEnum]
+
+
+  export const UnprocessedBookingScalarFieldEnum: {
+    id: 'id',
+    cabinetid: 'cabinetid',
+    bookingId: 'bookingId',
+    action: 'action',
+    failReason: 'failReason',
+    failMessage: 'failMessage',
+    realtyId: 'realtyId',
+    beginDate: 'beginDate',
+    endDate: 'endDate',
+    bookingStatus: 'bookingStatus',
+    source: 'source',
+    amount: 'amount',
+    notes: 'notes',
+    prepayment: 'prepayment',
+    balanceToBePaid: 'balanceToBePaid',
+    pricePerDay: 'pricePerDay',
+    deposit: 'deposit',
+    clientId: 'clientId',
+    fio: 'fio',
+    email: 'email',
+    phone: 'phone',
+    additionalPhone: 'additionalPhone',
+    resolved: 'resolved',
+    createdAt: 'createdAt'
+  };
+
+  export type UnprocessedBookingScalarFieldEnum = (typeof UnprocessedBookingScalarFieldEnum)[keyof typeof UnprocessedBookingScalarFieldEnum]
+
+
+  export const BugReportScalarFieldEnum: {
+    id: 'id',
+    cabinetid: 'cabinetid',
+    userId: 'userId',
+    message: 'message',
+    page: 'page',
+    createdAt: 'createdAt'
+  };
+
+  export type BugReportScalarFieldEnum = (typeof BugReportScalarFieldEnum)[keyof typeof BugReportScalarFieldEnum]
+
+
+  export const CabinetTemplateScalarFieldEnum: {
+    id: 'id',
+    cabinetid: 'cabinetid',
+    name: 'name',
+    body: 'body',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CabinetTemplateScalarFieldEnum = (typeof CabinetTemplateScalarFieldEnum)[keyof typeof CabinetTemplateScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -11385,6 +14758,7 @@ export namespace Prisma {
     contract_id: 'contract_id',
     contract_link: 'contract_link',
     channel: 'channel',
+    deposit_payment_link: 'deposit_payment_link',
     link: 'link'
   };
 
@@ -11399,6 +14773,40 @@ export namespace Prisma {
   };
 
   export type CleaningScheduleOrderByRelevanceFieldEnum = (typeof CleaningScheduleOrderByRelevanceFieldEnum)[keyof typeof CleaningScheduleOrderByRelevanceFieldEnum]
+
+
+  export const UnprocessedBookingOrderByRelevanceFieldEnum: {
+    action: 'action',
+    failReason: 'failReason',
+    failMessage: 'failMessage',
+    beginDate: 'beginDate',
+    endDate: 'endDate',
+    bookingStatus: 'bookingStatus',
+    source: 'source',
+    notes: 'notes',
+    fio: 'fio',
+    email: 'email',
+    phone: 'phone',
+    additionalPhone: 'additionalPhone'
+  };
+
+  export type UnprocessedBookingOrderByRelevanceFieldEnum = (typeof UnprocessedBookingOrderByRelevanceFieldEnum)[keyof typeof UnprocessedBookingOrderByRelevanceFieldEnum]
+
+
+  export const BugReportOrderByRelevanceFieldEnum: {
+    message: 'message',
+    page: 'page'
+  };
+
+  export type BugReportOrderByRelevanceFieldEnum = (typeof BugReportOrderByRelevanceFieldEnum)[keyof typeof BugReportOrderByRelevanceFieldEnum]
+
+
+  export const CabinetTemplateOrderByRelevanceFieldEnum: {
+    name: 'name',
+    body: 'body'
+  };
+
+  export type CabinetTemplateOrderByRelevanceFieldEnum = (typeof CabinetTemplateOrderByRelevanceFieldEnum)[keyof typeof CabinetTemplateOrderByRelevanceFieldEnum]
 
 
   /**
@@ -11470,6 +14878,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
    * Reference to a field of type 'LogStatus'
    */
   export type EnumLogStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LogStatus'>
@@ -11480,13 +14895,6 @@ export namespace Prisma {
    * Reference to a field of type 'Thumbler'
    */
   export type EnumThumblerFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Thumbler'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 
@@ -11515,6 +14923,13 @@ export namespace Prisma {
    * Reference to a field of type 'BookStatus'
    */
   export type EnumBookStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BookStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
   /**
    * Deep Input Types
@@ -11620,6 +15035,7 @@ export namespace Prisma {
     emptyStayMarker?: StringNullableFilter<"Cabinet"> | string | null
     cleaningHeader?: StringNullableFilter<"Cabinet"> | string | null
     cleaningFooter?: StringNullableFilter<"Cabinet"> | string | null
+    balance?: FloatFilter<"Cabinet"> | number
   }
 
   export type CabinetOrderByWithRelationInput = {
@@ -11640,6 +15056,7 @@ export namespace Prisma {
     emptyStayMarker?: SortOrderInput | SortOrder
     cleaningHeader?: SortOrderInput | SortOrder
     cleaningFooter?: SortOrderInput | SortOrder
+    balance?: SortOrder
     _relevance?: CabinetOrderByRelevanceInput
   }
 
@@ -11664,6 +15081,7 @@ export namespace Prisma {
     emptyStayMarker?: StringNullableFilter<"Cabinet"> | string | null
     cleaningHeader?: StringNullableFilter<"Cabinet"> | string | null
     cleaningFooter?: StringNullableFilter<"Cabinet"> | string | null
+    balance?: FloatFilter<"Cabinet"> | number
   }, "id" | "realtycalendarid">
 
   export type CabinetOrderByWithAggregationInput = {
@@ -11684,6 +15102,7 @@ export namespace Prisma {
     emptyStayMarker?: SortOrderInput | SortOrder
     cleaningHeader?: SortOrderInput | SortOrder
     cleaningFooter?: SortOrderInput | SortOrder
+    balance?: SortOrder
     _count?: CabinetCountOrderByAggregateInput
     _avg?: CabinetAvgOrderByAggregateInput
     _max?: CabinetMaxOrderByAggregateInput
@@ -11712,6 +15131,7 @@ export namespace Prisma {
     emptyStayMarker?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     cleaningHeader?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     cleaningFooter?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    balance?: FloatWithAggregatesFilter<"Cabinet"> | number
   }
 
   export type LogsWhereInput = {
@@ -12140,6 +15560,7 @@ export namespace Prisma {
     maid_id?: IntNullableFilter<"Bookings"> | number | null
     review?: IntNullableFilter<"Bookings"> | number | null
     channel?: StringNullableFilter<"Bookings"> | string | null
+    deposit_payment_link?: StringNullableFilter<"Bookings"> | string | null
     link?: StringFilter<"Bookings"> | string
   }
 
@@ -12173,6 +15594,7 @@ export namespace Prisma {
     maid_id?: SortOrderInput | SortOrder
     review?: SortOrderInput | SortOrder
     channel?: SortOrderInput | SortOrder
+    deposit_payment_link?: SortOrderInput | SortOrder
     link?: SortOrder
     _relevance?: BookingsOrderByRelevanceInput
   }
@@ -12210,6 +15632,7 @@ export namespace Prisma {
     maid_id?: IntNullableFilter<"Bookings"> | number | null
     review?: IntNullableFilter<"Bookings"> | number | null
     channel?: StringNullableFilter<"Bookings"> | string | null
+    deposit_payment_link?: StringNullableFilter<"Bookings"> | string | null
     link?: StringFilter<"Bookings"> | string
   }, "id">
 
@@ -12243,6 +15666,7 @@ export namespace Prisma {
     maid_id?: SortOrderInput | SortOrder
     review?: SortOrderInput | SortOrder
     channel?: SortOrderInput | SortOrder
+    deposit_payment_link?: SortOrderInput | SortOrder
     link?: SortOrder
     _count?: BookingsCountOrderByAggregateInput
     _avg?: BookingsAvgOrderByAggregateInput
@@ -12284,6 +15708,7 @@ export namespace Prisma {
     maid_id?: IntNullableWithAggregatesFilter<"Bookings"> | number | null
     review?: IntNullableWithAggregatesFilter<"Bookings"> | number | null
     channel?: StringNullableWithAggregatesFilter<"Bookings"> | string | null
+    deposit_payment_link?: StringNullableWithAggregatesFilter<"Bookings"> | string | null
     link?: StringWithAggregatesFilter<"Bookings"> | string
   }
 
@@ -12376,6 +15801,276 @@ export namespace Prisma {
     included?: EnumThumblerWithAggregatesFilter<"CleaningSchedule"> | $Enums.Thumbler
     createdAt?: DateTimeWithAggregatesFilter<"CleaningSchedule"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"CleaningSchedule"> | Date | string
+  }
+
+  export type UnprocessedBookingWhereInput = {
+    AND?: UnprocessedBookingWhereInput | UnprocessedBookingWhereInput[]
+    OR?: UnprocessedBookingWhereInput[]
+    NOT?: UnprocessedBookingWhereInput | UnprocessedBookingWhereInput[]
+    id?: IntFilter<"UnprocessedBooking"> | number
+    cabinetid?: IntFilter<"UnprocessedBooking"> | number
+    bookingId?: IntFilter<"UnprocessedBooking"> | number
+    action?: StringFilter<"UnprocessedBooking"> | string
+    failReason?: StringFilter<"UnprocessedBooking"> | string
+    failMessage?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    realtyId?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    beginDate?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    endDate?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    bookingStatus?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    source?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    amount?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    notes?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    prepayment?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    balanceToBePaid?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    pricePerDay?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    deposit?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    clientId?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    fio?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    email?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    phone?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    additionalPhone?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    resolved?: BoolFilter<"UnprocessedBooking"> | boolean
+    createdAt?: DateTimeFilter<"UnprocessedBooking"> | Date | string
+  }
+
+  export type UnprocessedBookingOrderByWithRelationInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    bookingId?: SortOrder
+    action?: SortOrder
+    failReason?: SortOrder
+    failMessage?: SortOrderInput | SortOrder
+    realtyId?: SortOrderInput | SortOrder
+    beginDate?: SortOrderInput | SortOrder
+    endDate?: SortOrderInput | SortOrder
+    bookingStatus?: SortOrderInput | SortOrder
+    source?: SortOrderInput | SortOrder
+    amount?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    prepayment?: SortOrderInput | SortOrder
+    balanceToBePaid?: SortOrderInput | SortOrder
+    pricePerDay?: SortOrderInput | SortOrder
+    deposit?: SortOrderInput | SortOrder
+    clientId?: SortOrderInput | SortOrder
+    fio?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    additionalPhone?: SortOrderInput | SortOrder
+    resolved?: SortOrder
+    createdAt?: SortOrder
+    _relevance?: UnprocessedBookingOrderByRelevanceInput
+  }
+
+  export type UnprocessedBookingWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: UnprocessedBookingWhereInput | UnprocessedBookingWhereInput[]
+    OR?: UnprocessedBookingWhereInput[]
+    NOT?: UnprocessedBookingWhereInput | UnprocessedBookingWhereInput[]
+    cabinetid?: IntFilter<"UnprocessedBooking"> | number
+    bookingId?: IntFilter<"UnprocessedBooking"> | number
+    action?: StringFilter<"UnprocessedBooking"> | string
+    failReason?: StringFilter<"UnprocessedBooking"> | string
+    failMessage?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    realtyId?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    beginDate?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    endDate?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    bookingStatus?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    source?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    amount?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    notes?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    prepayment?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    balanceToBePaid?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    pricePerDay?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    deposit?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    clientId?: IntNullableFilter<"UnprocessedBooking"> | number | null
+    fio?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    email?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    phone?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    additionalPhone?: StringNullableFilter<"UnprocessedBooking"> | string | null
+    resolved?: BoolFilter<"UnprocessedBooking"> | boolean
+    createdAt?: DateTimeFilter<"UnprocessedBooking"> | Date | string
+  }, "id">
+
+  export type UnprocessedBookingOrderByWithAggregationInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    bookingId?: SortOrder
+    action?: SortOrder
+    failReason?: SortOrder
+    failMessage?: SortOrderInput | SortOrder
+    realtyId?: SortOrderInput | SortOrder
+    beginDate?: SortOrderInput | SortOrder
+    endDate?: SortOrderInput | SortOrder
+    bookingStatus?: SortOrderInput | SortOrder
+    source?: SortOrderInput | SortOrder
+    amount?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    prepayment?: SortOrderInput | SortOrder
+    balanceToBePaid?: SortOrderInput | SortOrder
+    pricePerDay?: SortOrderInput | SortOrder
+    deposit?: SortOrderInput | SortOrder
+    clientId?: SortOrderInput | SortOrder
+    fio?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    additionalPhone?: SortOrderInput | SortOrder
+    resolved?: SortOrder
+    createdAt?: SortOrder
+    _count?: UnprocessedBookingCountOrderByAggregateInput
+    _avg?: UnprocessedBookingAvgOrderByAggregateInput
+    _max?: UnprocessedBookingMaxOrderByAggregateInput
+    _min?: UnprocessedBookingMinOrderByAggregateInput
+    _sum?: UnprocessedBookingSumOrderByAggregateInput
+  }
+
+  export type UnprocessedBookingScalarWhereWithAggregatesInput = {
+    AND?: UnprocessedBookingScalarWhereWithAggregatesInput | UnprocessedBookingScalarWhereWithAggregatesInput[]
+    OR?: UnprocessedBookingScalarWhereWithAggregatesInput[]
+    NOT?: UnprocessedBookingScalarWhereWithAggregatesInput | UnprocessedBookingScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"UnprocessedBooking"> | number
+    cabinetid?: IntWithAggregatesFilter<"UnprocessedBooking"> | number
+    bookingId?: IntWithAggregatesFilter<"UnprocessedBooking"> | number
+    action?: StringWithAggregatesFilter<"UnprocessedBooking"> | string
+    failReason?: StringWithAggregatesFilter<"UnprocessedBooking"> | string
+    failMessage?: StringNullableWithAggregatesFilter<"UnprocessedBooking"> | string | null
+    realtyId?: IntNullableWithAggregatesFilter<"UnprocessedBooking"> | number | null
+    beginDate?: StringNullableWithAggregatesFilter<"UnprocessedBooking"> | string | null
+    endDate?: StringNullableWithAggregatesFilter<"UnprocessedBooking"> | string | null
+    bookingStatus?: StringNullableWithAggregatesFilter<"UnprocessedBooking"> | string | null
+    source?: StringNullableWithAggregatesFilter<"UnprocessedBooking"> | string | null
+    amount?: IntNullableWithAggregatesFilter<"UnprocessedBooking"> | number | null
+    notes?: StringNullableWithAggregatesFilter<"UnprocessedBooking"> | string | null
+    prepayment?: IntNullableWithAggregatesFilter<"UnprocessedBooking"> | number | null
+    balanceToBePaid?: IntNullableWithAggregatesFilter<"UnprocessedBooking"> | number | null
+    pricePerDay?: IntNullableWithAggregatesFilter<"UnprocessedBooking"> | number | null
+    deposit?: IntNullableWithAggregatesFilter<"UnprocessedBooking"> | number | null
+    clientId?: IntNullableWithAggregatesFilter<"UnprocessedBooking"> | number | null
+    fio?: StringNullableWithAggregatesFilter<"UnprocessedBooking"> | string | null
+    email?: StringNullableWithAggregatesFilter<"UnprocessedBooking"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"UnprocessedBooking"> | string | null
+    additionalPhone?: StringNullableWithAggregatesFilter<"UnprocessedBooking"> | string | null
+    resolved?: BoolWithAggregatesFilter<"UnprocessedBooking"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"UnprocessedBooking"> | Date | string
+  }
+
+  export type BugReportWhereInput = {
+    AND?: BugReportWhereInput | BugReportWhereInput[]
+    OR?: BugReportWhereInput[]
+    NOT?: BugReportWhereInput | BugReportWhereInput[]
+    id?: IntFilter<"BugReport"> | number
+    cabinetid?: IntFilter<"BugReport"> | number
+    userId?: IntFilter<"BugReport"> | number
+    message?: StringFilter<"BugReport"> | string
+    page?: StringNullableFilter<"BugReport"> | string | null
+    createdAt?: DateTimeFilter<"BugReport"> | Date | string
+  }
+
+  export type BugReportOrderByWithRelationInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    userId?: SortOrder
+    message?: SortOrder
+    page?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _relevance?: BugReportOrderByRelevanceInput
+  }
+
+  export type BugReportWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: BugReportWhereInput | BugReportWhereInput[]
+    OR?: BugReportWhereInput[]
+    NOT?: BugReportWhereInput | BugReportWhereInput[]
+    cabinetid?: IntFilter<"BugReport"> | number
+    userId?: IntFilter<"BugReport"> | number
+    message?: StringFilter<"BugReport"> | string
+    page?: StringNullableFilter<"BugReport"> | string | null
+    createdAt?: DateTimeFilter<"BugReport"> | Date | string
+  }, "id">
+
+  export type BugReportOrderByWithAggregationInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    userId?: SortOrder
+    message?: SortOrder
+    page?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: BugReportCountOrderByAggregateInput
+    _avg?: BugReportAvgOrderByAggregateInput
+    _max?: BugReportMaxOrderByAggregateInput
+    _min?: BugReportMinOrderByAggregateInput
+    _sum?: BugReportSumOrderByAggregateInput
+  }
+
+  export type BugReportScalarWhereWithAggregatesInput = {
+    AND?: BugReportScalarWhereWithAggregatesInput | BugReportScalarWhereWithAggregatesInput[]
+    OR?: BugReportScalarWhereWithAggregatesInput[]
+    NOT?: BugReportScalarWhereWithAggregatesInput | BugReportScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"BugReport"> | number
+    cabinetid?: IntWithAggregatesFilter<"BugReport"> | number
+    userId?: IntWithAggregatesFilter<"BugReport"> | number
+    message?: StringWithAggregatesFilter<"BugReport"> | string
+    page?: StringNullableWithAggregatesFilter<"BugReport"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"BugReport"> | Date | string
+  }
+
+  export type CabinetTemplateWhereInput = {
+    AND?: CabinetTemplateWhereInput | CabinetTemplateWhereInput[]
+    OR?: CabinetTemplateWhereInput[]
+    NOT?: CabinetTemplateWhereInput | CabinetTemplateWhereInput[]
+    id?: IntFilter<"CabinetTemplate"> | number
+    cabinetid?: IntFilter<"CabinetTemplate"> | number
+    name?: StringFilter<"CabinetTemplate"> | string
+    body?: StringFilter<"CabinetTemplate"> | string
+    createdAt?: DateTimeFilter<"CabinetTemplate"> | Date | string
+    updatedAt?: DateTimeFilter<"CabinetTemplate"> | Date | string
+  }
+
+  export type CabinetTemplateOrderByWithRelationInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    name?: SortOrder
+    body?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _relevance?: CabinetTemplateOrderByRelevanceInput
+  }
+
+  export type CabinetTemplateWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: CabinetTemplateWhereInput | CabinetTemplateWhereInput[]
+    OR?: CabinetTemplateWhereInput[]
+    NOT?: CabinetTemplateWhereInput | CabinetTemplateWhereInput[]
+    cabinetid?: IntFilter<"CabinetTemplate"> | number
+    name?: StringFilter<"CabinetTemplate"> | string
+    body?: StringFilter<"CabinetTemplate"> | string
+    createdAt?: DateTimeFilter<"CabinetTemplate"> | Date | string
+    updatedAt?: DateTimeFilter<"CabinetTemplate"> | Date | string
+  }, "id">
+
+  export type CabinetTemplateOrderByWithAggregationInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    name?: SortOrder
+    body?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CabinetTemplateCountOrderByAggregateInput
+    _avg?: CabinetTemplateAvgOrderByAggregateInput
+    _max?: CabinetTemplateMaxOrderByAggregateInput
+    _min?: CabinetTemplateMinOrderByAggregateInput
+    _sum?: CabinetTemplateSumOrderByAggregateInput
+  }
+
+  export type CabinetTemplateScalarWhereWithAggregatesInput = {
+    AND?: CabinetTemplateScalarWhereWithAggregatesInput | CabinetTemplateScalarWhereWithAggregatesInput[]
+    OR?: CabinetTemplateScalarWhereWithAggregatesInput[]
+    NOT?: CabinetTemplateScalarWhereWithAggregatesInput | CabinetTemplateScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"CabinetTemplate"> | number
+    cabinetid?: IntWithAggregatesFilter<"CabinetTemplate"> | number
+    name?: StringWithAggregatesFilter<"CabinetTemplate"> | string
+    body?: StringWithAggregatesFilter<"CabinetTemplate"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"CabinetTemplate"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CabinetTemplate"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -12480,6 +16175,7 @@ export namespace Prisma {
     emptyStayMarker?: string | null
     cleaningHeader?: string | null
     cleaningFooter?: string | null
+    balance?: number
   }
 
   export type CabinetUncheckedCreateInput = {
@@ -12500,6 +16196,7 @@ export namespace Prisma {
     emptyStayMarker?: string | null
     cleaningHeader?: string | null
     cleaningFooter?: string | null
+    balance?: number
   }
 
   export type CabinetUpdateInput = {
@@ -12519,6 +16216,7 @@ export namespace Prisma {
     emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningHeader?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningFooter?: NullableStringFieldUpdateOperationsInput | string | null
+    balance?: FloatFieldUpdateOperationsInput | number
   }
 
   export type CabinetUncheckedUpdateInput = {
@@ -12539,6 +16237,7 @@ export namespace Prisma {
     emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningHeader?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningFooter?: NullableStringFieldUpdateOperationsInput | string | null
+    balance?: FloatFieldUpdateOperationsInput | number
   }
 
   export type CabinetCreateManyInput = {
@@ -12559,6 +16258,7 @@ export namespace Prisma {
     emptyStayMarker?: string | null
     cleaningHeader?: string | null
     cleaningFooter?: string | null
+    balance?: number
   }
 
   export type CabinetUpdateManyMutationInput = {
@@ -12578,6 +16278,7 @@ export namespace Prisma {
     emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningHeader?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningFooter?: NullableStringFieldUpdateOperationsInput | string | null
+    balance?: FloatFieldUpdateOperationsInput | number
   }
 
   export type CabinetUncheckedUpdateManyInput = {
@@ -12598,6 +16299,7 @@ export namespace Prisma {
     emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningHeader?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningFooter?: NullableStringFieldUpdateOperationsInput | string | null
+    balance?: FloatFieldUpdateOperationsInput | number
   }
 
   export type LogsCreateInput = {
@@ -13054,6 +16756,7 @@ export namespace Prisma {
     maid_id?: number | null
     review?: number | null
     channel?: string | null
+    deposit_payment_link?: string | null
     link: string
   }
 
@@ -13087,6 +16790,7 @@ export namespace Prisma {
     maid_id?: number | null
     review?: number | null
     channel?: string | null
+    deposit_payment_link?: string | null
     link: string
   }
 
@@ -13120,6 +16824,7 @@ export namespace Prisma {
     maid_id?: NullableIntFieldUpdateOperationsInput | number | null
     review?: NullableIntFieldUpdateOperationsInput | number | null
     channel?: NullableStringFieldUpdateOperationsInput | string | null
+    deposit_payment_link?: NullableStringFieldUpdateOperationsInput | string | null
     link?: StringFieldUpdateOperationsInput | string
   }
 
@@ -13153,6 +16858,7 @@ export namespace Prisma {
     maid_id?: NullableIntFieldUpdateOperationsInput | number | null
     review?: NullableIntFieldUpdateOperationsInput | number | null
     channel?: NullableStringFieldUpdateOperationsInput | string | null
+    deposit_payment_link?: NullableStringFieldUpdateOperationsInput | string | null
     link?: StringFieldUpdateOperationsInput | string
   }
 
@@ -13186,6 +16892,7 @@ export namespace Prisma {
     maid_id?: number | null
     review?: number | null
     channel?: string | null
+    deposit_payment_link?: string | null
     link: string
   }
 
@@ -13219,6 +16926,7 @@ export namespace Prisma {
     maid_id?: NullableIntFieldUpdateOperationsInput | number | null
     review?: NullableIntFieldUpdateOperationsInput | number | null
     channel?: NullableStringFieldUpdateOperationsInput | string | null
+    deposit_payment_link?: NullableStringFieldUpdateOperationsInput | string | null
     link?: StringFieldUpdateOperationsInput | string
   }
 
@@ -13252,6 +16960,7 @@ export namespace Prisma {
     maid_id?: NullableIntFieldUpdateOperationsInput | number | null
     review?: NullableIntFieldUpdateOperationsInput | number | null
     channel?: NullableStringFieldUpdateOperationsInput | string | null
+    deposit_payment_link?: NullableStringFieldUpdateOperationsInput | string | null
     link?: StringFieldUpdateOperationsInput | string
   }
 
@@ -13353,6 +17062,312 @@ export namespace Prisma {
     checkout_time?: NullableStringFieldUpdateOperationsInput | string | null
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     included?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UnprocessedBookingCreateInput = {
+    cabinetid: number
+    bookingId: number
+    action: string
+    failReason: string
+    failMessage?: string | null
+    realtyId?: number | null
+    beginDate?: string | null
+    endDate?: string | null
+    bookingStatus?: string | null
+    source?: string | null
+    amount?: number | null
+    notes?: string | null
+    prepayment?: number | null
+    balanceToBePaid?: number | null
+    pricePerDay?: number | null
+    deposit?: number | null
+    clientId?: number | null
+    fio?: string | null
+    email?: string | null
+    phone?: string | null
+    additionalPhone?: string | null
+    resolved?: boolean
+    createdAt?: Date | string
+  }
+
+  export type UnprocessedBookingUncheckedCreateInput = {
+    id?: number
+    cabinetid: number
+    bookingId: number
+    action: string
+    failReason: string
+    failMessage?: string | null
+    realtyId?: number | null
+    beginDate?: string | null
+    endDate?: string | null
+    bookingStatus?: string | null
+    source?: string | null
+    amount?: number | null
+    notes?: string | null
+    prepayment?: number | null
+    balanceToBePaid?: number | null
+    pricePerDay?: number | null
+    deposit?: number | null
+    clientId?: number | null
+    fio?: string | null
+    email?: string | null
+    phone?: string | null
+    additionalPhone?: string | null
+    resolved?: boolean
+    createdAt?: Date | string
+  }
+
+  export type UnprocessedBookingUpdateInput = {
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    bookingId?: IntFieldUpdateOperationsInput | number
+    action?: StringFieldUpdateOperationsInput | string
+    failReason?: StringFieldUpdateOperationsInput | string
+    failMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    realtyId?: NullableIntFieldUpdateOperationsInput | number | null
+    beginDate?: NullableStringFieldUpdateOperationsInput | string | null
+    endDate?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    prepayment?: NullableIntFieldUpdateOperationsInput | number | null
+    balanceToBePaid?: NullableIntFieldUpdateOperationsInput | number | null
+    pricePerDay?: NullableIntFieldUpdateOperationsInput | number | null
+    deposit?: NullableIntFieldUpdateOperationsInput | number | null
+    clientId?: NullableIntFieldUpdateOperationsInput | number | null
+    fio?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    resolved?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UnprocessedBookingUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    bookingId?: IntFieldUpdateOperationsInput | number
+    action?: StringFieldUpdateOperationsInput | string
+    failReason?: StringFieldUpdateOperationsInput | string
+    failMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    realtyId?: NullableIntFieldUpdateOperationsInput | number | null
+    beginDate?: NullableStringFieldUpdateOperationsInput | string | null
+    endDate?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    prepayment?: NullableIntFieldUpdateOperationsInput | number | null
+    balanceToBePaid?: NullableIntFieldUpdateOperationsInput | number | null
+    pricePerDay?: NullableIntFieldUpdateOperationsInput | number | null
+    deposit?: NullableIntFieldUpdateOperationsInput | number | null
+    clientId?: NullableIntFieldUpdateOperationsInput | number | null
+    fio?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    resolved?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UnprocessedBookingCreateManyInput = {
+    id?: number
+    cabinetid: number
+    bookingId: number
+    action: string
+    failReason: string
+    failMessage?: string | null
+    realtyId?: number | null
+    beginDate?: string | null
+    endDate?: string | null
+    bookingStatus?: string | null
+    source?: string | null
+    amount?: number | null
+    notes?: string | null
+    prepayment?: number | null
+    balanceToBePaid?: number | null
+    pricePerDay?: number | null
+    deposit?: number | null
+    clientId?: number | null
+    fio?: string | null
+    email?: string | null
+    phone?: string | null
+    additionalPhone?: string | null
+    resolved?: boolean
+    createdAt?: Date | string
+  }
+
+  export type UnprocessedBookingUpdateManyMutationInput = {
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    bookingId?: IntFieldUpdateOperationsInput | number
+    action?: StringFieldUpdateOperationsInput | string
+    failReason?: StringFieldUpdateOperationsInput | string
+    failMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    realtyId?: NullableIntFieldUpdateOperationsInput | number | null
+    beginDate?: NullableStringFieldUpdateOperationsInput | string | null
+    endDate?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    prepayment?: NullableIntFieldUpdateOperationsInput | number | null
+    balanceToBePaid?: NullableIntFieldUpdateOperationsInput | number | null
+    pricePerDay?: NullableIntFieldUpdateOperationsInput | number | null
+    deposit?: NullableIntFieldUpdateOperationsInput | number | null
+    clientId?: NullableIntFieldUpdateOperationsInput | number | null
+    fio?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    resolved?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UnprocessedBookingUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    bookingId?: IntFieldUpdateOperationsInput | number
+    action?: StringFieldUpdateOperationsInput | string
+    failReason?: StringFieldUpdateOperationsInput | string
+    failMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    realtyId?: NullableIntFieldUpdateOperationsInput | number | null
+    beginDate?: NullableStringFieldUpdateOperationsInput | string | null
+    endDate?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    prepayment?: NullableIntFieldUpdateOperationsInput | number | null
+    balanceToBePaid?: NullableIntFieldUpdateOperationsInput | number | null
+    pricePerDay?: NullableIntFieldUpdateOperationsInput | number | null
+    deposit?: NullableIntFieldUpdateOperationsInput | number | null
+    clientId?: NullableIntFieldUpdateOperationsInput | number | null
+    fio?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    resolved?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BugReportCreateInput = {
+    cabinetid: number
+    userId: number
+    message: string
+    page?: string | null
+    createdAt?: Date | string
+  }
+
+  export type BugReportUncheckedCreateInput = {
+    id?: number
+    cabinetid: number
+    userId: number
+    message: string
+    page?: string | null
+    createdAt?: Date | string
+  }
+
+  export type BugReportUpdateInput = {
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+    page?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BugReportUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+    page?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BugReportCreateManyInput = {
+    id?: number
+    cabinetid: number
+    userId: number
+    message: string
+    page?: string | null
+    createdAt?: Date | string
+  }
+
+  export type BugReportUpdateManyMutationInput = {
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+    page?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BugReportUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+    page?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CabinetTemplateCreateInput = {
+    cabinetid: number
+    name: string
+    body: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CabinetTemplateUncheckedCreateInput = {
+    id?: number
+    cabinetid: number
+    name: string
+    body: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CabinetTemplateUpdateInput = {
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CabinetTemplateUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CabinetTemplateCreateManyInput = {
+    id?: number
+    cabinetid: number
+    name: string
+    body: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CabinetTemplateUpdateManyMutationInput = {
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CabinetTemplateUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cabinetid?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13618,6 +17633,17 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type CabinetOrderByRelevanceInput = {
     fields: CabinetOrderByRelevanceFieldEnum | CabinetOrderByRelevanceFieldEnum[]
     sort: SortOrder
@@ -13642,10 +17668,12 @@ export namespace Prisma {
     emptyStayMarker?: SortOrder
     cleaningHeader?: SortOrder
     cleaningFooter?: SortOrder
+    balance?: SortOrder
   }
 
   export type CabinetAvgOrderByAggregateInput = {
     id?: SortOrder
+    balance?: SortOrder
   }
 
   export type CabinetMaxOrderByAggregateInput = {
@@ -13664,6 +17692,7 @@ export namespace Prisma {
     emptyStayMarker?: SortOrder
     cleaningHeader?: SortOrder
     cleaningFooter?: SortOrder
+    balance?: SortOrder
   }
 
   export type CabinetMinOrderByAggregateInput = {
@@ -13682,10 +17711,12 @@ export namespace Prisma {
     emptyStayMarker?: SortOrder
     cleaningHeader?: SortOrder
     cleaningFooter?: SortOrder
+    balance?: SortOrder
   }
 
   export type CabinetSumOrderByAggregateInput = {
     id?: SortOrder
+    balance?: SortOrder
   }
 
   export type EnumTimezoneWithAggregatesFilter<$PrismaModel = never> = {
@@ -13722,6 +17753,22 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedJsonNullableFilter<$PrismaModel>
     _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type EnumLogStatusFilter<$PrismaModel = never> = {
@@ -13852,17 +17899,6 @@ export namespace Prisma {
     cabinetid?: SortOrder
   }
 
-  export type FloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type MaidsOrderByRelevanceInput = {
     fields: MaidsOrderByRelevanceFieldEnum | MaidsOrderByRelevanceFieldEnum[]
     sort: SortOrder
@@ -13900,22 +17936,6 @@ export namespace Prisma {
     id?: SortOrder
     rating?: SortOrder
     cabinetid?: SortOrder
-  }
-
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -14201,6 +18221,7 @@ export namespace Prisma {
     maid_id?: SortOrder
     review?: SortOrder
     channel?: SortOrder
+    deposit_payment_link?: SortOrder
     link?: SortOrder
   }
 
@@ -14250,6 +18271,7 @@ export namespace Prisma {
     maid_id?: SortOrder
     review?: SortOrder
     channel?: SortOrder
+    deposit_payment_link?: SortOrder
     link?: SortOrder
   }
 
@@ -14283,6 +18305,7 @@ export namespace Prisma {
     maid_id?: SortOrder
     review?: SortOrder
     channel?: SortOrder
+    deposit_payment_link?: SortOrder
     link?: SortOrder
   }
 
@@ -14399,6 +18422,220 @@ export namespace Prisma {
     maid_id?: SortOrder
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type UnprocessedBookingOrderByRelevanceInput = {
+    fields: UnprocessedBookingOrderByRelevanceFieldEnum | UnprocessedBookingOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type UnprocessedBookingCountOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    bookingId?: SortOrder
+    action?: SortOrder
+    failReason?: SortOrder
+    failMessage?: SortOrder
+    realtyId?: SortOrder
+    beginDate?: SortOrder
+    endDate?: SortOrder
+    bookingStatus?: SortOrder
+    source?: SortOrder
+    amount?: SortOrder
+    notes?: SortOrder
+    prepayment?: SortOrder
+    balanceToBePaid?: SortOrder
+    pricePerDay?: SortOrder
+    deposit?: SortOrder
+    clientId?: SortOrder
+    fio?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    additionalPhone?: SortOrder
+    resolved?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UnprocessedBookingAvgOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    bookingId?: SortOrder
+    realtyId?: SortOrder
+    amount?: SortOrder
+    prepayment?: SortOrder
+    balanceToBePaid?: SortOrder
+    pricePerDay?: SortOrder
+    deposit?: SortOrder
+    clientId?: SortOrder
+  }
+
+  export type UnprocessedBookingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    bookingId?: SortOrder
+    action?: SortOrder
+    failReason?: SortOrder
+    failMessage?: SortOrder
+    realtyId?: SortOrder
+    beginDate?: SortOrder
+    endDate?: SortOrder
+    bookingStatus?: SortOrder
+    source?: SortOrder
+    amount?: SortOrder
+    notes?: SortOrder
+    prepayment?: SortOrder
+    balanceToBePaid?: SortOrder
+    pricePerDay?: SortOrder
+    deposit?: SortOrder
+    clientId?: SortOrder
+    fio?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    additionalPhone?: SortOrder
+    resolved?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UnprocessedBookingMinOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    bookingId?: SortOrder
+    action?: SortOrder
+    failReason?: SortOrder
+    failMessage?: SortOrder
+    realtyId?: SortOrder
+    beginDate?: SortOrder
+    endDate?: SortOrder
+    bookingStatus?: SortOrder
+    source?: SortOrder
+    amount?: SortOrder
+    notes?: SortOrder
+    prepayment?: SortOrder
+    balanceToBePaid?: SortOrder
+    pricePerDay?: SortOrder
+    deposit?: SortOrder
+    clientId?: SortOrder
+    fio?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    additionalPhone?: SortOrder
+    resolved?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UnprocessedBookingSumOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    bookingId?: SortOrder
+    realtyId?: SortOrder
+    amount?: SortOrder
+    prepayment?: SortOrder
+    balanceToBePaid?: SortOrder
+    pricePerDay?: SortOrder
+    deposit?: SortOrder
+    clientId?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type BugReportOrderByRelevanceInput = {
+    fields: BugReportOrderByRelevanceFieldEnum | BugReportOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type BugReportCountOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    userId?: SortOrder
+    message?: SortOrder
+    page?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type BugReportAvgOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type BugReportMaxOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    userId?: SortOrder
+    message?: SortOrder
+    page?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type BugReportMinOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    userId?: SortOrder
+    message?: SortOrder
+    page?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type BugReportSumOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type CabinetTemplateOrderByRelevanceInput = {
+    fields: CabinetTemplateOrderByRelevanceFieldEnum | CabinetTemplateOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type CabinetTemplateCountOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    name?: SortOrder
+    body?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CabinetTemplateAvgOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+  }
+
+  export type CabinetTemplateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    name?: SortOrder
+    body?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CabinetTemplateMinOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+    name?: SortOrder
+    body?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CabinetTemplateSumOrderByAggregateInput = {
+    id?: SortOrder
+    cabinetid?: SortOrder
+  }
+
   export type StaffCreateNestedOneWithoutUserInput = {
     create?: XOR<StaffCreateWithoutUserInput, StaffUncheckedCreateWithoutUserInput>
     connectOrCreate?: StaffCreateOrConnectWithoutUserInput
@@ -14467,6 +18704,14 @@ export namespace Prisma {
     set?: $Enums.Timezone
   }
 
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type EnumLogStatusFieldUpdateOperationsInput = {
     set?: $Enums.LogStatus
   }
@@ -14487,14 +18732,6 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutStaffInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutStaffInput, UserUpdateWithoutStaffInput>, UserUncheckedUpdateWithoutStaffInput>
-  }
-
-  export type FloatFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type ObjectPhotoCreateNestedManyWithoutObjectsInput = {
@@ -14579,6 +18816,10 @@ export namespace Prisma {
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -14812,6 +19053,22 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type NestedEnumLogStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.LogStatus | EnumLogStatusFieldRefInput<$PrismaModel>
     in?: $Enums.LogStatus[]
@@ -14844,22 +19101,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumThumblerFilter<$PrismaModel>
     _max?: NestedEnumThumblerFilter<$PrismaModel>
-  }
-
-  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type NestedEnumShowSettingsFilter<$PrismaModel = never> = {
@@ -14980,6 +19221,19 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type StaffCreateWithoutUserInput = {

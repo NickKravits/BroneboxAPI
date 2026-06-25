@@ -149,7 +149,8 @@ exports.Prisma.CabinetScalarFieldEnum = {
   approxTimeMarker: 'approxTimeMarker',
   emptyStayMarker: 'emptyStayMarker',
   cleaningHeader: 'cleaningHeader',
-  cleaningFooter: 'cleaningFooter'
+  cleaningFooter: 'cleaningFooter',
+  balance: 'balance'
 };
 
 exports.Prisma.LogsScalarFieldEnum = {
@@ -244,6 +245,7 @@ exports.Prisma.BookingsScalarFieldEnum = {
   maid_id: 'maid_id',
   review: 'review',
   channel: 'channel',
+  deposit_payment_link: 'deposit_payment_link',
   link: 'link'
 };
 
@@ -258,6 +260,51 @@ exports.Prisma.CleaningScheduleScalarFieldEnum = {
   checkout_time: 'checkout_time',
   comment: 'comment',
   included: 'included',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UnprocessedBookingScalarFieldEnum = {
+  id: 'id',
+  cabinetid: 'cabinetid',
+  bookingId: 'bookingId',
+  action: 'action',
+  failReason: 'failReason',
+  failMessage: 'failMessage',
+  realtyId: 'realtyId',
+  beginDate: 'beginDate',
+  endDate: 'endDate',
+  bookingStatus: 'bookingStatus',
+  source: 'source',
+  amount: 'amount',
+  notes: 'notes',
+  prepayment: 'prepayment',
+  balanceToBePaid: 'balanceToBePaid',
+  pricePerDay: 'pricePerDay',
+  deposit: 'deposit',
+  clientId: 'clientId',
+  fio: 'fio',
+  email: 'email',
+  phone: 'phone',
+  additionalPhone: 'additionalPhone',
+  resolved: 'resolved',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BugReportScalarFieldEnum = {
+  id: 'id',
+  cabinetid: 'cabinetid',
+  userId: 'userId',
+  message: 'message',
+  page: 'page',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CabinetTemplateScalarFieldEnum = {
+  id: 'id',
+  cabinetid: 'cabinetid',
+  name: 'name',
+  body: 'body',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -354,6 +401,7 @@ exports.Prisma.BookingsOrderByRelevanceFieldEnum = {
   contract_id: 'contract_id',
   contract_link: 'contract_link',
   channel: 'channel',
+  deposit_payment_link: 'deposit_payment_link',
   link: 'link'
 };
 
@@ -362,6 +410,31 @@ exports.Prisma.CleaningScheduleOrderByRelevanceFieldEnum = {
   checkin_time: 'checkin_time',
   checkout_time: 'checkout_time',
   comment: 'comment'
+};
+
+exports.Prisma.UnprocessedBookingOrderByRelevanceFieldEnum = {
+  action: 'action',
+  failReason: 'failReason',
+  failMessage: 'failMessage',
+  beginDate: 'beginDate',
+  endDate: 'endDate',
+  bookingStatus: 'bookingStatus',
+  source: 'source',
+  notes: 'notes',
+  fio: 'fio',
+  email: 'email',
+  phone: 'phone',
+  additionalPhone: 'additionalPhone'
+};
+
+exports.Prisma.BugReportOrderByRelevanceFieldEnum = {
+  message: 'message',
+  page: 'page'
+};
+
+exports.Prisma.CabinetTemplateOrderByRelevanceFieldEnum = {
+  name: 'name',
+  body: 'body'
 };
 exports.TemPass = exports.$Enums.TemPass = {
   YES: 'YES',
@@ -442,7 +515,10 @@ exports.Prisma.ModelName = {
   Objects: 'Objects',
   ObjectPhoto: 'ObjectPhoto',
   Bookings: 'Bookings',
-  CleaningSchedule: 'CleaningSchedule'
+  CleaningSchedule: 'CleaningSchedule',
+  UnprocessedBooking: 'UnprocessedBooking',
+  BugReport: 'BugReport',
+  CabinetTemplate: 'CabinetTemplate'
 };
 
 /**
