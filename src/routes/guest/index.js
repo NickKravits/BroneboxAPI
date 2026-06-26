@@ -162,7 +162,8 @@ module.exports = async (fastify) => {
         let show = {}
 
         if (objects && !isBlockedStatus) {
-            // Payment & deposit: always visible; payment buttons remain after completion; deposit button disappears
+            // Payment & deposit: always visible; payment button hides when balance_to_be_paid_1 = 0;
+            // deposit button hides when Bookings.deposit >= Objects.deposit (paid) — stays visible even after checkout
             const payState = getShowState(
                 objects.sspayanddeposit,
                 booking.begin_date, booking.end_date,
@@ -171,7 +172,7 @@ module.exports = async (fastify) => {
             show.payanddeposit = {
                 visible:       true,
                 active:        payState.active,
-                depositActive: payState.active && !completed,
+                depositActive: payState.active,
                 availableAt:   formatAvailableAt(payState.availableAt, timezone)
             }
 

@@ -38,12 +38,10 @@ fastify.register(require('./src/routes/logs'), { prefix: '/logs' })
 fastify.register(require('./src/routes/cabinet'), { prefix: '/cabinet' })
 fastify.register(require('./src/routes/events'))
 
-fastify.listen({ port: 3000 }, (err) => {
+fastify.listen({ port: parseInt(process.env.PORT) || 3000, host: process.env.IP_ADDRESS || '127.0.0.1' }, (err) => {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
   }
-  // У Fastify уже включен logger, поэтому строку ниже можно убрать, 
-  // но если очень хочется — оставляйте.
-  console.log('Сервер запущен на порту 3000') 
+  console.log(`Сервер запущен на http://${process.env.IP_ADDRESS || '127.0.0.1'}:${process.env.PORT || 3000}`)
 })
