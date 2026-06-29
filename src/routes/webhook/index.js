@@ -41,7 +41,7 @@ module.exports = async (fastify) => {
                 email,
                 phone,
                 additional_phone
-            } = client
+            } = client || {}
 
             const cabinet = await fastify.prisma.cabinet.findUnique({
                 where: { realtycalendarid: webhookkey },
