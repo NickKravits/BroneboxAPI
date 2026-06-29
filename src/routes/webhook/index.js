@@ -4,6 +4,10 @@ module.exports = async (fastify) => {
   // POST /webhook/rc/:webhookkey
     fastify.post('/rc/:webhookkey', async (req, reply) => {
         try {
+            if (!req.body || Object.keys(req.body).length === 0) {
+                return reply.status(200).send({ ok: true })
+            }
+
             const { webhookkey } = req.params
             const { action, status, data } = req.body
             const { booking } = data
@@ -395,14 +399,14 @@ module.exports = async (fastify) => {
                     data: { status: 'canceled' }
                 })
             } else {
-                return reply.status(400).send({ error: 'Неизвестное действие' })
+                return reply.status(200).send({ ok: true })
             }
 
             return reply.status(200).send({ ok: true })
 
         } catch (err) {
             console.error(err)
-            return reply.status(500).send({ error: 'Не удалось обработать webhook' })
+            return reply.status(200).send({ error: 'Не удалось обработать webhook' })
         }
     })
 }
