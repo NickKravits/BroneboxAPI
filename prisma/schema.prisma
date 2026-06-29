@@ -182,8 +182,8 @@ model Bookings {
   begin_date            String?
   end_date              String?
   realty_id             Int?
-  created_at            DateTime? @default(now)
-  updated_at            DateTime? @default(now)
+  created_at            DateTime? @default(now())
+  updated_at            DateTime? @default(now())
   amount                Int?
   notes                 String?
   source                String?
