@@ -6,7 +6,7 @@ const fastify = require('fastify')({ logger: true })
 // Переписываем на require. Больше никакой await здесь не нужен, 
 // Fastify сам под капотом разберется с асинхронностью.
 fastify.register(require('@fastify/multipart'), {
-  limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+  limits: { fileSize: 20 * 1024 * 1024 } // 20MB
 })
 
 fastify.register(require('@fastify/static'), {

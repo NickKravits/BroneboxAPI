@@ -231,15 +231,21 @@ module.exports = async (fastify) => {
     await fs.mkdir(dir, { recursive: true })
     await fs.writeFile(path.join(dir, fileName), await data.toBuffer())
 
-    // Теперь тут передается чистое число objectId, Prisma будет довольна
+    const maxOrder = await fastify.prisma.objectPhoto.aggregate({
+        where: { objectId },
+        _max: { sortOrder: true }
+    })
+    const nextOrder = (maxOrder._max.sortOrder ?? -1) + 1
+
     const photo = await fastify.prisma.objectPhoto.create({
       data: {
-        objectId: objectId, 
-        url: `/uploads/objects/${objectId}/${fileName}`
+        objectId: objectId,
+        url: `/uploads/objects/${objectId}/${fileName}`,
+        sortOrder: nextOrder
       }
     })
 
-    return reply.send({ url: photo.url })
+    return reply.send({ url: photo.url, id: photo.id })
 })
 
   fastify.post('/get', async (req, reply) => {
@@ -355,10 +361,55 @@ module.exports = async (fastify) => {
     const photos = await fastify.prisma.objectPhoto.findMany({
         where: { objectId },
         select: { id: true, url: true },
-        orderBy: { id: 'asc' }
+        orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }]
     })
 
     return reply.send({ photos })
+  })
+
+  fastify.post('/:id/photos/reorder', async (req, reply) => {
+    await req.jwtVerify()
+    const userId = req.user.id
+    const objectId = parseInt(req.params.id)
+    const { photoIds } = req.body
+
+    if (isNaN(objectId)) return reply.status(400).send({ error: 'Некорректный ID объекта' })
+    if (!Array.isArray(photoIds)) return reply.status(400).send({ error: 'photoIds должен быть массивом' })
+
+    const user = await fastify.prisma.user.findUnique({
+        where: { id: userId },
+        select: { cabinet: true, role: true }
+    })
+    if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
+
+    if (user.role !== 'ADMINISTRATOR') {
+        const staff = await fastify.prisma.staff.findUnique({
+            where: { id: userId, cabinetid: user.cabinet },
+            select: { manageobjects: true }
+        })
+        if (!staff || staff.manageobjects !== 'YES') {
+            return reply.status(403).send({ error: 'Недостаточно прав' })
+        }
+    }
+
+    const object = await fastify.prisma.objects.findUnique({
+        where: { id: objectId },
+        select: { cabinetid: true }
+    })
+    if (!object || object.cabinetid !== user.cabinet) {
+        return reply.status(403).send({ error: 'Недостаточно прав' })
+    }
+
+    await Promise.all(
+        photoIds.map((id, index) =>
+            fastify.prisma.objectPhoto.updateMany({
+                where: { id: parseInt(id), objectId },
+                data: { sortOrder: index }
+            })
+        )
+    )
+
+    return reply.send({ ok: true })
   })
 
   fastify.post('/edit', async (req, reply) => {

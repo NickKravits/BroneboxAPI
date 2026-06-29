@@ -166,7 +166,8 @@ model ObjectPhoto {
   id        Int    @id @default(autoincrement())
   objectId  Int
   url       String
-  objects    Objects @relation(fields: [objectId], references: [id])
+  sortOrder Int    @default(0)
+  objects   Objects @relation(fields: [objectId], references: [id])
 }
 
 enum ShowSettings {
