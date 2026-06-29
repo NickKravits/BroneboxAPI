@@ -48,15 +48,21 @@ module.exports = async (fastify) => {
         }
 
         const objectsList = await fastify.prisma.objects.findMany({
-        where: { 
-            cabinetid: user.cabinet 
+        where: {
+            cabinetid: user.cabinet
         },
             select: {
                 id: true,
                 realtyid: true,
                 name: true,
                 location: true,
-                active: true
+                active: true,
+                checkindef: true,
+                checkoutdef: true,
+                depositchanel: true,
+                paymentchanel: true,
+                deposit: true,
+                maplink: true
                 }
             })
 
