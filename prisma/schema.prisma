@@ -47,6 +47,7 @@ model Cabinet {
   Timezone            Timezone  @default(EUROPE_MOSCOW)
   realtycalendarid    String?   @unique
   okidokiapi          String?
+  okidokiwebhookkey   String?   @unique
   tochkaPhone         String?
   tochkaApiKey        String?   @db.VarChar(1000)
   tochkaMerchantId    String?
@@ -204,6 +205,7 @@ model Bookings {
   tochka_id_deposit     Int?
   begin_time            String?
   end_time              String?
+  contract_status       String?
   contract_id           String?
   contract_link         String?
   maid_id               Int?
@@ -281,4 +283,41 @@ model CabinetTemplate {
   body      String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id             Int           @id @default(autoincrement())
+  cabinetid      Int
+  bookingId      Int
+  amount         Int
+  type           PaymentType
+  method         PaymentMethod
+  madeBy         String?
+  receiptUrl     String?
+  status         PaymentStatus
+  returnedAmount Int?
+  returnedAt     DateTime?
+  externalId     String?
+  link           String?
+  linkExpiresAt  DateTime?
+  createdAt      DateTime      @default(now())
+  paidAt         DateTime?
+}
+
+enum PaymentType {
+  PAY
+  DEPOSIT
+}
+
+enum PaymentMethod {
+  MANAGER
+  TOCHKA
+  TBANK
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  RETURNED
 }

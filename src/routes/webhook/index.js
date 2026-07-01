@@ -45,7 +45,7 @@ module.exports = async (fastify) => {
 
             const cabinet = await fastify.prisma.cabinet.findUnique({
                 where: { realtycalendarid: webhookkey },
-                select: { id: true, okidokiapi: true }
+                select: { id: true, okidokiapi: true, okidokiwebhookkey: true }
             })
 
             if (!cabinet) {
@@ -160,7 +160,9 @@ module.exports = async (fastify) => {
                         api_key: cabinet.okidokiapi,
                         template_id: odStringId,
                         source: "BroneBox",
-                        // CallBack Позже. Сохрани коммент
+                        callback_url: cabinet.okidokiwebhookkey
+                            ? `${process.env.APP_URL}/webhook/okidoki/${cabinet.okidokiwebhookkey}`
+                            : undefined,
                         // Redirect потом. Сохрани коммент
                         entities: [
                             {
@@ -401,6 +403,53 @@ module.exports = async (fastify) => {
             } else {
                 return reply.status(200).send({ ok: true })
             }
+
+            return reply.status(200).send({ ok: true })
+
+        } catch (err) {
+            console.error(err)
+            return reply.status(200).send({ error: 'Не удалось обработать webhook' })
+        }
+    })
+
+  // POST /webhook/okidoki/:webhookkey
+    fastify.post('/okidoki/:webhookkey', async (req, reply) => {
+        try {
+            if (!req.body || Object.keys(req.body).length === 0) {
+                return reply.status(200).send({ ok: true })
+            }
+
+            const { webhookkey } = req.params
+            const { _id, status } = req.body
+
+            const cabinet = await fastify.prisma.cabinet.findUnique({
+                where: { okidokiwebhookkey: webhookkey },
+                select: { id: true }
+            })
+
+            if (!cabinet) {
+                return reply.status(200).send({ ok: true })
+            }
+
+            const booking = await fastify.prisma.bookings.findFirst({
+                where: { contract_id: _id, cabinet: cabinet.id }
+            })
+
+            if (!booking) {
+                await fastify.prisma.logs.create({
+                    data: {
+                        cabinetid: cabinet.id,
+                        status: 'ERROR',
+                        message: `OkiDoki | Договор ${_id} не найден ни в одной брони кабинета`
+                    }
+                })
+                return reply.status(200).send({ ok: true })
+            }
+
+            await fastify.prisma.bookings.update({
+                where: { id: booking.id },
+                data: { contract_status: status?.name || null }
+            })
 
             return reply.status(200).send({ ok: true })
 

@@ -272,9 +272,16 @@ module.exports = async (fastify) => {
             }
         }
 
+        const existing = await fastify.prisma.cabinet.findUnique({
+            where: { id: user.cabinet },
+            select: { okidokiwebhookkey: true }
+        })
+
+        const webhookKey = existing?.okidokiwebhookkey || crypto.randomBytes(16).toString('hex')
+
         await fastify.prisma.cabinet.update({
             where: { id: user.cabinet },
-            data: { okidokiapi: apiKey }
+            data: { okidokiapi: apiKey, okidokiwebhookkey: webhookKey }
         })
 
         await fastify.prisma.logs.create({

@@ -285,7 +285,10 @@ module.exports = async (fastify) => {
                     where: { id: item.bookingId, cabinet: user.cabinet }
                 })
                 if (existing) {
-                    return reply.status(400).send({ error: `Бронирование #${item.bookingId} уже существует в системе` })
+                    await fastify.prisma.unprocessedBooking.delete({
+                        where: { id: item.id }
+                    })
+                    return reply.status(400).send({ error: `Бронирование #${item.bookingId} уже существует в системе`, deleted: true })
                 }
 
                 await fastify.prisma.bookings.create({
@@ -321,6 +324,34 @@ module.exports = async (fastify) => {
             })
 
             return reply.send({ message: 'Бронирование перенесено' })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
+    // POST /bookings/unprocessed/delete
+    fastify.post('/unprocessed/delete', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const { id } = req.body
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: req.user.id },
+                select: { cabinet: true }
+            })
+            if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
+
+            const item = await fastify.prisma.unprocessedBooking.findFirst({
+                where: { id: Number(id), cabinetid: user.cabinet }
+            })
+            if (!item) return reply.status(404).send({ error: 'Необработанная бронь не найдена' })
+
+            await fastify.prisma.unprocessedBooking.delete({
+                where: { id: item.id }
+            })
+
+            return reply.send({ message: 'Удалено' })
         } catch (err) {
             console.error(err)
             return reply.status(500).send({ error: 'Ошибка сервера' })
