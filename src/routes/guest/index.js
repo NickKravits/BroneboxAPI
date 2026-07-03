@@ -289,14 +289,17 @@ module.exports = async (fastify) => {
         if (!cabinet?.okidokiapi) return reply.send({ result: 'unknown' })
 
         try {
-            const res = await fetch('https://api.doki.online/external/contract', {
+            const okiUrl = new URL('https://api.doki.online/external/contract')
+            okiUrl.searchParams.set('api_key', cabinet.okidokiapi)
+            okiUrl.searchParams.set('contract_id', booking.contract_id)
+
+            const res = await fetch(okiUrl.toString(), {
                 method:  'GET',
-                headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({ api_key: cabinet.okidokiapi, contract_id: booking.contract_id })
+                headers: { 'Content-Type': 'application/json' }
             })
 
             const data        = await res.json()
-            const statusName  = data.status
+            const statusName  = typeof data.status === 'object' ? data.status?.name : data.status
 
             await fastify.prisma.bookings.update({
                 where: { id: booking.id },
