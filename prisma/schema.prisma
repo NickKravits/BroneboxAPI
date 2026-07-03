@@ -143,6 +143,7 @@ model Objects {
   oddepositid     String?
   odpayperdayid   String?
   odpayedid       String?
+  okidokiactive   Int           @default(0)
   depositchanel   DepositChanel @default(NONE)
   paymentchanel   PaymentChanel @default(NONE)
   active          Thumbler      @default(YES)

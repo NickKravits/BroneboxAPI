@@ -67,7 +67,8 @@ module.exports = async (fastify) => {
                         oddateoutid: true,
                         oddepositid: true,
                         odpayperdayid: true,
-                        odpayedid: true
+                        odpayedid: true,
+                        okidokiactive: true
                     }
                 })
 
@@ -123,7 +124,8 @@ module.exports = async (fastify) => {
             if (action === 'create_booking') {
                 let okiDokiLink = ""
                 let okiDokiId = ""
-                if (cabinet.okidokiapi) {
+                const link = crypto.randomBytes(6).toString('hex')
+                if (cabinet.okidokiapi && object.okidokiactive === 1) {
                     const odStringId = object.odstringid;
                     const odValueId = object.odvalueid;
                     const odNameId = object.odnameid;
@@ -133,17 +135,16 @@ module.exports = async (fastify) => {
                     const odPayPerDayId = object.odpayperdayid;
                     const odPayedId = object.odpayedid;
 
-                    if (odStringId == "" || odValueId == "" || odNameId == "" || odDateInId == "" || odDateOutId == "" || odDepositId == "" || odPayPerDayId == "" || odPayedId == "") {
-                        await fastify.prisma.logs.create({
-                        data: {
-                            cabinetid: cabinet.id,
-                            status: "INFO",
-                            message: `Договоры | Договор может быть создан как черновик! Так как на объекте ${realty_id} заполнены не все поля!`
-                        }
-                        })
-                    }
-
                     if (odStringId != "") {
+                        if (odValueId == "" || odNameId == "" || odDateInId == "" || odDateOutId == "" || odDepositId == "" || odPayPerDayId == "" || odPayedId == "") {
+                            await fastify.prisma.logs.create({
+                                data: {
+                                    cabinetid: cabinet.id,
+                                    status: "INFO",
+                                    message: `Договоры | Договор может быть создан как черновик! Так как на объекте ${realty_id} заполнены не все поля!`
+                                }
+                            })
+                        }
 
                     function formatDate(dateString) {
                         // Проверяем, что строка не пустая и соответствует формату YYYY-MM-DD
@@ -163,7 +164,7 @@ module.exports = async (fastify) => {
                         callback_url: cabinet.okidokiwebhookkey
                             ? `${process.env.APP_URL}/webhook/okidoki/${cabinet.okidokiwebhookkey}`
                             : undefined,
-                        // Redirect потом. Сохрани коммент
+                        redirect_url: `${process.env.FRONTEND_URL}/c/?id=${link}&red=okidoki`,
                         entities: [
                             {
                                 value: odNameId,
@@ -202,7 +203,7 @@ module.exports = async (fastify) => {
                     });
 
                     const data = await res.json();
-                    console.debug(data)
+                    
                     okiDokiLink = data.link;
                     okiDokiId = data.contract_id;
                 }
@@ -223,7 +224,7 @@ module.exports = async (fastify) => {
                 return reply.status(200).send({ ok: true })
             }
 
-                const link = crypto.randomBytes(6).toString('hex')
+                
                 await fastify.prisma.bookings.create({
                     data: {
                         status: status,

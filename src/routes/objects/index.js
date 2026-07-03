@@ -77,7 +77,8 @@ module.exports = async (fastify) => {
         await req.jwtVerify()
         const userId = req.user.id
 
-        const { realtyId, name, instructions, checkInTime, checkOutTime, showPaymentTiming, showInstructionTiming, showContractTiming, showReviewTiming, location, mapLink, defaultDeposit, okiDokiRowId, okiDokiValueId, okiDokiNameId, okiDokiDateInId, okiDokiDateOutId, okiDokiDepositId, okiDokiPayPerDayId, okiDokiPayedId, DepositChanel, PaymentChanel, active } = req.body
+        const { realtyId, name, instructions, checkInTime, checkOutTime, showPaymentTiming, showInstructionTiming, showContractTiming, showReviewTiming, location, mapLink, defaultDeposit, okiDokiRowId, okiDokiValueId, okiDokiNameId, okiDokiDateInId, okiDokiDateOutId, okiDokiDepositId, okiDokiPayPerDayId, okiDokiPayedId, okidokiactive, DepositChanel, PaymentChanel, active } = req.body
+        const safeOkidokiactive = okidokiactive === 1 ? 1 : 0
 
         if (!name || !instructions || !checkInTime || !checkOutTime || !location || !defaultDeposit ) {
             return reply.status(400).send({ error: 'Отсутствуют обязательные поля' })
@@ -152,6 +153,7 @@ module.exports = async (fastify) => {
                     oddepositid: okiDokiDepositId,
                     odpayperdayid: okiDokiPayPerDayId,
                     odpayedid: okiDokiPayedId,
+                    okidokiactive: safeOkidokiactive,
                     depositchanel: DepositChanel,
                     paymentchanel: PaymentChanel,
                     active
@@ -423,7 +425,8 @@ module.exports = async (fastify) => {
         await req.jwtVerify()
         const userId = req.user.id
 
-        const { objectId, realtyId, name, instructions, checkInTime, checkOutTime, showPaymentTiming, showInstructionTiming, showContractTiming, showReviewTiming, location, mapLink, defaultDeposit, okiDokiRowId, okiDokiValueId, okiDokiNameId, okiDokiDateInId, okiDokiDateOutId, okiDokiDepositId, okiDokiPayPerDayId, okiDokiPayedId, DepositChanel, PaymentChanel, active } = req.body
+        const { objectId, realtyId, name, instructions, checkInTime, checkOutTime, showPaymentTiming, showInstructionTiming, showContractTiming, showReviewTiming, location, mapLink, defaultDeposit, okiDokiRowId, okiDokiValueId, okiDokiNameId, okiDokiDateInId, okiDokiDateOutId, okiDokiDepositId, okiDokiPayPerDayId, okiDokiPayedId, okidokiactive, DepositChanel, PaymentChanel, active } = req.body
+        const safeOkidokiactive = okidokiactive === 1 ? 1 : 0
 
         if (!objectId || !name || !instructions || !checkInTime || !checkOutTime || !location || !defaultDeposit) {
             return reply.status(400).send({ error: 'Отсутствуют обязательные поля' })
@@ -506,6 +509,7 @@ module.exports = async (fastify) => {
                 oddepositid: okiDokiDepositId,
                 odpayperdayid: okiDokiPayPerDayId,
                 odpayedid: okiDokiPayedId,
+                okidokiactive: safeOkidokiactive,
                 depositchanel: DepositChanel,
                 paymentchanel: PaymentChanel,
                 active

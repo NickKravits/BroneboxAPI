@@ -270,6 +270,55 @@ module.exports = async (fastify) => {
         return reply.send({ ok: true })
     })
 
+    // ── POST /guest/contract/update ───────────────────────────────────────
+    fastify.post('/contract/update', async (req, reply) => {
+        const { id } = req.body
+
+        const booking = await fastify.prisma.bookings.findFirst({
+            where:  { link: id },
+            select: { id: true, contract_id: true, cabinet: true }
+        })
+
+        if (!booking || !booking.contract_id) return reply.send({ result: 'nothing' })
+
+        const cabinet = await fastify.prisma.cabinet.findFirst({
+            where:  { id: booking.cabinet },
+            select: { okidokiapi: true }
+        })
+
+        if (!cabinet?.okidokiapi) return reply.send({ result: 'unknown' })
+
+        try {
+            const res = await fetch('https://api.doki.online/external/contract', {
+                method:  'GET',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ api_key: cabinet.okidokiapi, contract_id: booking.contract_id })
+            })
+
+            const data        = await res.json()
+            const statusName  = data.status
+
+            await fastify.prisma.bookings.update({
+                where: { id: booking.id },
+                data:  { contract_status: statusName || null }
+            })
+
+            let result
+            if      (statusName === 'Черновик')        result = 'draft'
+            else if (statusName === 'Выставлен')        result = 'nothing'
+            else if (statusName === 'Отклонен')         result = 'dicline'
+            else if (statusName === 'Ожидает проверки') result = 'pertrue'
+            else if (statusName === 'Аннулирован')      result = 'notfound'
+            else if (statusName === 'Подписан')         result = 'true'
+            else                                        result = 'unknown'
+
+            return reply.send({ result })
+        } catch (err) {
+            console.error(err)
+            return reply.send({ result: 'unknown' })
+        }
+    })
+
     // ── POST /guest/review ─────────────────────────────────────────────────
     fastify.post('/review', async (req, reply) => {
         const { id, rating } = req.body

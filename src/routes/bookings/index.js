@@ -245,8 +245,7 @@ module.exports = async (fastify) => {
                 if (!objectId) return reply.status(400).send({ error: 'Не указан объект' })
 
                 const object = await fastify.prisma.objects.findFirst({
-                    where: { id: Number(objectId), cabinetid: user.cabinet },
-                    select: { realtyid: true }
+                    where: { id: Number(objectId), cabinetid: user.cabinet }
                 })
                 if (!object) return reply.status(404).send({ error: 'Объект не найден' })
 
@@ -255,6 +254,94 @@ module.exports = async (fastify) => {
                 })
                 if (existing) {
                     return reply.status(400).send({ error: `Бронирование #${item.bookingId} уже существует в системе` })
+                }
+
+                const cabinet = await fastify.prisma.cabinet.findUnique({
+                    where: { id: user.cabinet }
+                })
+
+                let okiDokiLink = ""
+                let okiDokiId = ""
+
+                if (cabinet.okidokiapi && object.okidokiactive === 1) {
+                    const odStringId = object.odstringid;
+                    const odValueId = object.odvalueid;
+                    const odNameId = object.odnameid;
+                    const odDateInId = object.oddateinid;
+                    const odDateOutId = object.oddateoutid;
+                    const odDepositId = object.oddepositid;
+                    const odPayPerDayId = object.odpayperdayid;
+                    const odPayedId = object.odpayedid;
+
+                    if (odStringId == "" || odValueId == "" || odNameId == "" || odDateInId == "" || odDateOutId == "" || odDepositId == "" || odPayPerDayId == "" || odPayedId == "") {
+                        await fastify.prisma.logs.create({
+                        data: {
+                            cabinetid: cabinet.id,
+                            status: "INFO",
+                            message: `Договоры | Договор может быть создан как черновик! Так как на объекте ${item.realtyId} заполнены не все поля!`
+                        }
+                        })
+                    }
+
+                    function formatDate(dateString) {
+                        // Проверяем, что строка не пустая и соответствует формату YYYY-MM-DD
+                        if (!dateString || !dateString.includes('-')) return dateString;
+                        return dateString.split('-').reverse().join('.');
+                    }
+
+                    const bDate = formatDate(item.beginDate);
+                    const eDate = formatDate(item.endDate);
+
+                    const depSit = object.deposit;
+
+                    const requestBody = {
+                        api_key: cabinet.okidokiapi,
+                        template_id: odStringId,
+                        source: "BroneBox",
+                        callback_url: cabinet.okidokiwebhookkey
+                            ? `${process.env.APP_URL}/webhook/okidoki/${cabinet.okidokiwebhookkey}`
+                            : undefined,
+                        redirect_url: `${process.env.FRONTEND_URL}/c/?id=${link}&red=okidoki`,
+                        entities: [
+                            {
+                                value: odNameId,
+                                keyword: odValueId
+                            },
+                            {
+                                value: bDate,
+                                keyword: odDateInId
+                            },
+                            {
+                                value: eDate,
+                                keyword: odDateOutId
+                            },
+                            {
+                                value: depSit,
+                                keyword: odDepositId
+                            },
+                            {
+                                value: item.pricePerDay,
+                                keyword: odPayPerDayId
+                            },
+                            {
+                                value: item.prepayment,
+                                keyword: odPayedId
+                            }
+                        ]
+                    };
+
+                    const res = await fetch('https://api.doki.online/external/contract', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    const data = await res.json();
+                    console.debug(data)
+                    okiDokiLink = data.link;
+                    okiDokiId = data.contract_id;
                 }
 
                 await fastify.prisma.bookings.create({
@@ -277,7 +364,9 @@ module.exports = async (fastify) => {
                         phone: item.phone,
                         additional_phone: item.additionalPhone,
                         cabinet: user.cabinet,
-                        link
+                        link,
+                        contract_id: okiDokiId,
+                        contract_link: okiDokiLink
                     }
                 })
             } else if (item.failReason === 'booking_not_found') {
@@ -289,6 +378,55 @@ module.exports = async (fastify) => {
                         where: { id: item.id }
                     })
                     return reply.status(400).send({ error: `Бронирование #${item.bookingId} уже существует в системе`, deleted: true })
+                }
+
+                let okiDokiLink = ""
+                let okiDokiId = ""
+
+                const cabinet = await fastify.prisma.cabinet.findUnique({
+                    where: { id: user.cabinet }
+                })
+
+                if (cabinet.okidokiapi && item.realtyId) {
+                    const object = await fastify.prisma.objects.findFirst({
+                        where: { realtyid: item.realtyId, cabinetid: user.cabinet }
+                    })
+
+                    if (object && object.okidokiactive === 1 && object.odstringid) {
+                        const formatDate = (dateString) => {
+                            if (!dateString || !dateString.includes('-')) return dateString;
+                            return dateString.split('-').reverse().join('.');
+                        }
+
+                        const requestBody = {
+                            api_key: cabinet.okidokiapi,
+                            template_id: object.odstringid,
+                            source: "BroneBox",
+                            callback_url: cabinet.okidokiwebhookkey
+                                ? `${process.env.APP_URL}/webhook/okidoki/${cabinet.okidokiwebhookkey}`
+                                : undefined,
+                            redirect_url: `${process.env.FRONTEND_URL}/c/?id=${link}&red=okidoki`,
+                            entities: [
+                                { value: object.odnameid, keyword: object.odvalueid },
+                                { value: formatDate(item.beginDate), keyword: object.oddateinid },
+                                { value: formatDate(item.endDate), keyword: object.oddateoutid },
+                                { value: object.deposit, keyword: object.oddepositid },
+                                { value: item.pricePerDay, keyword: object.odpayperdayid },
+                                { value: item.prepayment, keyword: object.odpayedid }
+                            ]
+                        }
+
+                        const res = await fetch('https://api.doki.online/external/contract', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestBody)
+                        })
+
+                        const data = await res.json()
+                        console.debug(data)
+                        okiDokiLink = data.link
+                        okiDokiId = data.contract_id
+                    }
                 }
 
                 await fastify.prisma.bookings.create({
@@ -311,7 +449,9 @@ module.exports = async (fastify) => {
                         phone: item.phone,
                         additional_phone: item.additionalPhone,
                         cabinet: user.cabinet,
-                        link
+                        link,
+                        contract_id: okiDokiId,
+                        contract_link: okiDokiLink
                     }
                 })
             } else {
