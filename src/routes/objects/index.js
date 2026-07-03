@@ -315,6 +315,7 @@ module.exports = async (fastify) => {
             oddepositid: true,
             odpayperdayid: true,
             odpayedid: true,
+            okidokiactive: true,
             depositchanel: true,
             paymentchanel: true,
             active: true,
