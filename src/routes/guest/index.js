@@ -299,6 +299,7 @@ module.exports = async (fastify) => {
             })
 
             const data        = await res.json()
+            console.log('[OkiDoki GET]', JSON.stringify(data))
             const statusName  = typeof data.status === 'object' ? data.status?.name : data.status
 
             await fastify.prisma.bookings.update({
