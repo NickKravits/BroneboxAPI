@@ -124,7 +124,8 @@ module.exports = async (fastify) => {
                 okidokiapi: true,
                 tochkaApiKey: true,
                 tochkaCustomerCode: true,
-                tochkaMerchantId: true
+                tochkaMerchantId: true,
+                tochkaPaymentMode: true
             }
         })
 
@@ -135,15 +136,18 @@ module.exports = async (fastify) => {
         }
 
         if (cabinet.tochkaApiKey && cabinet.tochkaCustomerCode) {
-            tochka = "CONNECTED"
             if (!cabinet.tochkaMerchantId) {
                 tochka = "NOT_READY"
+            } else if (!cabinet.tochkaPaymentMode || cabinet.tochkaPaymentMode.length === 0) {
+                tochka = "NOT_READY_PAYMENT"
+            } else {
+                tochka = "CONNECTED"
             }
         } else {
             tochka = "NOT_CONNECTED"
         }
 
-        return reply.send({ okidoki, tochka, permissions })
+        return reply.send({ okidoki, tochka, permissions, tochkaMerchantId: cabinet.tochkaMerchantId })
 
     } catch (err) {
         console.debug(err)
@@ -340,7 +344,7 @@ module.exports = async (fastify) => {
             await req.jwtVerify()
 
             const userId = req.user.id
-            const { phone, apiKey, vatType, purpose, name } = req.body
+            const { phone, apiKey, vatType, purpose, name, customerCode: providedCustomerCode } = req.body
 
             if (!apiKey || !phone || !vatType || !purpose || !name) {
                 return reply.status(400).send({ error: 'Обязательные поля не заполнены' })
@@ -429,7 +433,19 @@ module.exports = async (fastify) => {
             if (!customers?.length) {
                 return reply.status(400).send({ error: 'Клиент не найден по данному токену' });
             }
-            const customerCode = customers[0].customerCode;
+
+            let customerCode;
+            if (providedCustomerCode) {
+                const found = customers.find(c => c.customerCode === providedCustomerCode);
+                if (!found) {
+                    return reply.status(400).send({ error: 'Выбранный клиент не найден' });
+                }
+                customerCode = providedCustomerCode;
+            } else if (customers.length === 1) {
+                customerCode = customers[0].customerCode;
+            } else {
+                return reply.send({ customerResult: 'MULTIPLE', customers });
+            }
 
             const response = await fetch(`https://enter.tochka.com/uapi/acquiring/v1.0/payments?customerCode=${customerCode}`, {
                 method: 'GET',
