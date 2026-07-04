@@ -2,12 +2,13 @@
 
 module.exports = async (fastify) => {
 
-    // GET /payments/getbybooking?bookingId=X
+    // GET /payments/getbybooking?bookingId=X&type=PAY|DEPOSIT
     fastify.get('/getbybooking', async (req, reply) => {
         try {
             await req.jwtVerify()
             const userId = req.user.id
             const bookingId = parseInt(req.query.bookingId)
+            const type = req.query.type === 'DEPOSIT' ? 'DEPOSIT' : 'PAY'
 
             if (!bookingId) return reply.status(400).send({ error: 'bookingId обязателен' })
 
@@ -29,7 +30,7 @@ module.exports = async (fastify) => {
             if (!booking) return reply.status(404).send({ error: 'Бронирование не найдено' })
 
             const payments = await fastify.prisma.payment.findMany({
-                where: { bookingId, cabinetid: user.cabinet, type: 'PAY' },
+                where: { bookingId, cabinetid: user.cabinet, type },
                 orderBy: { createdAt: 'desc' }
             })
 
@@ -45,6 +46,7 @@ module.exports = async (fastify) => {
             await req.jwtVerify()
             const userId = req.user.id
             const { bookingId, amount } = req.body
+            const type = req.body.type === 'DEPOSIT' ? 'DEPOSIT' : 'PAY'
 
             if (!bookingId || amount === undefined || amount === null) {
                 return reply.status(400).send({ error: 'bookingId и amount обязательны' })
@@ -64,7 +66,7 @@ module.exports = async (fastify) => {
 
             const booking = await fastify.prisma.bookings.findFirst({
                 where: { id: parseInt(bookingId), cabinet: user.cabinet },
-                select: { id: true, amount: true, prepayment: true }
+                select: { id: true, amount: true, prepayment: true, deposit: true, realty_id: true }
             })
             if (!booking) return reply.status(404).send({ error: 'Бронирование не найдено' })
 
@@ -74,12 +76,23 @@ module.exports = async (fastify) => {
             }
 
             const paidAgg = await fastify.prisma.payment.aggregate({
-                where: { bookingId: parseInt(bookingId), cabinetid: user.cabinet, type: 'PAY', status: 'PAID' },
+                where: { bookingId: parseInt(bookingId), cabinetid: user.cabinet, type, status: 'PAID' },
                 _sum: { amount: true }
             })
             const alreadyPaid = paidAgg._sum.amount || 0
 
-            const maxAmount = Math.max(0, (booking.amount || 0) - (booking.prepayment || 0) - alreadyPaid)
+            let maxAmount
+            if (type === 'DEPOSIT') {
+                const object = await fastify.prisma.objects.findFirst({
+                    where: { realtyid: booking.realty_id, cabinetid: user.cabinet },
+                    select: { deposit: true }
+                })
+                const objectDeposit = parseFloat(object?.deposit) || 0
+                maxAmount = Math.max(0, objectDeposit - (booking.deposit || 0) - alreadyPaid)
+            } else {
+                maxAmount = Math.max(0, (booking.amount || 0) - (booking.prepayment || 0) - alreadyPaid)
+            }
+
             if (numAmount > maxAmount) {
                 return reply.status(400).send({ error: `Сумма не может превышать ${maxAmount}` })
             }
@@ -89,7 +102,7 @@ module.exports = async (fastify) => {
                     cabinetid: user.cabinet,
                     bookingId: parseInt(bookingId),
                     amount:    numAmount,
-                    type:      'PAY',
+                    type,
                     method:    'MANAGER',
                     madeBy:    user.login,
                     status:    'PAID',
