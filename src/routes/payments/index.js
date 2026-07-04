@@ -29,7 +29,7 @@ module.exports = async (fastify) => {
             if (!booking) return reply.status(404).send({ error: 'Бронирование не найдено' })
 
             const payments = await fastify.prisma.payment.findMany({
-                where: { bookingId, cabinetid: user.cabinet },
+                where: { bookingId, cabinetid: user.cabinet, type: 'PAY' },
                 orderBy: { createdAt: 'desc' }
             })
 
@@ -73,7 +73,13 @@ module.exports = async (fastify) => {
                 return reply.status(400).send({ error: 'Сумма должна быть не менее 0' })
             }
 
-            const maxAmount = Math.max(0, (booking.amount || 0) - (booking.prepayment || 0))
+            const paidAgg = await fastify.prisma.payment.aggregate({
+                where: { bookingId: parseInt(bookingId), cabinetid: user.cabinet, type: 'PAY', status: 'PAID' },
+                _sum: { amount: true }
+            })
+            const alreadyPaid = paidAgg._sum.amount || 0
+
+            const maxAmount = Math.max(0, (booking.amount || 0) - (booking.prepayment || 0) - alreadyPaid)
             if (numAmount > maxAmount) {
                 return reply.status(400).send({ error: `Сумма не может превышать ${maxAmount}` })
             }
