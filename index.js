@@ -36,6 +36,7 @@ fastify.register(require('./src/routes/bookings'), { prefix: '/bookings' })
 fastify.register(require('./src/routes/guest'), { prefix: '/guest' })
 fastify.register(require('./src/routes/logs'), { prefix: '/logs' })
 fastify.register(require('./src/routes/cabinet'), { prefix: '/cabinet' })
+fastify.register(require('./src/routes/payments'), { prefix: '/payments' })
 fastify.register(require('./src/routes/events'))
 
 fastify.listen({ port: parseInt(process.env.PORT) || 3000, host: process.env.IP_ADDRESS || '127.0.0.1' }, (err) => {

@@ -290,13 +290,13 @@ model Payment {
   id             Int           @id @default(autoincrement())
   cabinetid      Int
   bookingId      Int
-  amount         Int
+  amount         Float
   type           PaymentType
   method         PaymentMethod
   madeBy         String?
   receiptUrl     String?
   status         PaymentStatus
-  returnedAmount Int?
+  returnedAmount Float?
   returnedAt     DateTime?
   externalId     String?
   link           String?
