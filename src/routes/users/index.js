@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt')
+
 module.exports = async (fastify) => {
   // GET /users/getme
   fastify.get('/getme', async (req, reply) => {
@@ -49,6 +51,57 @@ module.exports = async (fastify) => {
         })
         return reply.send({ message: 'Имя обновлено', name: updated.name })
     } catch (err) {
+        return reply.status(401).send({ error: 'Неавторизованный доступ' })
+    }
+  })
+
+  // POST /users/change-password
+  fastify.post('/change-password', async (req, reply) => {
+    try {
+        await req.jwtVerify()
+        const { currentPassword, newPassword } = req.body
+
+        if (!currentPassword || !newPassword) {
+            return reply.status(400).send({ error: 'Заполните все поля' })
+        }
+        if (newPassword.length < 6) {
+            return reply.status(400).send({ error: 'Новый пароль должен быть не менее 6 символов' })
+        }
+
+        const user = await fastify.prisma.user.findUnique({
+            where: { id: req.user.id }
+        })
+        if (!user) {
+            return reply.status(404).send({ error: 'Пользователь не найден' })
+        }
+
+        const valid = await bcrypt.compare(currentPassword, user.password)
+        if (!valid) {
+            return reply.status(401).send({ error: 'Неверный текущий пароль' })
+        }
+
+        const hashed = await bcrypt.hash(newPassword, 10)
+
+        const updated = await fastify.prisma.user.update({
+            where: { id: user.id },
+            data: { password: hashed, tempass: 'NO', tokenVersion: { increment: 1 } }
+        })
+
+        await fastify.prisma.logs.create({
+            data: {
+                cabinetid: user.cabinet,
+                status: 'SUCCESS',
+                message: `Пароль | Пользователь ${user.login} сменил пароль. Остальные сеансы завершены`
+            }
+        })
+
+        // Все ранее выданные токены становятся недействительны (см. trusted в plugins/jwt.js).
+        // Текущей сессии сразу выдаём новый токен с актуальной tokenVersion, чтобы её не разлогинило.
+        const newToken = fastify.jwt.sign({ id: updated.id, login: updated.login, tokenVersion: updated.tokenVersion })
+
+        return reply.send({ message: 'Пароль успешно изменён', token: newToken })
+    } catch (err) {
+        console.error(err)
         return reply.status(401).send({ error: 'Неавторизованный доступ' })
     }
   })

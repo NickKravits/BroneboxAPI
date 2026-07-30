@@ -29,17 +29,18 @@ enum TemPass {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  login     String   @unique
-  password  String
-  tempass   TemPass  @default(YES)
-  name      String?
-  role      Role
-  cabinet   Int
-  status    Status   @default(ACTIVE)
-  createdAt DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  login        String   @unique
+  password     String
+  tempass      TemPass  @default(YES)
+  name         String?
+  role         Role
+  cabinet      Int
+  status       Status   @default(ACTIVE)
+  createdAt    DateTime @default(now())
+  tokenVersion Int      @default(0)
 
-  staff     Staff?
+  staff        Staff?
 }
 
 model Cabinet {

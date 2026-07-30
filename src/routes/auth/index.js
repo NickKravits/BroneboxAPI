@@ -24,7 +24,7 @@ module.exports = async (fastify) => {
       return reply.status(401).send({ error: 'Пользователь удален' })
     }
 
-    const token = fastify.jwt.sign({ id: user.id, login: user.login })
+    const token = fastify.jwt.sign({ id: user.id, login: user.login, tokenVersion: user.tokenVersion })
 
     await fastify.prisma.logs.create({
             data: {
