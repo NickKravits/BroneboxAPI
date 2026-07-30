@@ -372,9 +372,11 @@ module.exports = async (fastify) => {
             where: { bookingId: booking.id, type: 'PAY', status: 'PAID', cabinetid: booking.cabinet },
         })
 
-        const toPay = (booking.amount || 0) - (booking.prepayment || 0) - payments.reduce((sum, p) => sum + p.amount, 0)
+        // Тот же источник истины, что и на странице гостя (balance_to_be_paid_1 минус уже оплаченное),
+        // а не amount - prepayment — эти поля синхронизируются из RealtyCalendar независимо и могут расходиться
+        const toPay = Math.max(0, (booking.balance_to_be_paid_1 || 0) - payments.reduce((sum, p) => sum + p.amount, 0))
 
-        if (toPay <= 0) return reply.status(400).send({ error: 'No payment due' })
+        if (toPay <= 0) return reply.status(400).send({ error: 'Нет суммы к оплате' })
         
 
         const object = await fastify.prisma.objects.findFirst({
