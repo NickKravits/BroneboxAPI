@@ -160,6 +160,7 @@ module.exports = async (fastify) => {
             await req.jwtVerify()
             const userId = req.user.id
             const { bookingId } = req.body
+            const type = req.body.type === 'DEPOSIT' ? 'DEPOSIT' : 'PAY'
 
             if (!bookingId) return reply.status(400).send({ error: 'bookingId обязателен' })
 
@@ -169,11 +170,17 @@ module.exports = async (fastify) => {
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
 
+            const booking = await fastify.prisma.bookings.findFirst({
+                where: { id: parseInt(bookingId), cabinet: user.cabinet },
+                select: { deposit: true }
+            })
+            if (!booking) return reply.status(404).send({ error: 'Бронирование не найдено' })
+
             const payments = await fastify.prisma.payment.findMany({
-                where: { cabinetid: user.cabinet, bookingId: parseInt(bookingId), type: 'PAY', status: 'PAID' }
+                where: { cabinetid: user.cabinet, bookingId: parseInt(bookingId), type, status: 'PAID' }
             })
 
-            let amount = 0
+            let amount = type === 'DEPOSIT' ? (booking.deposit || 0) : 0
             for (const payment of payments) {
                 amount += payment.amount
             }
