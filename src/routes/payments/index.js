@@ -191,4 +191,49 @@ module.exports = async (fastify) => {
             return reply.status(500).send({ error: 'Ошибка сервера' })
         }
     })
+
+    // POST /payments/getpaymentamounts  { bookingIds: [1,2,3], type: 'PAY'|'DEPOSIT' }
+    // Батч-версия getpaymentamount — одним запросом вместо N, чтобы не устраивать
+    // N параллельных запросов на список бронирований (упирается в лимит пула соединений к БД)
+    fastify.post('/getpaymentamounts', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const userId = req.user.id
+            const type = req.body.type === 'DEPOSIT' ? 'DEPOSIT' : 'PAY'
+            const ids = Array.isArray(req.body.bookingIds)
+                ? req.body.bookingIds.map(id => parseInt(id)).filter(id => !isNaN(id))
+                : []
+
+            if (!ids.length) return reply.send({ amounts: {} })
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true }
+            })
+            if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
+
+            const amounts = {}
+            ids.forEach(id => { amounts[id] = 0 })
+
+            const sums = await fastify.prisma.payment.groupBy({
+                by: ['bookingId'],
+                where: { cabinetid: user.cabinet, bookingId: { in: ids }, type, status: 'PAID' },
+                _sum: { amount: true }
+            })
+            sums.forEach(s => { amounts[s.bookingId] = s._sum.amount || 0 })
+
+            if (type === 'DEPOSIT') {
+                const bookings = await fastify.prisma.bookings.findMany({
+                    where: { id: { in: ids }, cabinet: user.cabinet },
+                    select: { id: true, deposit: true }
+                })
+                bookings.forEach(b => { amounts[b.id] = (amounts[b.id] || 0) + (b.deposit || 0) })
+            }
+
+            return reply.send({ amounts })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
 }

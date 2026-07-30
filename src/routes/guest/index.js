@@ -108,6 +108,7 @@ module.exports = async (fastify) => {
                 price_per_day:        true,
                 deposit:              true,
                 fio:                  true,
+                email:                true,
                 begin_time:           true,
                 end_time:             true,
                 contract_link:        true,
@@ -120,6 +121,12 @@ module.exports = async (fastify) => {
         if (!booking) {
             return reply.status(404).send({ error: 'Booking not found' })
         }
+
+        const paidAgg = await fastify.prisma.payment.aggregate({
+            where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'PAY', status: 'PAID' },
+            _sum: { amount: true }
+        })
+        const paidAmount = paidAgg._sum.amount || 0
 
         const objects = await fastify.prisma.objects.findFirst({
             where: { realtyid: booking.realty_id },
@@ -142,8 +149,28 @@ module.exports = async (fastify) => {
 
         const cabinet = await fastify.prisma.cabinet.findFirst({
             where:  { id: booking.cabinet },
-            select: { Timezone: true }
+            select: {
+                Timezone:           true,
+                tochkaPhone:        true,
+                tochkaApiKey:       true,
+                tochkaMerchantId:   true,
+                tochkaPaymentMode:  true,
+                tochkaVatType:      true,
+                tochkaPurpose:      true,
+                tochkaName:         true,
+                tochkaCustomerCode: true
+            }
         })
+
+        // Готовность интеграции с Точкой — те же поля, что проверяет /guest/payment/getpaymenturl
+        const tochkaReady = !!(
+            cabinet?.tochkaPhone && cabinet?.tochkaApiKey && cabinet?.tochkaMerchantId &&
+            cabinet?.tochkaPaymentMode && cabinet?.tochkaVatType && cabinet?.tochkaPurpose &&
+            cabinet?.tochkaName && cabinet?.tochkaCustomerCode
+        )
+        if (objects) {
+            objects.tochkaReady = tochkaReady
+        }
 
         const photos = objects
             ? await fastify.prisma.objectPhoto.findMany({
@@ -233,7 +260,7 @@ module.exports = async (fastify) => {
             }
         }
 
-        return reply.send({ booking, objects, photos, show, bookingState, checkoutPassed })
+        return reply.send({ booking, objects, photos, show, bookingState, checkoutPassed, paidAmount })
     })
 
     // ── POST /guest/save-times ─────────────────────────────────────────────
@@ -392,9 +419,11 @@ module.exports = async (fastify) => {
             const tochkaPurpose = cabinet.tochkaPurpose
             const tochkaName = cabinet.tochkaName
             const tochkaCustomerCode = cabinet.tochkaCustomerCode
+            const tochkaOrgName = cabinet.tochkaOrgName
+            const tochkaTaxCode = cabinet.tochkaTaxCode
 
             if (!tochkaPhone || !tochkaApiKey || !tochkaMerchantId || !tochkaPaymentMode || !tochkaVatType || !tochkaPurpose || !tochkaName || !tochkaCustomerCode) {
-                return reply.status(400).send({ error: 'Incomplete cabinet information' })
+                return reply.status(400).send({ error: 'Оплата через Точка Банк временно недоступна. Обратитесь к вашему менеджеру.' })
             }
 
             const templateVars = {
@@ -444,15 +473,15 @@ module.exports = async (fastify) => {
                                     paymentObject: 'service',
                                     Supplier: {
                                         phone: tochkaPhone,
-                                        name: '',   // Нет в базе — юр. название поставщика пока не хранится
-                                        taxCode: '' // Нет в базе — ИНН поставщика пока не хранится
+                                        name: tochkaOrgName || '',
+                                        taxCode: tochkaTaxCode || ''
                                     }
                                 }
                             ],
                             Supplier: {
                                 phone: tochkaPhone,
-                                name: '',   // Нет в базе — юр. название поставщика пока не хранится
-                                taxCode: '' // Нет в базе — ИНН поставщика пока не хранится
+                                name: tochkaOrgName || '',
+                                taxCode: tochkaTaxCode || ''
                             }
                         }
                     })

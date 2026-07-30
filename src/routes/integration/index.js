@@ -435,14 +435,17 @@ module.exports = async (fastify) => {
             }
 
             let customerCode;
+            let selectedCustomer;
             if (providedCustomerCode) {
                 const found = customers.find(c => c.customerCode === providedCustomerCode);
                 if (!found) {
                     return reply.status(400).send({ error: 'Выбранный клиент не найден' });
                 }
                 customerCode = providedCustomerCode;
+                selectedCustomer = found;
             } else if (customers.length === 1) {
                 customerCode = customers[0].customerCode;
+                selectedCustomer = customers[0];
             } else {
                 return reply.send({ customerResult: 'MULTIPLE', customers });
             }
@@ -564,14 +567,16 @@ module.exports = async (fastify) => {
 
             await fastify.prisma.cabinet.update({
                 where: { id: user.cabinet },
-                data: { 
+                data: {
                     tochkaPhone: phone,
                     tochkaApiKey: apiKey,
                     tochkaMerchantId: merchantIdValue,
                     tochkaVatType: vatType,
                     tochkaPurpose: purpose,
                     tochkaName: name,
-                    tochkaCustomerCode: customerCode
+                    tochkaCustomerCode: customerCode,
+                    tochkaOrgName: selectedCustomer?.fullName || null,
+                    tochkaTaxCode: selectedCustomer?.taxCode || null
                  }
             })
 
@@ -638,7 +643,9 @@ module.exports = async (fastify) => {
                     tochkaVatType: null,
                     tochkaPurpose: null,
                     tochkaName: null,
-                    tochkaCustomerCode: null
+                    tochkaCustomerCode: null,
+                    tochkaOrgName: null,
+                    tochkaTaxCode: null
                 }
             })
 

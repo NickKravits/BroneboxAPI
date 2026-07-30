@@ -57,6 +57,8 @@ model Cabinet {
   tochkaPurpose       String?
   tochkaName          String?
   tochkaCustomerCode  String?
+  tochkaOrgName       String?
+  tochkaTaxCode       String?
   cleaningTemplate    String?   @db.Text
   approxTimeMarker    String?   @default("~")
   emptyStayMarker     String?   @default("—")
