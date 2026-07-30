@@ -79,6 +79,17 @@ module.exports = async (fastify) => {
         }).format(utcDate)
     }
 
+    // Date-only Russian formatting, used for {created_at}/{checkin}/{checkout} template vars.
+    function formatRuDateOnly(date) {
+        if (!date) return ''
+        return new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+    }
+
+    // Replaces {placeholder} tokens in Tochka purpose/name templates with real values.
+    function fillTochkaTemplate(template, vars) {
+        return (template || '').replace(/\{(\w+)\}/g, (match, key) => vars[key] ?? match)
+    }
+
     // ── POST /guest/get ────────────────────────────────────────────────────
     fastify.post('/get', async (req, reply) => {
         const { id } = req.body
@@ -319,6 +330,169 @@ module.exports = async (fastify) => {
         } catch (err) {
             console.error(err)
             return reply.send({ result: 'unknown' })
+        }
+    })
+
+    fastify.post('/payment/getpaymenturl', async (req, reply) => {
+        const { id, email } = req.body
+        const booking = await fastify.prisma.bookings.findFirst({
+            where:  { link: id }
+        })
+
+        if (!booking) return reply.status(404).send({ error: 'Booking not found' })
+
+        const payments = await fastify.prisma.payment.findMany({
+            where: { bookingId: booking.id, type: 'PAY', status: 'PAID', cabinetid: booking.cabinet },
+        })
+
+        const toPay = (booking.amount || 0) - (booking.prepayment || 0) - payments.reduce((sum, p) => sum + p.amount, 0)
+
+        if (toPay <= 0) return reply.status(400).send({ error: 'No payment due' })
+        
+
+        const object = await fastify.prisma.objects.findFirst({
+            where:  { realtyid: booking.realty_id, cabinetid: booking.cabinet },
+            select: { paymentchanel: true, name: true, location: true }
+        })
+
+        if (!object) {
+            return reply.status(404).send({ error: 'Object not found' })
+        }
+
+        if (object.paymentchanel == "TOCHKA") {
+            const expiredLimit = new Date(Date.now() + 10 * 60 * 1000) // 10 minutes from now
+            const existsUrl = await fastify.prisma.payment.findFirst({
+                where: {
+                    type: 'PAY',
+                    bookingId: booking.id,
+                    status: 'PENDING',
+                    cabinetid: booking.cabinet,
+                    linkExpiresAt: { gte: expiredLimit } // те, которые не истекли
+                },
+                    orderBy: { linkExpiresAt: 'desc' }
+            })
+
+            if (existsUrl) {
+                return reply.send({ url: existsUrl.link })
+            }
+
+            const cabinet = await fastify.prisma.cabinet.findFirst({
+                where:  { id: booking.cabinet }
+            })
+
+            if (!cabinet) {
+                return reply.status(404).send({ error: 'Cabinet not found' })
+            }
+
+            const tochkaPhone = cabinet.tochkaPhone
+            const tochkaApiKey = cabinet.tochkaApiKey
+            const tochkaMerchantId = cabinet.tochkaMerchantId
+            const tochkaPaymentMode = cabinet.tochkaPaymentMode
+            const tochkaVatType = cabinet.tochkaVatType
+            const tochkaPurpose = cabinet.tochkaPurpose
+            const tochkaName = cabinet.tochkaName
+            const tochkaCustomerCode = cabinet.tochkaCustomerCode
+
+            if (!tochkaPhone || !tochkaApiKey || !tochkaMerchantId || !tochkaPaymentMode || !tochkaVatType || !tochkaPurpose || !tochkaName || !tochkaCustomerCode) {
+                return reply.status(400).send({ error: 'Incomplete cabinet information' })
+            }
+
+            const templateVars = {
+                apartment_name: object.name || '',
+                address:        object.location || '',
+                created_at:     formatRuDateOnly(booking.created_at),
+                checkin:        formatRuDateOnly(booking.begin_date),
+                checkout:       formatRuDateOnly(booking.end_date)
+            }
+            const tochkaPurposeEdited = fillTochkaTemplate(tochkaPurpose, templateVars)
+            const tochkaNameEdited    = fillTochkaTemplate(tochkaName, templateVars)
+
+            const amountStr    = toPay.toFixed(2)
+            const guestPageLink = `${process.env.FRONTEND_URL}/c/?id=${booking.link}&red=tochka`
+
+            let tochkaRes
+            try {
+                tochkaRes = await fetch('https://enter.tochka.com/uapi/acquiring/v1.0/payments_with_receipt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${tochkaApiKey}`
+                    },
+                    body: JSON.stringify({
+                        Data: {
+                            customerCode: tochkaCustomerCode,
+                            amount: amountStr,
+                            purpose: tochkaPurposeEdited,
+                            redirectUrl: guestPageLink,
+                            failRedirectUrl: guestPageLink,
+                            paymentMode: tochkaPaymentMode,
+                            saveCard: false,
+                            merchantId: tochkaMerchantId,
+                            preAuthorization: false,
+                            ttl: 11,
+                            Client: {
+                                email
+                            },
+                            Items: [
+                                {
+                                    vatType: tochkaVatType,
+                                    name: tochkaNameEdited,
+                                    amount: amountStr,
+                                    quantity: 1,
+                                    paymentMethod: 'full_payment',
+                                    paymentObject: 'service',
+                                    Supplier: {
+                                        phone: tochkaPhone,
+                                        name: '',   // Нет в базе — юр. название поставщика пока не хранится
+                                        taxCode: '' // Нет в базе — ИНН поставщика пока не хранится
+                                    }
+                                }
+                            ],
+                            Supplier: {
+                                phone: tochkaPhone,
+                                name: '',   // Нет в базе — юр. название поставщика пока не хранится
+                                taxCode: '' // Нет в базе — ИНН поставщика пока не хранится
+                            }
+                        }
+                    })
+                })
+            } catch (err) {
+                fastify.log.error(`[Точка] Ошибка сети при создании платежа: ${err.message}`)
+                return reply.status(502).send({ error: 'Не удалось связаться с банком' })
+            }
+
+            if (!tochkaRes.ok) {
+                const errorText = await tochkaRes.text()
+                fastify.log.error(`[Точка] Ошибка создания платежа. Статус: ${tochkaRes.status} | Ответ: ${errorText}`)
+                return reply.status(502).send({ error: 'Не удалось создать ссылку на оплату' })
+            }
+
+            const tochkaData  = await tochkaRes.json()
+            const paymentData = tochkaData.Data
+
+            const payment = await fastify.prisma.payment.create({
+                data: {
+                    cabinetid:     booking.cabinet,
+                    bookingId:     booking.id,
+                    amount:        parseFloat(paymentData.amount),
+                    type:          'PAY',
+                    method:        'TOCHKA',
+                    status:        'PENDING',
+                    externalId:    paymentData.operationId,
+                    link:          paymentData.paymentLink,
+                    linkExpiresAt: new Date(Date.now() + 10 * 60 * 1000)
+                }
+            })
+
+            return reply.send({ url: payment.link })
+
+        } else if (object.paymentchanel == "TBANK") {
+            return reply.status(400).send({ error: 'TBANK payment channel is not implemented yet' })
+        } else if (object.paymentchanel == "NONE") {
+            return reply.status(400).send({ error: 'Payment channel is not set' })
+        } else {
+            return reply.status(400).send({ error: 'Unknown payment channel' })
         }
     })
 

@@ -154,4 +154,34 @@ module.exports = async (fastify) => {
             return reply.status(500).send({ error: 'Ошибка сервера' })
         }
     })
+
+    fastify.post('/getpaymentamount', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const userId = req.user.id
+            const { bookingId } = req.body
+
+            if (!bookingId) return reply.status(400).send({ error: 'bookingId обязателен' })
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true }
+            })
+            if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
+
+            const payments = await fastify.prisma.payment.findMany({
+                where: { cabinetid: user.cabinet, bookingId: parseInt(bookingId), type: 'PAY', status: 'PAID' }
+            })
+
+            let amount = 0
+            for (const payment of payments) {
+                amount += payment.amount
+            }
+
+            return reply.send({ amount })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
 }
