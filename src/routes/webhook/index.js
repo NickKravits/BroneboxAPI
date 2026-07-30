@@ -459,4 +459,100 @@ module.exports = async (fastify) => {
             return reply.status(200).send({ error: 'Не удалось обработать webhook' })
         }
     })
+
+    // POST /webhook/TochkaPayment/:webhookkey — подтверждение оплаты Точки.
+    // Тело запроса — голый JWT (не JSON), поэтому парсим его в изолированном контексте,
+    // чтобы не сломать JSON-парсинг остальных вебхуков (/rc, /okidoki) выше.
+    fastify.register(async (scoped) => {
+        scoped.addContentTypeParser('*', { parseAs: 'string' }, (req, body, done) => {
+            done(null, body)
+        })
+
+        scoped.post('/TochkaPayment/:webhookkey', async (req, reply) => {
+            try {
+                const { webhookkey } = req.params
+
+                const cabinet = await fastify.prisma.cabinet.findFirst({
+                    where: { tochkaWebhookKey: webhookkey },
+                    select: { id: true }
+                })
+
+                if (!cabinet) {
+                    return reply.status(200).send({ ok: true })
+                }
+
+                const token = typeof req.body === 'string' ? req.body.trim() : ''
+                const parts = token.split('.')
+                if (parts.length !== 3) {
+                    fastify.log.error(`[Точка вебхук] Тело запроса не похоже на JWT`)
+                    return reply.status(200).send({ ok: true })
+                }
+
+                let payload
+                try {
+                    payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'))
+                } catch (err) {
+                    fastify.log.error(`[Точка вебхук] Не удалось разобрать JWT: ${err.message}`)
+                    return reply.status(200).send({ ok: true })
+                }
+
+                const { amount, paymentType, operationId, webhookType, status } = payload || {}
+
+                if (webhookType !== 'acquiringInternetPayment') {
+                    return reply.status(200).send({ ok: true })
+                }
+
+                if (!operationId) {
+                    fastify.log.error(`[Точка вебхук] В теле нет operationId`)
+                    return reply.status(200).send({ ok: true })
+                }
+
+                const payment = await fastify.prisma.payment.findFirst({
+                    where: { method: 'TOCHKA', externalId: String(operationId) }
+                })
+
+                if (!payment) {
+                    fastify.log.error(`[Точка вебхук] Платёж с externalId=${operationId} не найден`)
+                    return reply.status(200).send({ ok: true })
+                }
+
+                if (payment.cabinetid !== cabinet.id) {
+                    fastify.log.error(`[Точка вебхук] Кабинет из ключа вебхука (${cabinet.id}) не совпадает с кабинетом платежа #${payment.id} (${payment.cabinetid})`)
+                    return reply.status(200).send({ ok: true })
+                }
+
+                const updateData = {
+                    status:            'PAID',
+                    paidAt:            new Date(),
+                    tochkaStatus:      status || null,
+                    tochkaPaymentType: paymentType || null
+                }
+
+                const parsedAmount = parseFloat(amount)
+                if (!isNaN(parsedAmount)) {
+                    updateData.amount = parsedAmount
+                } else {
+                    fastify.log.error(`[Точка вебхук] Некорректный amount у платежа #${payment.id}: ${amount}`)
+                }
+
+                await fastify.prisma.payment.update({
+                    where: { id: payment.id },
+                    data: updateData
+                })
+
+                await fastify.prisma.logs.create({
+                    data: {
+                        cabinetid: cabinet.id,
+                        status: "SUCCESS",
+                        message: `Точка | Платёж #${payment.id} подтверждён вебхуком (operationId: ${operationId})`
+                    }
+                })
+
+                return reply.status(200).send({ ok: true })
+            } catch (err) {
+                console.error(err)
+                return reply.status(200).send({ ok: true })
+            }
+        })
+    })
 }

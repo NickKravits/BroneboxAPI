@@ -1,6 +1,23 @@
 const { ok } = require('assert')
 const crypto = require('crypto')
 
+// Полный сброс интеграции с Точка Банком — используется и при явном отключении,
+// и при неудачном подключении вебхука (интеграция считается незавершённой)
+const TOCHKA_RESET_DATA = {
+    tochkaPhone: null,
+    tochkaApiKey: null,
+    tochkaMerchantId: null,
+    tochkaPaymentMode: null,
+    tochkaVatType: null,
+    tochkaPurpose: null,
+    tochkaName: null,
+    tochkaCustomerCode: null,
+    tochkaOrgName: null,
+    tochkaTaxCode: null,
+    tochkaAppClientId: null,
+    tochkaWebhookKey: null
+}
+
 module.exports = async (fastify) => {
   // GET /integration/realtycalendar
   fastify.get('/realtycalendar', async (req, reply) => {
@@ -344,9 +361,9 @@ module.exports = async (fastify) => {
             await req.jwtVerify()
 
             const userId = req.user.id
-            const { phone, apiKey, vatType, purpose, name, customerCode: providedCustomerCode } = req.body
+            const { phone, apiKey, vatType, purpose, name, clientId, customerCode: providedCustomerCode } = req.body
 
-            if (!apiKey || !phone || !vatType || !purpose || !name) {
+            if (!apiKey || !phone || !vatType || !purpose || !name || !clientId) {
                 return reply.status(400).send({ error: 'Обязательные поля не заполнены' })
             }
 
@@ -576,7 +593,8 @@ module.exports = async (fastify) => {
                     tochkaName: name,
                     tochkaCustomerCode: customerCode,
                     tochkaOrgName: selectedCustomer?.fullName || null,
-                    tochkaTaxCode: selectedCustomer?.taxCode || null
+                    tochkaTaxCode: selectedCustomer?.taxCode || null,
+                    tochkaAppClientId: clientId
                  }
             })
 
@@ -635,18 +653,7 @@ module.exports = async (fastify) => {
 
             await fastify.prisma.cabinet.update({
                 where: { id: user.cabinet },
-                data: {
-                    tochkaPhone: null,
-                    tochkaApiKey: null,
-                    tochkaMerchantId: null,
-                    tochkaPaymentMode: null,
-                    tochkaVatType: null,
-                    tochkaPurpose: null,
-                    tochkaName: null,
-                    tochkaCustomerCode: null,
-                    tochkaOrgName: null,
-                    tochkaTaxCode: null
-                }
+                data: TOCHKA_RESET_DATA
             })
 
             await fastify.prisma.logs.create({
@@ -692,12 +699,17 @@ module.exports = async (fastify) => {
 
             const cabinet = await fastify.prisma.cabinet.findUnique({
                 where: { id: user.cabinet },
-                select: { tochkaApiKey: true, tochkaCustomerCode: true }
+                select: {
+                    tochkaApiKey: true,
+                    tochkaCustomerCode: true,
+                    tochkaAppClientId: true,
+                    tochkaWebhookKey: true
+                }
             })
 
             if (!cabinet?.tochkaApiKey || !cabinet?.tochkaCustomerCode) {
-                return reply.status(400).send({ 
-                    error: 'Сначала настройте интеграцию с Точка Банком' 
+                return reply.status(400).send({
+                    error: 'Сначала настройте интеграцию с Точка Банком'
                 })
             }
 
@@ -716,16 +728,124 @@ module.exports = async (fastify) => {
                 return reply.status(400).send({ error: `Недопустимые способы оплаты: ${invalidModes.join(', ')}` })
 }
 
+            // Вебхук подтверждения оплаты обязателен — без него интеграция не считается завершённой.
+            // Если что-то пойдёт не так, весь набор данных интеграции сбрасывается, чтобы пользователь
+            // перепроверил токен/Client ID и прошёл настройку заново.
+            if (!cabinet.tochkaAppClientId) {
+                await fastify.prisma.cabinet.update({
+                    where: { id: user.cabinet },
+                    data: TOCHKA_RESET_DATA
+                })
+                await fastify.prisma.logs.create({
+                    data: {
+                        cabinetid: user.cabinet,
+                        status: "ERROR",
+                        message: "Интеграция | Не указан Client ID приложения — интеграция с Точка Банком сброшена. Пройдите настройку заново."
+                    }
+                })
+                return reply.status(400).send({
+                    error: 'Не указан Client ID приложения. Проверьте данные и пройдите интеграцию с Точка Банком заново.'
+                })
+            }
+
+            const webhookKey = cabinet.tochkaWebhookKey || crypto.randomBytes(16).toString('hex')
+
+            let webhookRes
+            try {
+                webhookRes = await fetch(`https://enter.tochka.com/uapi/webhook/v1.0/${cabinet.tochkaAppClientId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${cabinet.tochkaApiKey}`
+                    },
+                    body: JSON.stringify({
+                        webhooksList: ['acquiringInternetPayment'],
+                        url: `${process.env.APP_URL}/webhook/TochkaPayment/${webhookKey}`
+                    })
+                })
+            } catch (err) {
+                fastify.log.error(`[Точка] Ошибка сети при регистрации вебхука: ${err.message}`)
+                await fastify.prisma.cabinet.update({
+                    where: { id: user.cabinet },
+                    data: TOCHKA_RESET_DATA
+                })
+                await fastify.prisma.logs.create({
+                    data: {
+                        cabinetid: user.cabinet,
+                        status: "ERROR",
+                        message: "Интеграция | Ошибка сети при подключении вебхука Точка Банка. Интеграция сброшена, пройдите настройку заново."
+                    }
+                })
+                return reply.status(502).send({
+                    error: 'Не удалось связаться с банком для подключения вебхука. Проверьте данные и пройдите интеграцию заново.'
+                })
+            }
+
+            if (!webhookRes.ok) {
+                const httpStatus = webhookRes.status;
+                const errorText = await webhookRes.text();
+                fastify.log.error(`[Ошибка Точки] Вебхук. Статус: ${httpStatus} | Ответ: ${errorText}`);
+
+                await fastify.prisma.cabinet.update({
+                    where: { id: user.cabinet },
+                    data: TOCHKA_RESET_DATA
+                })
+                await fastify.prisma.logs.create({
+                    data: {
+                        cabinetid: user.cabinet,
+                        status: "ERROR",
+                        message: `Интеграция | Не удалось подключить вебхук Точка Банка (код ${httpStatus}). Интеграция сброшена, пройдите настройку заново.`
+                    }
+                })
+
+                switch (httpStatus) {
+                    case 400:
+                        return reply.status(400).send({
+                            error: 'Код: 400. Ошибка валидации при подключении вебхука! Проверьте данные и пройдите интеграцию с Точка Банком заново.'
+                        });
+
+                    case 403:
+                        return reply.status(403).send({
+                            error: 'Код: 403. Не удалось подключить вебхук! Проверьте данные и пройдите интеграцию с Точка Банком заново.'
+                        });
+
+                    case 404:
+                        return reply.status(404).send({
+                            error: 'Код: 404. Метод не найден при подключении вебхука! Обратитесь к разработчику.'
+                        });
+
+                    case 424:
+                        return reply.status(424).send({
+                            error: 'Код: 424. Не удалось подключить вебхук! Попробуйте позже, проверьте данные и пройдите интеграцию заново.'
+                        });
+
+                    case 500:
+                        return reply.status(500).send({
+                            error: 'Код: 500. Ошибка запроса при подключении вебхука! Обратитесь к разработчику.'
+                        });
+
+                    default:
+                        return reply.status(502).send({
+                            error: `Неожиданный ответ от банка при подключении вебхука. Код: ${httpStatus}. Проверьте данные и пройдите интеграцию заново.`
+                        });
+                }
+            }
+
             await fastify.prisma.cabinet.update({
                 where: { id: user.cabinet },
-                data: { tochkaMerchantId: merchantId, tochkaPaymentMode: paymentModes }
+                data: {
+                    tochkaMerchantId: merchantId,
+                    tochkaPaymentMode: paymentModes,
+                    tochkaWebhookKey: webhookKey
+                }
             })
 
             await fastify.prisma.logs.create({
                 data: {
                     cabinetid: user.cabinet,
                     status: "SUCCESS",
-                    message: "Интеграция | Завершена интеграция с Точка банком. Торговая точка выбрана."
+                    message: "Интеграция | Завершена интеграция с Точка банком. Торговая точка выбрана, вебхук подключён."
                 }
             })
 
