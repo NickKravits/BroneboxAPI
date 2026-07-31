@@ -161,9 +161,12 @@ module.exports = async (fastify) => {
             }
         })
 
-        // Целевая сумма залога: ручное значение брони приоритетнее дефолта из настроек объекта
+        // Целевая сумма залога: ручное значение брони приоритетнее дефолта из настроек объекта,
+        // но ТОЛЬКО если залог принимается через Точку или Т-Банк. Если через Монету или менеджера —
+        // ручное значение брони не учитывается вовсе, всегда берём дефолт из настроек объекта.
         const objectDepositDefault = parseFloat(objects?.deposit) || 0
-        const depositTarget = (booking.manual_deposit !== null && booking.manual_deposit !== undefined)
+        const depositManualAllowed = objects?.depositchanel === 'TOCHKA' || objects?.depositchanel === 'TBANK'
+        const depositTarget = (depositManualAllowed && booking.manual_deposit !== null && booking.manual_deposit !== undefined)
             ? booking.manual_deposit
             : objectDepositDefault
 
@@ -419,22 +422,8 @@ module.exports = async (fastify) => {
         }
 
         if (object.paymentchanel == "TOCHKA") {
-            const expiredLimit = new Date(Date.now() + 10 * 60 * 1000) // 10 minutes from now
-            const existsUrl = await fastify.prisma.payment.findFirst({
-                where: {
-                    type: 'PAY',
-                    bookingId: booking.id,
-                    status: 'PENDING',
-                    cabinetid: booking.cabinet,
-                    linkExpiresAt: { gte: expiredLimit } // те, которые не истекли
-                },
-                    orderBy: { linkExpiresAt: 'desc' }
-            })
-
-            if (existsUrl) {
-                return reply.send({ url: existsUrl.link })
-            }
-
+            // Каждый вызов создаёт новую ссылку на оплату — старые PENDING-платежи не переиспользуются,
+            // протухшие подчищает CronTab, переводя в FAILED (см. src/cron/expireStalePayments.js)
             const cabinet = await fastify.prisma.cabinet.findFirst({
                 where:  { id: booking.cabinet }
             })
@@ -602,22 +591,8 @@ module.exports = async (fastify) => {
 
         if (toPay <= 0) return reply.status(400).send({ error: 'Нет суммы к оплате' })
 
-        const expiredLimit = new Date(Date.now() + 10 * 60 * 1000) // 10 minutes from now
-        const existsUrl = await fastify.prisma.payment.findFirst({
-            where: {
-                type: 'DEPOSIT',
-                bookingId: booking.id,
-                status: 'PENDING',
-                cabinetid: booking.cabinet,
-                linkExpiresAt: { gte: expiredLimit } // те, которые не истекли
-            },
-                orderBy: { linkExpiresAt: 'desc' }
-        })
-
-        if (existsUrl) {
-            return reply.send({ url: existsUrl.link })
-        }
-
+        // Каждый вызов создаёт новую ссылку на оплату — старые PENDING-платежи не переиспользуются,
+        // протухшие подчищает CronTab, переводя в FAILED (см. src/cron/expireStalePayments.js)
         const cabinet = await fastify.prisma.cabinet.findFirst({
             where:  { id: booking.cabinet }
         })

@@ -44,7 +44,8 @@ module.exports = async (fastify) => {
                         managetemplates: true,
                         manageautosent: true,
                         seemaidsrate: true,
-                        managebooks: true
+                        managebooks: true,
+                        canreturnpayments: true
                     }
                 }
             }
@@ -300,7 +301,7 @@ module.exports = async (fastify) => {
                 return reply.status(403).send({ error: 'Невозможно получить информацию об администраторе' })
             }
 
-            const validPermissions = ['manageobjects', 'managemaids', 'manageintegration', 'managetemplates', 'manageautosent', 'seemaidsrate', 'managebooks']
+            const validPermissions = ['manageobjects', 'managemaids', 'manageintegration', 'managetemplates', 'manageautosent', 'seemaidsrate', 'managebooks', 'canreturnpayments']
 
             if (!validPermissions.includes(permission)) {
                 return reply.status(400).send({ error: 'Недопустимое имя разрешения' })

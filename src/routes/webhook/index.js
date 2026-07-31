@@ -1,4 +1,5 @@
 const crypto = require('crypto')
+const { returnTochkaFailedPayment } = require('../../services/tochkaRefund')
 
 module.exports = async (fastify) => {
   // POST /webhook/rc/:webhookkey
@@ -527,6 +528,26 @@ module.exports = async (fastify) => {
 
                 if (payment.cabinetid !== cabinet.id) {
                     fastify.log.error(`[Точка вебхук] Кабинет из ключа вебхука (${cabinet.id}) не совпадает с кабинетом платежа #${payment.id} (${payment.cabinetid})`)
+                    return reply.status(200).send({ ok: true })
+                }
+
+                // Платёж у нас уже не PENDING (истёк по времени и был списан в FAILED крон-джобом,
+                // либо уже был возвращён) — но гость всё равно провёл оплату в Точке. Раз мы этот
+                // платёж больше не считаем актуальным, деньги нужно вернуть автоматически, а не
+                // задним числом помечать его оплаченным. В базе при этом ничего не меняем.
+                if (payment.status === 'FAILED' || payment.status === 'RETURNED') {
+                    const parsedAmountForReturn = parseFloat(amount)
+                    if (!isNaN(parsedAmountForReturn) && parsedAmountForReturn > 0) {
+                        fastify.log.error(`[Точка вебхук] Платёж #${payment.id} (externalId ${operationId}) пришёл оплаченным, но у нас уже в статусе ${payment.status} — запускаем автоматический возврат`)
+                        await returnTochkaFailedPayment({
+                            fastify,
+                            cabinetid: cabinet.id,
+                            externalId: String(operationId),
+                            amount: parsedAmountForReturn
+                        })
+                    } else {
+                        fastify.log.error(`[Точка вебхук] Платёж #${payment.id} в статусе ${payment.status}, но amount из вебхука некорректен (${amount}) — автовозврат не выполнен`)
+                    }
                     return reply.status(200).send({ ok: true })
                 }
 

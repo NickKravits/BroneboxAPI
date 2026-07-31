@@ -1,5 +1,7 @@
 'use strict'
 
+const { callTochkaRefund } = require('../../services/tochkaRefund')
+
 module.exports = async (fastify) => {
 
     // GET /payments/getbybooking?bookingId=X&type=PAY|DEPOSIT
@@ -187,6 +189,12 @@ module.exports = async (fastify) => {
             })
             if (!payment) return reply.status(404).send({ error: 'Платёж не найден' })
 
+            // Возврат для платежей/залогов через Точку и Т-Банк пока не реализован —
+            // для них нужна отдельная логика (запрос возврата в самом банке), не как у ручных.
+            if (payment.method !== 'MANAGER') {
+                return reply.status(400).send({ error: 'Возврат для этого способа оплаты пока недоступен' })
+            }
+
             const numAmount = parseFloat(amount)
             if (isNaN(numAmount) || numAmount <= 0) {
                 return reply.status(400).send({ error: 'Сумма возврата должна быть больше 0' })
@@ -204,6 +212,118 @@ module.exports = async (fastify) => {
                     status:         'RETURNED'
                 }
             })
+
+            return reply.send({ payment: updated })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
+    // POST /payments/returnTochkaPayment — ручной возврат оплаты/залога, принятых через Точку.
+    // Доступно только ADMINISTRATOR или менеджеру с правом canreturnpayments — это реальный запрос
+    // на возврат денег в банк, а не просто пометка в нашей базе.
+    fastify.post('/returnTochkaPayment', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const userId = req.user.id
+            const { paymentId, amount } = req.body
+
+            if (!paymentId || amount === undefined || amount === null) {
+                return reply.status(400).send({ error: 'paymentId и amount обязательны' })
+            }
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true, role: true, staff: { select: { canreturnpayments: true } } }
+            })
+            if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
+
+            if (user.role !== 'ADMINISTRATOR') {
+                if (!user.staff || user.staff.canreturnpayments !== 'YES') {
+                    return reply.status(403).send({ error: 'Недостаточно прав для возврата платежей' })
+                }
+            }
+
+            const payment = await fastify.prisma.payment.findFirst({
+                where: { id: parseInt(paymentId), cabinetid: user.cabinet }
+            })
+            if (!payment) return reply.status(404).send({ error: 'Платёж не найден' })
+
+            if (payment.method !== 'TOCHKA') {
+                return reply.status(400).send({ error: 'Этот платёж принят не через Точку — используйте обычный возврат' })
+            }
+            if (!payment.externalId) {
+                return reply.status(400).send({ error: 'У платежа нет ID операции в Точке, возврат невозможен' })
+            }
+            if (payment.status !== 'PAID' && payment.status !== 'RETURNED') {
+                return reply.status(400).send({ error: 'Возврат возможен только для оплаченных платежей' })
+            }
+
+            const numAmount = parseFloat(amount)
+            if (isNaN(numAmount) || numAmount <= 0) {
+                return reply.status(400).send({ error: 'Сумма возврата должна быть больше 0' })
+            }
+            if (numAmount > payment.amount) {
+                return reply.status(400).send({ error: `Сумма возврата не может превышать ${payment.amount}` })
+            }
+
+            const cabinet = await fastify.prisma.cabinet.findFirst({
+                where: { id: user.cabinet },
+                select: { tochkaApiKey: true }
+            })
+            if (!cabinet?.tochkaApiKey) {
+                return reply.status(400).send({ error: 'Интеграция с Точка Банком не настроена' })
+            }
+
+            const amountStr = numAmount.toFixed(2)
+            const result = await callTochkaRefund(fastify, cabinet.tochkaApiKey, payment.externalId, amountStr)
+
+            if (!result.ok) {
+                await fastify.prisma.logs.create({
+                    data: {
+                        cabinetid: user.cabinet,
+                        status: 'ERROR',
+                        message: `Точка | Не удалось вернуть платёж #${payment.id} (externalId ${payment.externalId})`
+                    }
+                }).catch(() => {})
+
+                if (result.networkError) {
+                    return reply.status(502).send({ error: 'Не удалось связаться с банком' })
+                }
+                switch (result.httpStatus) {
+                    case 400:
+                        return reply.status(400).send({ error: 'Код: 400. Ошибка валидации при возврате! Проверьте сумму и статус платежа в Точке.' })
+                    case 403:
+                        return reply.status(403).send({ error: 'Код: 403. Банк отклонил запрос на возврат.' })
+                    case 404:
+                        return reply.status(404).send({ error: 'Код: 404. Платёж не найден в Точке.' })
+                    case 424:
+                        return reply.status(424).send({ error: 'Код: 424. Возврат невозможен, попробуйте позже или свяжитесь с банком.' })
+                    case 500:
+                        return reply.status(500).send({ error: 'Код: 500. Ошибка на стороне банка при возврате.' })
+                    default:
+                        return reply.status(502).send({ error: `Неожиданный ответ от банка при возврате. Код: ${result.httpStatus}.` })
+                }
+            }
+
+            const updated = await fastify.prisma.payment.update({
+                where: { id: payment.id },
+                data: {
+                    amount:         payment.amount - numAmount,
+                    returnedAmount: (payment.returnedAmount || 0) + numAmount,
+                    returnedAt:     new Date(),
+                    status:         'RETURNED'
+                }
+            })
+
+            await fastify.prisma.logs.create({
+                data: {
+                    cabinetid: user.cabinet,
+                    status: 'SUCCESS',
+                    message: `Точка | Возврат платежа #${payment.id} на сумму ${amountStr} ₽ выполнен`
+                }
+            }).catch(() => {})
 
             return reply.send({ payment: updated })
         } catch (err) {

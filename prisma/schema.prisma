@@ -118,6 +118,7 @@ model Staff {
   manageautosent    Thumbler  @default(NO)
   seemaidsrate      Thumbler  @default(YES)
   managebooks       Thumbler  @default(NO)
+  canreturnpayments Thumbler  @default(NO)
 }
 
 model Maids {

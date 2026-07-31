@@ -16,7 +16,8 @@ module.exports = async (fastify) => {
             name: true,
             role: true,
             cabinet: true,
-            status: true
+            status: true,
+            staff: { select: { canreturnpayments: true } }
         }
         })
 
@@ -30,7 +31,8 @@ module.exports = async (fastify) => {
             name: user.name,
             role: user.role,
             cabinet: user.cabinet,
-            status: user.status
+            status: user.status,
+            canReturnPayments: user.role === 'ADMINISTRATOR' || user.staff?.canreturnpayments === 'YES'
         }
     } catch (err) {
         return reply.status(401).send({ error: 'Неавторизованный доступ' })
