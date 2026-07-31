@@ -115,6 +115,7 @@ module.exports = async (fastify) => {
                 review:               true,
                 source:               true,
                 cabinet:              true,
+                deposit_payment_link: true,
             }
         })
 
@@ -127,6 +128,12 @@ module.exports = async (fastify) => {
             _sum: { amount: true }
         })
         const paidAmount = paidAgg._sum.amount || 0
+
+        const depositAgg = await fastify.prisma.payment.aggregate({
+            where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'DEPOSIT', status: 'PAID' },
+            _sum: { amount: true }
+        })
+        const depositPaidAmount = depositAgg._sum.amount || 0
 
         const objects = await fastify.prisma.objects.findFirst({
             where: { realtyid: booking.realty_id },
@@ -260,7 +267,7 @@ module.exports = async (fastify) => {
             }
         }
 
-        return reply.send({ booking, objects, photos, show, bookingState, checkoutPassed, paidAmount })
+        return reply.send({ booking, objects, photos, show, bookingState, checkoutPassed, paidAmount, depositPaidAmount })
     })
 
     // ── POST /guest/save-times ─────────────────────────────────────────────
