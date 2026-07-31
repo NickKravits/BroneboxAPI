@@ -80,16 +80,12 @@ module.exports = async (fastify) => {
                 return reply.status(403).send({ error: 'Доступ запрещён' })
             }
 
-            if (user.role !== 'ADMINISTRATOR') {
-                if ( !user.staff || user.staff.managebooks !== "YES" ) {
-                    return reply.status(403).send({ error: 'Доступ запрещён' })
-                }
-            }
+            const permissions = user.role === 'ADMINISTRATOR' || user.staff?.managebooks === 'YES'
 
             const booking = await fastify.prisma.bookings.findFirst({
                 where: { id, cabinet: user.cabinet }
             })
-            if (!booking) return reply.send({ booking: null })
+            if (!booking) return reply.send({ booking: null, permissions })
 
             let scheduledMaid = null
             if (booking.realty_id && booking.end_date) {
@@ -111,7 +107,7 @@ module.exports = async (fastify) => {
                 }
             }
 
-            return reply.send({ booking, scheduledMaid })
+            return reply.send({ booking, scheduledMaid, permissions })
         } catch (err) {
             return reply.status(500).send({ error: 'Ошибка сервера' })
         }

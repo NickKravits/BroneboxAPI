@@ -15,15 +15,9 @@ module.exports = async (fastify) => {
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
-                select: { cabinet: true, role: true, staff: { select: { managebooks: true } } }
+                select: { cabinet: true }
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
-
-            if (user.role !== 'ADMINISTRATOR') {
-                if (!user.staff || user.staff.managebooks !== 'YES') {
-                    return reply.status(403).send({ error: 'Доступ запрещён' })
-                }
-            }
 
             const booking = await fastify.prisma.bookings.findFirst({
                 where: { id: bookingId, cabinet: user.cabinet }
