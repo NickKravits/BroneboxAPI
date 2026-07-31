@@ -259,6 +259,11 @@ module.exports = async (fastify) => {
             if (payment.status !== 'PAID' && payment.status !== 'RETURNED') {
                 return reply.status(400).send({ error: 'Возврат возможен только для оплаченных платежей' })
             }
+            // Точка позволяет вернуть платёж только один раз — повторный запрос к банку
+            // по уже возвращённой операции падает с ошибкой
+            if ((payment.returnedAmount || 0) > 0) {
+                return reply.status(400).send({ error: 'Через Точку можно вернуть платёж только один раз — этот платёж уже был возвращён' })
+            }
 
             const numAmount = parseFloat(amount)
             if (isNaN(numAmount) || numAmount <= 0) {
@@ -437,6 +442,111 @@ module.exports = async (fastify) => {
             }
 
             return reply.send({ amounts, returnedAmounts })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
+    // GET /payments/getall?source=MANAGER|TOCHKA|TBANK&status=PENDING|PAID|FAILED|RETURNED&type=PAY|DEPOSIT
+    // Список всех платежей кабинета для вкладки "Финансы" — с фильтрами, без разбивки по брони
+    fastify.get('/getall', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const userId = req.user.id
+            const { source, status, type } = req.query
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true, role: true, staff: { select: { managebooks: true } } }
+            })
+            if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
+            if (user.role !== 'ADMINISTRATOR') {
+                if (!user.staff || user.staff.managebooks !== 'YES') {
+                    return reply.status(403).send({ error: 'Доступ запрещён' })
+                }
+            }
+
+            const where = { cabinetid: user.cabinet }
+            if (['MANAGER', 'TOCHKA', 'TBANK'].includes(source)) where.method = source
+            if (['PENDING', 'PAID', 'FAILED', 'RETURNED'].includes(status)) where.status = status
+            if (['PAY', 'DEPOSIT'].includes(type)) where.type = type
+
+            const payments = await fastify.prisma.payment.findMany({
+                where,
+                orderBy: { createdAt: 'desc' },
+                take: 300
+            })
+
+            const bookingIds = [...new Set(payments.map(p => p.bookingId))]
+            const bookings = bookingIds.length ? await fastify.prisma.bookings.findMany({
+                where: { id: { in: bookingIds }, cabinet: user.cabinet },
+                select: { id: true, fio: true }
+            }) : []
+            const fioById = {}
+            bookings.forEach(b => { fioById[b.id] = b.fio })
+
+            const result = payments.map(p => ({ ...p, bookingFio: fioById[p.bookingId] || null }))
+
+            return reply.send({ payments: result })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
+    // GET /payments/stats — сумма по дням за последние 30 дней + разбивка по источнику,
+    // для графиков на вкладке "Финансы". Учитываются только PAID/RETURNED (см. комментарии выше
+    // про то, что RETURNED-платёж с остатком всё ещё "в игре"), сумма — текущий held amount.
+    fastify.get('/stats', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const userId = req.user.id
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true, role: true, staff: { select: { managebooks: true } } }
+            })
+            if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
+            if (user.role !== 'ADMINISTRATOR') {
+                if (!user.staff || user.staff.managebooks !== 'YES') {
+                    return reply.status(403).send({ error: 'Доступ запрещён' })
+                }
+            }
+
+            const since = new Date()
+            since.setDate(since.getDate() - 29) // 30 дней, включая сегодня
+            since.setHours(0, 0, 0, 0)
+
+            const payments = await fastify.prisma.payment.findMany({
+                where: {
+                    cabinetid: user.cabinet,
+                    status: { in: ['PAID', 'RETURNED'] },
+                    createdAt: { gte: since }
+                },
+                select: { amount: true, method: true, createdAt: true }
+            })
+
+            const dayKey = (d) => new Date(d).toISOString().split('T')[0]
+            const dailyMap = {}
+            for (let i = 0; i < 30; i++) {
+                const d = new Date(since)
+                d.setDate(d.getDate() + i)
+                dailyMap[dayKey(d)] = 0
+            }
+            payments.forEach(p => {
+                const key = dayKey(p.createdAt)
+                if (key in dailyMap) dailyMap[key] += p.amount || 0
+            })
+            const daily = Object.keys(dailyMap).sort().map(date => ({ date, total: dailyMap[date] }))
+
+            const bySourceMap = { MANAGER: 0, TOCHKA: 0, TBANK: 0 }
+            payments.forEach(p => { bySourceMap[p.method] = (bySourceMap[p.method] || 0) + (p.amount || 0) })
+            const bySource = Object.entries(bySourceMap)
+                .filter(([, amount]) => amount > 0)
+                .map(([method, amount]) => ({ method, amount }))
+
+            return reply.send({ daily, bySource })
         } catch (err) {
             console.error(err)
             return reply.status(500).send({ error: 'Ошибка сервера' })
