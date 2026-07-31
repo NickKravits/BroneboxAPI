@@ -108,6 +108,7 @@ module.exports = async (fastify) => {
                 price_per_day:        true,
                 deposit:              true,
                 returned:             true,
+                manual_deposit:       true,
                 fio:                  true,
                 email:                true,
                 begin_time:           true,
@@ -132,18 +133,14 @@ module.exports = async (fastify) => {
         })
         const paidAmount = paidAgg._sum.amount || 0
 
-        // Залог: держим отдельно "сколько сейчас реально держим" и "сколько вернули гостю" —
-        // и из самой брони (Bookings.deposit/returned, синхронизируется из RealtyCalendar),
-        // и из Payment (type=DEPOSIT) — amount уже net (уменьшен возвратом), returnedAmount копит возвраты
+        // Залог из Payment (type=DEPOSIT) — amount уже net (уменьшен возвратом), returnedAmount копит возвраты.
+        // Используется либо как единственный источник (депозит через Точку), либо как добавка к Bookings.deposit/returned
         const depositAgg = await fastify.prisma.payment.aggregate({
             where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'DEPOSIT', status: { in: ['PAID', 'RETURNED'] } },
             _sum: { amount: true, returnedAmount: true }
         })
         const depositPaymentsHeld     = depositAgg._sum.amount || 0
         const depositPaymentsReturned = depositAgg._sum.returnedAmount || 0
-
-        const depositHeld     = (booking.deposit || 0) + depositPaymentsHeld
-        const depositReturned = (booking.returned || 0) + depositPaymentsReturned
 
         const objects = await fastify.prisma.objects.findFirst({
             where: { realtyid: booking.realty_id },
@@ -164,29 +161,45 @@ module.exports = async (fastify) => {
             }
         })
 
+        // Целевая сумма залога: ручное значение брони приоритетнее дефолта из настроек объекта
+        const objectDepositDefault = parseFloat(objects?.deposit) || 0
+        const depositTarget = (booking.manual_deposit !== null && booking.manual_deposit !== undefined)
+            ? booking.manual_deposit
+            : objectDepositDefault
+
+        // Если залог принимается через Точку — Bookings.deposit/returned больше не считаем вообще,
+        // единственный источник истины — Payment (там же и вся история возвратов)
+        const depositViaTochka = objects?.depositchanel === 'TOCHKA'
+        const depositHeld     = depositViaTochka ? depositPaymentsHeld     : (booking.deposit  || 0) + depositPaymentsHeld
+        const depositReturned = depositViaTochka ? depositPaymentsReturned : (booking.returned || 0) + depositPaymentsReturned
+
         const cabinet = await fastify.prisma.cabinet.findFirst({
             where:  { id: booking.cabinet },
             select: {
-                Timezone:           true,
-                tochkaPhone:        true,
-                tochkaApiKey:       true,
-                tochkaMerchantId:   true,
-                tochkaPaymentMode:  true,
-                tochkaVatType:      true,
-                tochkaPurpose:      true,
-                tochkaName:         true,
-                tochkaCustomerCode: true
+                Timezone:             true,
+                tochkaPhone:          true,
+                tochkaApiKey:         true,
+                tochkaMerchantId:     true,
+                tochkaPaymentMode:    true,
+                tochkaVatType:        true,
+                tochkaPurpose:        true,
+                tochkaName:           true,
+                tochkaPurposeDeposit: true,
+                tochkaNameDeposit:    true,
+                tochkaCustomerCode:   true
             }
         })
 
-        // Готовность интеграции с Точкой — те же поля, что проверяет /guest/payment/getpaymenturl
-        const tochkaReady = !!(
+        // Готовность интеграции с Точкой — отдельно для оплаты и для залога (разные шаблоны текста)
+        const tochkaBaseReady = !!(
             cabinet?.tochkaPhone && cabinet?.tochkaApiKey && cabinet?.tochkaMerchantId &&
-            cabinet?.tochkaPaymentMode && cabinet?.tochkaVatType && cabinet?.tochkaPurpose &&
-            cabinet?.tochkaName && cabinet?.tochkaCustomerCode
+            cabinet?.tochkaPaymentMode && cabinet?.tochkaVatType && cabinet?.tochkaCustomerCode
         )
+        const tochkaReady        = tochkaBaseReady && !!(cabinet?.tochkaPurpose && cabinet?.tochkaName)
+        const tochkaDepositReady = tochkaBaseReady && !!(cabinet?.tochkaPurposeDeposit && cabinet?.tochkaNameDeposit)
         if (objects) {
-            objects.tochkaReady = tochkaReady
+            objects.tochkaReady        = tochkaReady
+            objects.tochkaDepositReady = tochkaDepositReady
         }
 
         const photos = objects
@@ -277,7 +290,7 @@ module.exports = async (fastify) => {
             }
         }
 
-        return reply.send({ booking, objects, photos, show, bookingState, checkoutPassed, paidAmount, depositHeld, depositReturned })
+        return reply.send({ booking, objects, photos, show, bookingState, checkoutPassed, paidAmount, depositHeld, depositReturned, depositTarget })
     })
 
     // ── POST /guest/save-times ─────────────────────────────────────────────
@@ -456,7 +469,7 @@ module.exports = async (fastify) => {
             const tochkaNameEdited    = fillTochkaTemplate(tochkaName, templateVars)
 
             const amountStr    = toPay.toFixed(2)
-            const guestPageLink = `${process.env.FRONTEND_URL}/c/?id=${booking.link}&red=tochka`
+            const guestPageLink = `${process.env.FRONTEND_URL}/c/?id=${booking.link}&red=tochka&kind=pay`
 
             let tochkaRes
             try {
@@ -542,6 +555,181 @@ module.exports = async (fastify) => {
         } else {
             return reply.status(400).send({ error: 'Unknown payment channel' })
         }
+    })
+
+    // ── POST /guest/deposit/getpaymenturl ───────────────────────────────────
+    // Зеркалит /payment/getpaymenturl, но для залога: сумма считается от целевого залога
+    // (manual_deposit брони, либо дефолт объекта) минус уже внесённое через Payment(type=DEPOSIT).
+    // Bookings.deposit/returned здесь не участвуют вовсе — как только залог принимается через
+    // Точку, единственный источник истины — Payment.
+    fastify.post('/deposit/getpaymenturl', async (req, reply) => {
+        const { id, email } = req.body
+        const booking = await fastify.prisma.bookings.findFirst({
+            where:  { link: id }
+        })
+
+        if (!booking) return reply.status(404).send({ error: 'Booking not found' })
+
+        const object = await fastify.prisma.objects.findFirst({
+            where:  { realtyid: booking.realty_id, cabinetid: booking.cabinet },
+            select: { depositchanel: true, name: true, location: true, deposit: true }
+        })
+
+        if (!object) {
+            return reply.status(404).send({ error: 'Object not found' })
+        }
+
+        if (object.depositchanel !== "TOCHKA") {
+            if (object.depositchanel === "TBANK") {
+                return reply.status(400).send({ error: 'TBANK deposit channel is not implemented yet' })
+            }
+            return reply.status(400).send({ error: 'Приём залога через Точку не настроен для этого объекта' })
+        }
+
+        const depositTarget = (booking.manual_deposit !== null && booking.manual_deposit !== undefined)
+            ? booking.manual_deposit
+            : (parseFloat(object.deposit) || 0)
+
+        if (depositTarget <= 0) {
+            return reply.status(400).send({ error: 'Сумма залога не указана' })
+        }
+
+        const payments = await fastify.prisma.payment.findMany({
+            where: { bookingId: booking.id, type: 'DEPOSIT', status: { in: ['PAID', 'RETURNED'] }, cabinetid: booking.cabinet },
+        })
+
+        const toPay = Math.max(0, depositTarget - payments.reduce((sum, p) => sum + p.amount, 0))
+
+        if (toPay <= 0) return reply.status(400).send({ error: 'Нет суммы к оплате' })
+
+        const expiredLimit = new Date(Date.now() + 10 * 60 * 1000) // 10 minutes from now
+        const existsUrl = await fastify.prisma.payment.findFirst({
+            where: {
+                type: 'DEPOSIT',
+                bookingId: booking.id,
+                status: 'PENDING',
+                cabinetid: booking.cabinet,
+                linkExpiresAt: { gte: expiredLimit } // те, которые не истекли
+            },
+                orderBy: { linkExpiresAt: 'desc' }
+        })
+
+        if (existsUrl) {
+            return reply.send({ url: existsUrl.link })
+        }
+
+        const cabinet = await fastify.prisma.cabinet.findFirst({
+            where:  { id: booking.cabinet }
+        })
+
+        if (!cabinet) {
+            return reply.status(404).send({ error: 'Cabinet not found' })
+        }
+
+        const tochkaPhone = cabinet.tochkaPhone
+        const tochkaApiKey = cabinet.tochkaApiKey
+        const tochkaMerchantId = cabinet.tochkaMerchantId
+        const tochkaPaymentMode = cabinet.tochkaPaymentMode
+        const tochkaVatType = cabinet.tochkaVatType
+        const tochkaPurposeDeposit = cabinet.tochkaPurposeDeposit
+        const tochkaNameDeposit = cabinet.tochkaNameDeposit
+        const tochkaCustomerCode = cabinet.tochkaCustomerCode
+        const tochkaOrgName = cabinet.tochkaOrgName
+        const tochkaTaxCode = cabinet.tochkaTaxCode
+
+        if (!tochkaPhone || !tochkaApiKey || !tochkaMerchantId || !tochkaPaymentMode || !tochkaVatType || !tochkaPurposeDeposit || !tochkaNameDeposit || !tochkaCustomerCode) {
+            return reply.status(400).send({ error: 'Приём залога через Точка Банк временно недоступен. Обратитесь к вашему менеджеру.' })
+        }
+
+        const templateVars = {
+            apartment_name: object.name || '',
+            address:        object.location || '',
+            created_at:     formatRuDateOnly(booking.created_at),
+            checkin:        formatRuDateOnly(booking.begin_date),
+            checkout:       formatRuDateOnly(booking.end_date)
+        }
+        const tochkaPurposeEdited = fillTochkaTemplate(tochkaPurposeDeposit, templateVars)
+        const tochkaNameEdited    = fillTochkaTemplate(tochkaNameDeposit, templateVars)
+
+        const amountStr     = toPay.toFixed(2)
+        const guestPageLink = `${process.env.FRONTEND_URL}/c/?id=${booking.link}&red=tochka&kind=deposit`
+
+        let tochkaRes
+        try {
+            tochkaRes = await fetch('https://enter.tochka.com/uapi/acquiring/v1.0/payments_with_receipt', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${tochkaApiKey}`
+                },
+                body: JSON.stringify({
+                    Data: {
+                        customerCode: tochkaCustomerCode,
+                        amount: amountStr,
+                        purpose: tochkaPurposeEdited,
+                        redirectUrl: guestPageLink,
+                        failRedirectUrl: guestPageLink,
+                        paymentMode: tochkaPaymentMode,
+                        saveCard: false,
+                        merchantId: tochkaMerchantId,
+                        preAuthorization: false,
+                        ttl: 11,
+                        Client: {
+                            email
+                        },
+                        Items: [
+                            {
+                                vatType: tochkaVatType,
+                                name: tochkaNameEdited,
+                                amount: amountStr,
+                                quantity: 1,
+                                paymentMethod: 'full_payment',
+                                paymentObject: 'service',
+                                Supplier: {
+                                    phone: tochkaPhone,
+                                    name: tochkaOrgName || '',
+                                    taxCode: tochkaTaxCode || ''
+                                }
+                            }
+                        ],
+                        Supplier: {
+                            phone: tochkaPhone,
+                            name: tochkaOrgName || '',
+                            taxCode: tochkaTaxCode || ''
+                        }
+                    }
+                })
+            })
+        } catch (err) {
+            fastify.log.error(`[Точка] Ошибка сети при создании платежа (залог): ${err.message}`)
+            return reply.status(502).send({ error: 'Не удалось связаться с банком' })
+        }
+
+        if (!tochkaRes.ok) {
+            const errorText = await tochkaRes.text()
+            fastify.log.error(`[Точка] Ошибка создания платежа (залог). Статус: ${tochkaRes.status} | Ответ: ${errorText}`)
+            return reply.status(502).send({ error: 'Не удалось создать ссылку на оплату' })
+        }
+
+        const tochkaData  = await tochkaRes.json()
+        const paymentData = tochkaData.Data
+
+        const payment = await fastify.prisma.payment.create({
+            data: {
+                cabinetid:     booking.cabinet,
+                bookingId:     booking.id,
+                amount:        parseFloat(paymentData.amount),
+                type:          'DEPOSIT',
+                method:        'TOCHKA',
+                status:        'PENDING',
+                externalId:    paymentData.operationId,
+                link:          paymentData.paymentLink,
+                linkExpiresAt: new Date(Date.now() + 10 * 60 * 1000)
+            }
+        })
+
+        return reply.send({ url: payment.link })
     })
 
     // ── POST /guest/review ─────────────────────────────────────────────────

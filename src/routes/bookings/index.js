@@ -100,7 +100,7 @@ module.exports = async (fastify) => {
         try {
             await req.jwtVerify()
             const userId = req.user.id
-            const { id, checkin, checkout, channel, maidid } = req.body
+            const { id, checkin, checkout, channel, maidid, manualDeposit } = req.body
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
@@ -131,6 +131,22 @@ module.exports = async (fastify) => {
             if (checkout) data.end_time = checkout
             if (channel)  data.channel = channel
             if (maidid)   data.maid_id = parseInt(maidid)
+
+            if (manualDeposit !== undefined) {
+                if (manualDeposit === null) {
+                    data.manual_deposit = null
+                } else {
+                    const numDeposit = parseFloat(manualDeposit)
+                    if (isNaN(numDeposit) || numDeposit < 0) {
+                        return reply.status(400).send({ error: 'Некорректная сумма залога' })
+                    }
+                    // Ограничение платформы: либо совсем без залога, либо больше 100 рублей
+                    if (numDeposit !== 0 && numDeposit <= 100) {
+                        return reply.status(400).send({ error: 'Сумма залога должна быть 0 либо больше 100 ₽' })
+                    }
+                    data.manual_deposit = numDeposit
+                }
+            }
 
             const updated = await fastify.prisma.bookings.update({
                 where: { id: parseInt(id), cabinet: user.cabinet },

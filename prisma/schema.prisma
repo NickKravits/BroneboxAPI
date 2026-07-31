@@ -56,6 +56,8 @@ model Cabinet {
   tochkaVatType       Json?
   tochkaPurpose       String?
   tochkaName          String?
+  tochkaPurposeDeposit String?
+  tochkaNameDeposit    String?
   tochkaCustomerCode  String?
   tochkaOrgName       String?
   tochkaTaxCode       String?
@@ -200,6 +202,7 @@ model Bookings {
   price_per_day         Int?
   deposit               Int?
   returned              Int?
+  manual_deposit        Int?
   //client
   client_id             Int? //id
   fio                   String?

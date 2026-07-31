@@ -229,7 +229,7 @@ module.exports = async (fastify) => {
 
             const booking = await fastify.prisma.bookings.findFirst({
                 where: { id: parseInt(bookingId), cabinet: user.cabinet },
-                select: { deposit: true }
+                select: { deposit: true, realty_id: true }
             })
             if (!booking) return reply.status(404).send({ error: 'Бронирование не найдено' })
 
@@ -237,7 +237,16 @@ module.exports = async (fastify) => {
                 where: { cabinetid: user.cabinet, bookingId: parseInt(bookingId), type, status: { in: ['PAID', 'RETURNED'] } }
             })
 
-            let amount = type === 'DEPOSIT' ? (booking.deposit || 0) : 0
+            let depositViaTochka = false
+            if (type === 'DEPOSIT' && booking.realty_id != null) {
+                const object = await fastify.prisma.objects.findFirst({
+                    where: { realtyid: booking.realty_id, cabinetid: user.cabinet },
+                    select: { depositchanel: true }
+                })
+                depositViaTochka = object?.depositchanel === 'TOCHKA'
+            }
+
+            let amount = (type === 'DEPOSIT' && !depositViaTochka) ? (booking.deposit || 0) : 0
             for (const payment of payments) {
                 amount += payment.amount
             }
@@ -286,11 +295,24 @@ module.exports = async (fastify) => {
             if (type === 'DEPOSIT') {
                 const bookings = await fastify.prisma.bookings.findMany({
                     where: { id: { in: ids }, cabinet: user.cabinet },
-                    select: { id: true, deposit: true, returned: true }
+                    select: { id: true, deposit: true, returned: true, realty_id: true }
                 })
+                const realtyIds = [...new Set(bookings.map(b => b.realty_id).filter(id => id != null))]
+                const objects = realtyIds.length ? await fastify.prisma.objects.findMany({
+                    where: { realtyid: { in: realtyIds }, cabinetid: user.cabinet },
+                    select: { realtyid: true, depositchanel: true }
+                }) : []
+                const channelByRealty = {}
+                objects.forEach(o => { channelByRealty[o.realtyid] = o.depositchanel })
+
+                // Если залог принимается через Точку — Bookings.deposit/returned не учитываем,
+                // всё берётся только из Payments (см. depositViaTochka в guest/index.js)
                 bookings.forEach(b => {
-                    amounts[b.id] = (amounts[b.id] || 0) + (b.deposit || 0)
-                    returnedAmounts[b.id] = (returnedAmounts[b.id] || 0) + (b.returned || 0)
+                    const depositViaTochka = channelByRealty[b.realty_id] === 'TOCHKA'
+                    if (!depositViaTochka) {
+                        amounts[b.id] = (amounts[b.id] || 0) + (b.deposit || 0)
+                        returnedAmounts[b.id] = (returnedAmounts[b.id] || 0) + (b.returned || 0)
+                    }
                 })
             }
 

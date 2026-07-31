@@ -11,6 +11,8 @@ const TOCHKA_RESET_DATA = {
     tochkaVatType: null,
     tochkaPurpose: null,
     tochkaName: null,
+    tochkaPurposeDeposit: null,
+    tochkaNameDeposit: null,
     tochkaCustomerCode: null,
     tochkaOrgName: null,
     tochkaTaxCode: null,
@@ -361,9 +363,9 @@ module.exports = async (fastify) => {
             await req.jwtVerify()
 
             const userId = req.user.id
-            const { phone, apiKey, vatType, purpose, name, clientId, customerCode: providedCustomerCode } = req.body
+            const { phone, apiKey, vatType, purpose, name, purposeDeposit, nameDeposit, clientId, customerCode: providedCustomerCode } = req.body
 
-            if (!apiKey || !phone || !vatType || !purpose || !name || !clientId) {
+            if (!apiKey || !phone || !vatType || !purpose || !name || !purposeDeposit || !nameDeposit || !clientId) {
                 return reply.status(400).send({ error: 'Обязательные поля не заполнены' })
             }
 
@@ -591,6 +593,8 @@ module.exports = async (fastify) => {
                     tochkaVatType: vatType,
                     tochkaPurpose: purpose,
                     tochkaName: name,
+                    tochkaPurposeDeposit: purposeDeposit,
+                    tochkaNameDeposit: nameDeposit,
                     tochkaCustomerCode: customerCode,
                     tochkaOrgName: selectedCustomer?.fullName || null,
                     tochkaTaxCode: selectedCustomer?.taxCode || null,
