@@ -14,7 +14,6 @@ module.exports = fp(async (fastify) => {
     }
   })
 
-  // Декоратор для защиты роутов
   fastify.decorate('authenticate', async (req, reply) => {
     try {
       await req.jwtVerify()

@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt')
 
 module.exports = async (fastify) => {
-  // GET /users/getme
   fastify.get('/getme', async (req, reply) => {
     try {
         await req.jwtVerify()
@@ -17,13 +16,22 @@ module.exports = async (fastify) => {
             role: true,
             cabinet: true,
             status: true,
-            staff: { select: { canreturnpayments: true } }
+            staff: { select: {
+                manualpaymentedit: true,
+                manualdepositedit: true,
+                bankpaymentedit: true,
+                bankdepositedit: true,
+                financesinformationpayment: true,
+                financesinformationdeposit: true
+            } }
         }
         })
 
         if (!user) {
             return reply.status(404).send({ error: 'Пользователь не найден' })
         }
+
+        const isAdmin = user.role === 'ADMINISTRATOR'
 
         return {
             login: user.login,
@@ -32,14 +40,18 @@ module.exports = async (fastify) => {
             role: user.role,
             cabinet: user.cabinet,
             status: user.status,
-            canReturnPayments: user.role === 'ADMINISTRATOR' || user.staff?.canreturnpayments === 'YES'
+            manualPaymentEdit: isAdmin || user.staff?.manualpaymentedit === 'YES',
+            manualDepositEdit: isAdmin || user.staff?.manualdepositedit === 'YES',
+            bankPaymentEdit: isAdmin || user.staff?.bankpaymentedit === 'YES',
+            bankDepositEdit: isAdmin || user.staff?.bankdepositedit === 'YES',
+            financesInformationPayment: isAdmin || user.staff?.financesinformationpayment === 'YES',
+            financesInformationDeposit: isAdmin || user.staff?.financesinformationdeposit === 'YES'
         }
     } catch (err) {
         return reply.status(401).send({ error: 'Неавторизованный доступ' })
     }
   })
 
-  // POST /users/update-name
   fastify.post('/update-name', async (req, reply) => {
     try {
         await req.jwtVerify()
@@ -57,7 +69,6 @@ module.exports = async (fastify) => {
     }
   })
 
-  // POST /users/change-password
   fastify.post('/change-password', async (req, reply) => {
     try {
         await req.jwtVerify()
@@ -97,8 +108,6 @@ module.exports = async (fastify) => {
             }
         })
 
-        // Все ранее выданные токены становятся недействительны (см. trusted в plugins/jwt.js).
-        // Текущей сессии сразу выдаём новый токен с актуальной tokenVersion, чтобы её не разлогинило.
         const newToken = fastify.jwt.sign({ id: updated.id, login: updated.login, tokenVersion: updated.tokenVersion })
 
         return reply.send({ message: 'Пароль успешно изменён', token: newToken })
@@ -108,7 +117,6 @@ module.exports = async (fastify) => {
     }
   })
 
-  // GET /users/cabinet-info
   fastify.get('/cabinet-info', async (req, reply) => {
     try {
         await req.jwtVerify()
@@ -129,7 +137,6 @@ module.exports = async (fastify) => {
     }
   })
 
-  // POST /users/bug-report
   fastify.post('/bug-report', async (req, reply) => {
     try {
         await req.jwtVerify()

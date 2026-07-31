@@ -4,7 +4,6 @@ const { callTochkaRefund } = require('../../services/tochkaRefund')
 
 module.exports = async (fastify) => {
 
-    // GET /payments/getbybooking?bookingId=X&type=PAY|DEPOSIT
     fastify.get('/getbybooking', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -42,7 +41,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /payments/manualcreate
     fastify.post('/manualcreate', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -56,13 +54,14 @@ module.exports = async (fastify) => {
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
-                select: { cabinet: true, role: true, login: true, staff: { select: { managebooks: true } } }
+                select: { cabinet: true, role: true, login: true, staff: { select: { manualpaymentedit: true, manualdepositedit: true } } }
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
 
             if (user.role !== 'ADMINISTRATOR') {
-                if (!user.staff || user.staff.managebooks !== 'YES') {
-                    return reply.status(403).send({ error: 'Доступ запрещён' })
+                const allowed = type === 'DEPOSIT' ? user.staff?.manualdepositedit === 'YES' : user.staff?.manualpaymentedit === 'YES'
+                if (!allowed) {
+                    return reply.status(403).send({ error: `Недостаточно прав для создания ${type === 'DEPOSIT' ? 'залога' : 'оплаты'}` })
                 }
             }
 
@@ -77,8 +76,6 @@ module.exports = async (fastify) => {
                 return reply.status(400).send({ error: 'Сумма должна быть не менее 0' })
             }
 
-            // status PAID и RETURNED оба считаем — amount у платежа уже уменьшается при частичном
-            // возврате (см. /manualreturn), так что RETURNED-платёж с остатком всё ещё занимает лимит
             const paidAgg = await fastify.prisma.payment.aggregate({
                 where: { bookingId: parseInt(bookingId), cabinetid: user.cabinet, type, status: { in: ['PAID', 'RETURNED'] } },
                 _sum: { amount: true }
@@ -121,7 +118,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /payments/manualremove
     fastify.post('/manualremove', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -132,15 +128,9 @@ module.exports = async (fastify) => {
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
-                select: { cabinet: true, role: true, staff: { select: { managebooks: true } } }
+                select: { cabinet: true, role: true, staff: { select: { manualpaymentedit: true, manualdepositedit: true } } }
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
-
-            if (user.role !== 'ADMINISTRATOR') {
-                if (!user.staff || user.staff.managebooks !== 'YES') {
-                    return reply.status(403).send({ error: 'Доступ запрещён' })
-                }
-            }
 
             const payment = await fastify.prisma.payment.findFirst({
                 where: { id: parseInt(paymentId), cabinetid: user.cabinet }
@@ -148,6 +138,13 @@ module.exports = async (fastify) => {
             if (!payment) return reply.status(404).send({ error: 'Платёж не найден' })
             if (payment.method !== 'MANAGER') {
                 return reply.status(403).send({ error: 'Можно удалять только платежи метода MANAGER' })
+            }
+
+            if (user.role !== 'ADMINISTRATOR') {
+                const allowed = payment.type === 'DEPOSIT' ? user.staff?.manualdepositedit === 'YES' : user.staff?.manualpaymentedit === 'YES'
+                if (!allowed) {
+                    return reply.status(403).send({ error: `Недостаточно прав для удаления ${payment.type === 'DEPOSIT' ? 'залога' : 'оплаты'}` })
+                }
             }
 
             await fastify.prisma.payment.delete({ where: { id: payment.id } })
@@ -159,9 +156,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /payments/manualreturn — фиксируем (частичный или полный) возврат денег гостю.
-    // amount у платежа уменьшается на сумму возврата (self-reducing — остаток "на руках"),
-    // returnedAmount копит сумму всех возвратов, status всегда переключается на RETURNED
     fastify.post('/manualreturn', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -174,25 +168,24 @@ module.exports = async (fastify) => {
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
-                select: { cabinet: true, role: true, staff: { select: { managebooks: true } } }
+                select: { cabinet: true, role: true, staff: { select: { manualpaymentedit: true, manualdepositedit: true } } }
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
-
-            if (user.role !== 'ADMINISTRATOR') {
-                if (!user.staff || user.staff.managebooks !== 'YES') {
-                    return reply.status(403).send({ error: 'Доступ запрещён' })
-                }
-            }
 
             const payment = await fastify.prisma.payment.findFirst({
                 where: { id: parseInt(paymentId), cabinetid: user.cabinet }
             })
             if (!payment) return reply.status(404).send({ error: 'Платёж не найден' })
 
-            // Возврат для платежей/залогов через Точку и Т-Банк пока не реализован —
-            // для них нужна отдельная логика (запрос возврата в самом банке), не как у ручных.
             if (payment.method !== 'MANAGER') {
                 return reply.status(400).send({ error: 'Возврат для этого способа оплаты пока недоступен' })
+            }
+
+            if (user.role !== 'ADMINISTRATOR') {
+                const allowed = payment.type === 'DEPOSIT' ? user.staff?.manualdepositedit === 'YES' : user.staff?.manualpaymentedit === 'YES'
+                if (!allowed) {
+                    return reply.status(403).send({ error: `Недостаточно прав для возврата ${payment.type === 'DEPOSIT' ? 'залога' : 'оплаты'}` })
+                }
             }
 
             const numAmount = parseFloat(amount)
@@ -220,9 +213,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /payments/returnTochkaPayment — ручной возврат оплаты/залога, принятых через Точку.
-    // Доступно только ADMINISTRATOR или менеджеру с правом canreturnpayments — это реальный запрос
-    // на возврат денег в банк, а не просто пометка в нашей базе.
     fastify.post('/returnTochkaPayment', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -235,15 +225,9 @@ module.exports = async (fastify) => {
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
-                select: { cabinet: true, role: true, staff: { select: { canreturnpayments: true } } }
+                select: { cabinet: true, role: true, staff: { select: { bankpaymentedit: true, bankdepositedit: true } } }
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
-
-            if (user.role !== 'ADMINISTRATOR') {
-                if (!user.staff || user.staff.canreturnpayments !== 'YES') {
-                    return reply.status(403).send({ error: 'Недостаточно прав для возврата платежей' })
-                }
-            }
 
             const payment = await fastify.prisma.payment.findFirst({
                 where: { id: parseInt(paymentId), cabinetid: user.cabinet }
@@ -259,10 +243,15 @@ module.exports = async (fastify) => {
             if (payment.status !== 'PAID' && payment.status !== 'RETURNED') {
                 return reply.status(400).send({ error: 'Возврат возможен только для оплаченных платежей' })
             }
-            // Точка позволяет вернуть платёж только один раз — повторный запрос к банку
-            // по уже возвращённой операции падает с ошибкой
             if ((payment.returnedAmount || 0) > 0) {
                 return reply.status(400).send({ error: 'Через Точку можно вернуть платёж только один раз — этот платёж уже был возвращён' })
+            }
+
+            if (user.role !== 'ADMINISTRATOR') {
+                const allowed = payment.type === 'DEPOSIT' ? user.staff?.bankdepositedit === 'YES' : user.staff?.bankpaymentedit === 'YES'
+                if (!allowed) {
+                    return reply.status(403).send({ error: `Недостаточно прав для возврата ${payment.type === 'DEPOSIT' ? 'залога' : 'оплаты'}, принятых банком` })
+                }
             }
 
             const numAmount = parseFloat(amount)
@@ -383,9 +372,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /payments/getpaymentamounts  { bookingIds: [1,2,3], type: 'PAY'|'DEPOSIT' }
-    // Батч-версия getpaymentamount — одним запросом вместо N, чтобы не устраивать
-    // N параллельных запросов на список бронирований (упирается в лимит пула соединений к БД)
     fastify.post('/getpaymentamounts', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -430,8 +416,6 @@ module.exports = async (fastify) => {
                 const channelByRealty = {}
                 objects.forEach(o => { channelByRealty[o.realtyid] = o.depositchanel })
 
-                // Если залог принимается через Точку — Bookings.deposit/returned не учитываем,
-                // всё берётся только из Payments (см. depositViaTochka в guest/index.js)
                 bookings.forEach(b => {
                     const depositViaTochka = channelByRealty[b.realty_id] === 'TOCHKA'
                     if (!depositViaTochka) {
@@ -448,8 +432,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // GET /payments/getall?source=MANAGER|TOCHKA|TBANK&status=PENDING|PAID|FAILED|RETURNED&type=PAY|DEPOSIT
-    // Список всех платежей кабинета для вкладки "Финансы" — с фильтрами, без разбивки по брони
     fastify.get('/getall', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -458,19 +440,29 @@ module.exports = async (fastify) => {
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
-                select: { cabinet: true, role: true, staff: { select: { managebooks: true } } }
+                select: { cabinet: true, role: true, staff: { select: { financesinformationpayment: true, financesinformationdeposit: true } } }
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
-            if (user.role !== 'ADMINISTRATOR') {
-                if (!user.staff || user.staff.managebooks !== 'YES') {
-                    return reply.status(403).send({ error: 'Доступ запрещён' })
-                }
-            }
 
             const where = { cabinetid: user.cabinet }
             if (['MANAGER', 'TOCHKA', 'TBANK'].includes(source)) where.method = source
             if (['PENDING', 'PAID', 'FAILED', 'RETURNED'].includes(status)) where.status = status
             if (['PAY', 'DEPOSIT'].includes(type)) where.type = type
+
+            if (user.role !== 'ADMINISTRATOR') {
+                const allowPay = user.staff?.financesinformationpayment === 'YES'
+                const allowDeposit = user.staff?.financesinformationdeposit === 'YES'
+                if (!allowPay && !allowDeposit) {
+                    return reply.status(403).send({ error: 'Нет доступа к вкладке финансов' })
+                }
+                if (!allowPay || !allowDeposit) {
+                    const allowedType = allowPay ? 'PAY' : 'DEPOSIT'
+                    if (where.type && where.type !== allowedType) {
+                        return reply.status(403).send({ error: 'Нет доступа к этому типу платежей' })
+                    }
+                    where.type = allowedType
+                }
+            }
 
             const payments = await fastify.prisma.payment.findMany({
                 where,
@@ -495,9 +487,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // GET /payments/stats — сумма по дням за последние 30 дней + разбивка по источнику,
-    // для графиков на вкладке "Финансы". Учитываются только PAID/RETURNED (см. комментарии выше
-    // про то, что RETURNED-платёж с остатком всё ещё "в игре"), сумма — текущий held amount.
     fastify.get('/stats', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -505,25 +494,33 @@ module.exports = async (fastify) => {
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
-                select: { cabinet: true, role: true, staff: { select: { managebooks: true } } }
+                select: { cabinet: true, role: true, staff: { select: { financesinformationpayment: true, financesinformationdeposit: true } } }
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
+
+            const since = new Date()
+            since.setDate(since.getDate() - 29)
+            since.setHours(0, 0, 0, 0)
+
+            const where = {
+                cabinetid: user.cabinet,
+                status: { in: ['PAID', 'RETURNED'] },
+                createdAt: { gte: since }
+            }
+
             if (user.role !== 'ADMINISTRATOR') {
-                if (!user.staff || user.staff.managebooks !== 'YES') {
-                    return reply.status(403).send({ error: 'Доступ запрещён' })
+                const allowPay = user.staff?.financesinformationpayment === 'YES'
+                const allowDeposit = user.staff?.financesinformationdeposit === 'YES'
+                if (!allowPay && !allowDeposit) {
+                    return reply.status(403).send({ error: 'Нет доступа к вкладке финансов' })
+                }
+                if (!allowPay || !allowDeposit) {
+                    where.type = allowPay ? 'PAY' : 'DEPOSIT'
                 }
             }
 
-            const since = new Date()
-            since.setDate(since.getDate() - 29) // 30 дней, включая сегодня
-            since.setHours(0, 0, 0, 0)
-
             const payments = await fastify.prisma.payment.findMany({
-                where: {
-                    cabinetid: user.cabinet,
-                    status: { in: ['PAID', 'RETURNED'] },
-                    createdAt: { gte: since }
-                },
+                where,
                 select: { amount: true, method: true, createdAt: true }
             })
 

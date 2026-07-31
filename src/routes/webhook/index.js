@@ -2,7 +2,6 @@ const crypto = require('crypto')
 const { returnTochkaFailedPayment } = require('../../services/tochkaRefund')
 
 module.exports = async (fastify) => {
-  // POST /webhook/rc/:webhookkey
     fastify.post('/rc/:webhookkey', async (req, reply) => {
         try {
             if (!req.body || Object.keys(req.body).length === 0) {
@@ -148,7 +147,6 @@ module.exports = async (fastify) => {
                         }
 
                     function formatDate(dateString) {
-                        // Проверяем, что строка не пустая и соответствует формату YYYY-MM-DD
                         if (!dateString || !dateString.includes('-')) return dateString;
                         return dateString.split('-').reverse().join('.');
                     }
@@ -194,7 +192,6 @@ module.exports = async (fastify) => {
                         ]
                     };
 
-                    // Выполняем POST запрос
                     const res = await fetch('https://api.doki.online/external/contract', {
                         method: 'POST',
                         headers: {
@@ -323,8 +320,6 @@ module.exports = async (fastify) => {
                     deposit_payment_link: depositPaymentLink,
                 }
 
-                // Если входящий залог меньше того, что был — считаем это (частичным) возвратом
-                // и копим сумму возврата в Bookings.returned, чтобы показывать её гостю
                 const oldDepositValue = book.deposit || 0
                 const newDepositValue = deposit || 0
                 if (oldDepositValue > newDepositValue) {
@@ -423,7 +418,6 @@ module.exports = async (fastify) => {
         }
     })
 
-  // POST /webhook/okidoki/:webhookkey
     fastify.post('/okidoki/:webhookkey', async (req, reply) => {
         try {
             if (!req.body || Object.keys(req.body).length === 0) {
@@ -470,9 +464,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /webhook/TochkaPayment/:webhookkey — подтверждение оплаты Точки.
-    // Тело запроса — голый JWT (не JSON), поэтому парсим его в изолированном контексте,
-    // чтобы не сломать JSON-парсинг остальных вебхуков (/rc, /okidoki) выше.
     fastify.register(async (scoped) => {
         scoped.addContentTypeParser('*', { parseAs: 'string' }, (req, body, done) => {
             done(null, body)
@@ -531,10 +522,6 @@ module.exports = async (fastify) => {
                     return reply.status(200).send({ ok: true })
                 }
 
-                // Платёж у нас уже не PENDING (истёк по времени и был списан в FAILED крон-джобом,
-                // либо уже был возвращён) — но гость всё равно провёл оплату в Точке. Раз мы этот
-                // платёж больше не считаем актуальным, деньги нужно вернуть автоматически, а не
-                // задним числом помечать его оплаченным. В базе при этом ничего не меняем.
                 if (payment.status === 'FAILED' || payment.status === 'RETURNED') {
                     const parsedAmountForReturn = parseFloat(amount)
                     if (!isNaN(parsedAmountForReturn) && parsedAmountForReturn > 0) {

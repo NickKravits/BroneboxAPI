@@ -1,7 +1,5 @@
 'use strict'
 
-// Prisma returns enum keys (e.g. EUROPE_MOSCOW), not the @map values (Europe/Moscow).
-// This table converts them to valid IANA timezone strings.
 const TZ_MAP = {
     ETC_GMT_1:          'Etc/GMT-1',
     EUROPE_CENTRAL:     'Europe/Berlin',
@@ -19,8 +17,6 @@ const TZ_MAP = {
 }
 
 module.exports = async (fastify) => {
-
-    // ── Timezone helpers ───────────────────────────────────────────────────
 
     function localToUTC(dateStr, timeStr, timezone) {
         const [y, m, d] = dateStr.split('-').map(Number)
@@ -41,8 +37,6 @@ module.exports = async (fastify) => {
         return new Date(estimate.getTime() + ((h - lh) * 60 + (mi - lm)) * 60000)
     }
 
-    // Returns { active: bool, availableAt: Date|null } based on ShowSettings enum.
-    // availableAt is the UTC threshold Date when not yet active, or null when already active.
     function getShowState(setting, beginDate, endDate, checkinTime, checkoutTime, timezone) {
         if (!setting || setting === 'IMMEDIATELY') return { active: true, availableAt: null }
 
@@ -66,7 +60,6 @@ module.exports = async (fastify) => {
         return { active, availableAt: active ? null : thresholdUTC }
     }
 
-    // Formats a UTC Date to a human-readable Russian string in the given timezone.
     function formatAvailableAt(utcDate, timezone) {
         if (!utcDate) return null
         return new Intl.DateTimeFormat('ru-RU', {
@@ -79,18 +72,15 @@ module.exports = async (fastify) => {
         }).format(utcDate)
     }
 
-    // Date-only Russian formatting, used for {created_at}/{checkin}/{checkout} template vars.
     function formatRuDateOnly(date) {
         if (!date) return ''
         return new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
     }
 
-    // Replaces {placeholder} tokens in Tochka purpose/name templates with real values.
     function fillTochkaTemplate(template, vars) {
         return (template || '').replace(/\{(\w+)\}/g, (match, key) => vars[key] ?? match)
     }
 
-    // ── POST /guest/get ────────────────────────────────────────────────────
     fastify.post('/get', async (req, reply) => {
         const { id } = req.body
 
@@ -125,16 +115,12 @@ module.exports = async (fastify) => {
             return reply.status(404).send({ error: 'Booking not found' })
         }
 
-        // status PAID и RETURNED оба считаем — Payment.amount уже самоуменьшается при (частичном)
-        // возврате через /payments/manualreturn, так что RETURNED-платёж с остатком всё ещё в игре
         const paidAgg = await fastify.prisma.payment.aggregate({
             where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'PAY', status: { in: ['PAID', 'RETURNED'] } },
             _sum: { amount: true }
         })
         const paidAmount = paidAgg._sum.amount || 0
 
-        // Залог из Payment (type=DEPOSIT) — amount уже net (уменьшен возвратом), returnedAmount копит возвраты.
-        // Используется либо как единственный источник (депозит через Точку), либо как добавка к Bookings.deposit/returned
         const depositAgg = await fastify.prisma.payment.aggregate({
             where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'DEPOSIT', status: { in: ['PAID', 'RETURNED'] } },
             _sum: { amount: true, returnedAmount: true }
@@ -161,17 +147,12 @@ module.exports = async (fastify) => {
             }
         })
 
-        // Целевая сумма залога: ручное значение брони приоритетнее дефолта из настроек объекта,
-        // но ТОЛЬКО если залог принимается через Точку или Т-Банк. Если через Монету или менеджера —
-        // ручное значение брони не учитывается вовсе, всегда берём дефолт из настроек объекта.
         const objectDepositDefault = parseFloat(objects?.deposit) || 0
         const depositManualAllowed = objects?.depositchanel === 'TOCHKA' || objects?.depositchanel === 'TBANK'
         const depositTarget = (depositManualAllowed && booking.manual_deposit !== null && booking.manual_deposit !== undefined)
             ? booking.manual_deposit
             : objectDepositDefault
 
-        // Если залог принимается через Точку — Bookings.deposit/returned больше не считаем вообще,
-        // единственный источник истины — Payment (там же и вся история возвратов)
         const depositViaTochka = objects?.depositchanel === 'TOCHKA'
         const depositHeld     = depositViaTochka ? depositPaymentsHeld     : (booking.deposit  || 0) + depositPaymentsHeld
         const depositReturned = depositViaTochka ? depositPaymentsReturned : (booking.returned || 0) + depositPaymentsReturned
@@ -193,7 +174,6 @@ module.exports = async (fastify) => {
             }
         })
 
-        // Готовность интеграции с Точкой — отдельно для оплаты и для залога (разные шаблоны текста)
         const tochkaBaseReady = !!(
             cabinet?.tochkaPhone && cabinet?.tochkaApiKey && cabinet?.tochkaMerchantId &&
             cabinet?.tochkaPaymentMode && cabinet?.tochkaVatType && cabinet?.tochkaCustomerCode
@@ -225,7 +205,7 @@ module.exports = async (fastify) => {
               )
             : false
 
-        const bookingState = booking.status  // booked | canceled | deleted | request
+        const bookingState = booking.status
 
         const isBlockedStatus = bookingState === 'canceled' || bookingState === 'deleted' || bookingState === 'request'
         const completed = bookingState === 'booked' && checkoutPassed
@@ -233,8 +213,6 @@ module.exports = async (fastify) => {
         let show = {}
 
         if (objects && !isBlockedStatus) {
-            // Payment & deposit: always visible; payment button hides when balance_to_be_paid_1 = 0;
-            // deposit button hides when Bookings.deposit >= Objects.deposit (paid) — stays visible even after checkout
             const payState = getShowState(
                 objects.sspayanddeposit,
                 booking.begin_date, booking.end_date,
@@ -247,7 +225,6 @@ module.exports = async (fastify) => {
                 availableAt:   formatAvailableAt(payState.availableAt, timezone)
             }
 
-            // Instruction: hidden after checkout; before that always visible with availableAt if not yet time
             if (completed) {
                 show.instruction = { visible: false, active: false, availableAt: null }
             } else {
@@ -263,7 +240,6 @@ module.exports = async (fastify) => {
                 }
             }
 
-            // Contract: hidden only when no contract link (not provided); otherwise always visible including after completion
             if (!booking.contract_link) {
                 show.contract = { visible: false, active: false, availableAt: null }
             } else {
@@ -279,7 +255,6 @@ module.exports = async (fastify) => {
                 }
             }
 
-            // Review: always visible; active by schedule (also after completion); shows availableAt when not yet time
             const rateState = getShowState(
                 objects.ssrateclean,
                 booking.begin_date, booking.end_date,
@@ -296,7 +271,6 @@ module.exports = async (fastify) => {
         return reply.send({ booking, objects, photos, show, bookingState, checkoutPassed, paidAmount, depositHeld, depositReturned, depositTarget })
     })
 
-    // ── POST /guest/save-times ─────────────────────────────────────────────
     fastify.post('/save-times', async (req, reply) => {
         const { id, begin_time, end_time } = req.body
 
@@ -307,7 +281,6 @@ module.exports = async (fastify) => {
 
         if (!booking) return reply.status(404).send({ error: 'Booking not found' })
 
-        // Determine if checkout has passed — times cannot be changed after completion
         const objects = await fastify.prisma.objects.findFirst({
             where:  { realtyid: booking.realty_id },
             select: { checkoutdef: true }
@@ -341,7 +314,6 @@ module.exports = async (fastify) => {
         return reply.send({ ok: true })
     })
 
-    // ── POST /guest/contract/update ───────────────────────────────────────
     fastify.post('/contract/update', async (req, reply) => {
         const { id } = req.body
 
@@ -405,12 +377,10 @@ module.exports = async (fastify) => {
             where: { bookingId: booking.id, type: 'PAY', status: { in: ['PAID', 'RETURNED'] }, cabinetid: booking.cabinet },
         })
 
-        // Тот же источник истины, что и на странице гостя (balance_to_be_paid_1 минус уже оплаченное),
-        // а не amount - prepayment — эти поля синхронизируются из RealtyCalendar независимо и могут расходиться
         const toPay = Math.max(0, (booking.balance_to_be_paid_1 || 0) - payments.reduce((sum, p) => sum + p.amount, 0))
 
         if (toPay <= 0) return reply.status(400).send({ error: 'Нет суммы к оплате' })
-        
+
 
         const object = await fastify.prisma.objects.findFirst({
             where:  { realtyid: booking.realty_id, cabinetid: booking.cabinet },
@@ -422,8 +392,6 @@ module.exports = async (fastify) => {
         }
 
         if (object.paymentchanel == "TOCHKA") {
-            // Каждый вызов создаёт новую ссылку на оплату — старые PENDING-платежи не переиспользуются,
-            // протухшие подчищает CronTab, переводя в FAILED (см. src/cron/expireStalePayments.js)
             const cabinet = await fastify.prisma.cabinet.findFirst({
                 where:  { id: booking.cabinet }
             })
@@ -546,11 +514,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // ── POST /guest/deposit/getpaymenturl ───────────────────────────────────
-    // Зеркалит /payment/getpaymenturl, но для залога: сумма считается от целевого залога
-    // (manual_deposit брони, либо дефолт объекта) минус уже внесённое через Payment(type=DEPOSIT).
-    // Bookings.deposit/returned здесь не участвуют вовсе — как только залог принимается через
-    // Точку, единственный источник истины — Payment.
     fastify.post('/deposit/getpaymenturl', async (req, reply) => {
         const { id, email } = req.body
         const booking = await fastify.prisma.bookings.findFirst({
@@ -591,8 +554,6 @@ module.exports = async (fastify) => {
 
         if (toPay <= 0) return reply.status(400).send({ error: 'Нет суммы к оплате' })
 
-        // Каждый вызов создаёт новую ссылку на оплату — старые PENDING-платежи не переиспользуются,
-        // протухшие подчищает CronTab, переводя в FAILED (см. src/cron/expireStalePayments.js)
         const cabinet = await fastify.prisma.cabinet.findFirst({
             where:  { id: booking.cabinet }
         })
@@ -707,7 +668,6 @@ module.exports = async (fastify) => {
         return reply.send({ url: payment.link })
     })
 
-    // ── POST /guest/review ─────────────────────────────────────────────────
     fastify.post('/review', async (req, reply) => {
         const { id, rating } = req.body
 

@@ -1,14 +1,6 @@
 const { ok } = require('assert')
 const crypto = require('crypto')
 
-// Полный сброс интеграции с Точка Банком — используется и при явном отключении,
-// и при неудачном подключении вебхука (интеграция считается незавершённой).
-// tochkaWebhookKey сюда намеренно НЕ входит: мы никогда не отменяем регистрацию
-// вебхука на стороне Точки при сбросе/отключении, поэтому подписка на их стороне
-// продолжает жить под этим ключом. Если обнулить ключ у себя, следующая попытка
-// сгенерирует новый случайный ключ и Точка ответит "Object already exists" на
-// повторную регистрацию — вечный цикл сломанной интеграции. Сохраняя ключ, мы
-// переиспользуем тот же URL и повторная регистрация становится идемпотентной.
 const TOCHKA_RESET_DATA = {
     tochkaPhone: null,
     tochkaApiKey: null,
@@ -26,7 +18,6 @@ const TOCHKA_RESET_DATA = {
 }
 
 module.exports = async (fastify) => {
-  // GET /integration/realtycalendar
   fastify.get('/realtycalendar', async (req, reply) => {
     try {
         await req.jwtVerify()
@@ -174,12 +165,11 @@ module.exports = async (fastify) => {
         return reply.send({ okidoki, tochka, permissions, tochkaMerchantId: cabinet.tochkaMerchantId })
 
     } catch (err) {
-        console.debug(err)
+        console.error(err)
         return reply.status(401).send({ error: 'Неавторизованный доступ' })
     }
   })
 
-  // GET /integration/okidoki/templates
     fastify.get('/okidoki/templates', async (req, reply) => {
     try {
         await req.jwtVerify()
@@ -205,12 +195,11 @@ module.exports = async (fastify) => {
         if (err.name === 'AbortError') {
             return reply.status(408).send({ error: 'Таймаут запроса' })
         }
-        console.debug(err)
+        console.error(err)
         return reply.status(500).send({ error: 'Внутренняя ошибка сервера' })
     }
 })
 
-// GET /integration/okidoki/entities
     fastify.get('/okidoki/entities', async (req, reply) => {
     try {
         await req.jwtVerify()
@@ -231,13 +220,12 @@ module.exports = async (fastify) => {
         }
 
         const data = await res.json()
-        console.debug('entities response:', JSON.stringify(data))
         return reply.send(data)
     } catch (err) {
         if (err.name === 'AbortError') {
             return reply.status(408).send({ error: 'Таймаут запроса' })
         }
-        console.debug(err)
+        console.error(err)
         return reply.status(500).send({ error: 'Внутренняя ошибка сервера' })
     }
 })
@@ -265,7 +253,7 @@ module.exports = async (fastify) => {
         if (err.name === 'AbortError') {
             return reply.status(408).send({ error: 'Таймаут запроса' })
         }
-        console.debug(err)
+        console.error(err)
         return reply.status(500).send({ error: 'Внутренняя ошибка сервера' })
     }
 })
@@ -322,7 +310,7 @@ module.exports = async (fastify) => {
 
         return reply.send({ ok: true })
     } catch (err) {
-        console.debug(err)
+        console.error(err)
         return reply.status(401).send({ error: 'Неавторизованный доступ' })
     }
 })
@@ -629,7 +617,7 @@ module.exports = async (fastify) => {
 
             return reply.send({ message, merchantResult, dataMerchant })
         } catch (err) {
-            console.debug(err)
+            console.error(err)
             return reply.status(401).send({ error: 'Неавторизованный доступ' })
         }
 
@@ -675,7 +663,7 @@ module.exports = async (fastify) => {
 
             return reply.send({ message: "Интеграция успешно отключена!" })
         } catch (err) {
-            console.debug(err)
+            console.error(err)
             return reply.status(401).send({ error: 'Неавторизованный доступ' })
         }
     })
@@ -737,9 +725,6 @@ module.exports = async (fastify) => {
                 return reply.status(400).send({ error: `Недопустимые способы оплаты: ${invalidModes.join(', ')}` })
 }
 
-            // Вебхук подтверждения оплаты обязателен — без него интеграция не считается завершённой.
-            // Если что-то пойдёт не так, весь набор данных интеграции сбрасывается, чтобы пользователь
-            // перепроверил токен/Client ID и прошёл настройку заново.
             if (!cabinet.tochkaAppClientId) {
                 await fastify.prisma.cabinet.update({
                     where: { id: user.cabinet },
@@ -796,10 +781,6 @@ module.exports = async (fastify) => {
                 const errorText = await webhookRes.text();
                 fastify.log.error(`[Ошибка Точки] Вебхук. Статус: ${httpStatus} | Ответ: ${errorText}`);
 
-                // "Object already exists" — у Точки уже есть подписка на вебхук для этого Client ID
-                // (например, осталась от прошлой попытки настройки). Пробуем удалить старую подписку
-                // и зарегистрировать вебхук заново тем же ключом — если получится, считаем подключение
-                // успешным и не трогаем остальные данные интеграции.
                 let recovered = false
                 if (httpStatus === 400 && /already exists/i.test(errorText)) {
                     try {
@@ -899,7 +880,7 @@ module.exports = async (fastify) => {
 
             return reply.send({ message: "Интеграция успешно подключена!" })
         } catch (err) {
-            console.debug(err)
+            console.error(err)
             return reply.status(401).send({ error: 'Неавторизованный доступ' })
         }
     })
@@ -990,7 +971,7 @@ module.exports = async (fastify) => {
 
             return reply.send({ dataMerchant })
         } catch (err) {
-            console.debug(err)
+            console.error(err)
             return reply.status(401).send({ error: 'Неавторизованный доступ' })
         }
     })

@@ -1,5 +1,4 @@
 module.exports = async (fastify) => {
-  // GET /maids/getall
   fastify.get('/getall', async (req, reply) => {
     try {
         await req.jwtVerify()
@@ -36,14 +35,14 @@ module.exports = async (fastify) => {
                     haveRights = false
             }
             }
-            
+
         } else {
             haveRights = true;
         }
 
         const maidsList = await fastify.prisma.maids.findMany({
-        where: { 
-            cabinetid: user.cabinet 
+        where: {
+            cabinetid: user.cabinet
         },
             select: {
                 id: true,
@@ -112,7 +111,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // GET /maids/schedule?date=YYYY-MM-DD
     fastify.get('/schedule', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -129,13 +127,11 @@ module.exports = async (fastify) => {
             })
             if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
 
-            // All active objects
             const objects = await fastify.prisma.objects.findMany({
                 where: { cabinetid: user.cabinet, active: 'YES' },
                 select: { id: true, name: true, location: true, realtyid: true, checkindef: true, checkoutdef: true }
             })
 
-            // All bookings touching this date (ending, starting, or spanning)
             const allBookings = await fastify.prisma.bookings.findMany({
                 where: {
                     cabinet: user.cabinet,
@@ -148,7 +144,6 @@ module.exports = async (fastify) => {
                 }
             })
 
-            // Saved schedule entries for this date
             const scheduleEntries = await fastify.prisma.cleaningSchedule.findMany({
                 where: { cabinetid: user.cabinet, date }
             })
@@ -163,11 +158,8 @@ module.exports = async (fastify) => {
             for (const object of objects) {
                 const objBookings = allBookings.filter(b => b.realty_id === object.realtyid)
 
-                // Booking ending today (departing guests — whose checkout triggers the cleaning)
                 const checkoutBooking = objBookings.find(b => b.end_date === date)
-                // Booking spanning today (guests still staying)
                 const ongoingBooking  = objBookings.find(b => b.begin_date < date && b.end_date > date)
-                // Booking starting today (next guests arriving)
                 const checkinBooking  = objBookings.find(b => b.begin_date === date)
 
                 const schedule = scheduleEntries.find(s => s.objectid === object.id)
@@ -175,22 +167,18 @@ module.exports = async (fastify) => {
                 let status, sortOrder, defaultIncluded
 
                 if (ongoingBooking) {
-                    // Guests are still staying — exclude, push to bottom
                     status = 'ongoing'
                     sortOrder = 2
                     defaultIncluded = false
                 } else if (checkoutBooking) {
-                    // Guests checking out today — include, clean the room
                     status = 'checkout'
                     sortOrder = 0
                     defaultIncluded = true
                 } else if (checkinBooking) {
-                    // No one checking out, but new guests arriving — room needs cleaning
                     status = 'empty'
                     sortOrder = 0
                     defaultIncluded = true
                 } else {
-                    // No booking at all today — not occupied since last cleaning
                     status = 'empty'
                     sortOrder = 1
                     defaultIncluded = false
@@ -206,21 +194,18 @@ module.exports = async (fastify) => {
                     status,
                     sortOrder,
 
-                    // Departing guests (checkout booking)
                     checkoutBookingId: checkoutBooking?.id ?? null,
                     checkoutDate: checkoutBooking?.end_date ?? null,
                     checkoutTime: schedule?.checkout_time ?? checkoutBooking?.end_time ?? '',
                     hasBookingCheckoutTime: !!checkoutBooking?.end_time,
                     guestReview: checkinBooking?.review ?? null,
 
-                    // Arriving guests (next booking, if any)
                     checkinBookingId: checkinBooking?.id ?? null,
                     checkinDate: checkinBooking?.begin_date ?? null,
                     checkinTime: schedule?.checkin_time ?? checkinBooking?.begin_time ?? '',
                     hasBookingCheckinTime: !!checkinBooking?.begin_time,
                     hasNextBooking: !!checkinBooking,
 
-                    // Ongoing booking info
                     ongoingCheckin:  ongoingBooking?.begin_date ?? null,
                     ongoingCheckout: ongoingBooking?.end_date ?? null,
 
@@ -230,7 +215,6 @@ module.exports = async (fastify) => {
                 })
             }
 
-            // Sort: checkout first (0), empty (1), ongoing at bottom (2)
             entries.sort((a, b) => a.sortOrder - b.sortOrder)
 
             return reply.send({ entries, maids })
@@ -240,7 +224,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /maids/schedule/save
     fastify.post('/schedule/save', async (req, reply) => {
         try {
             await req.jwtVerify()

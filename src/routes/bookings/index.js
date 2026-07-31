@@ -1,7 +1,6 @@
 const crypto = require('crypto')
 
 module.exports = async (fastify) => {
-    // POST /bookings/get
     fastify.post('/get', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -12,7 +11,6 @@ module.exports = async (fastify) => {
             const { object, checkin, checkout, phone } = req.body
             const where = {}
 
-            // object — realty_id объекта (число); даты — точное совпадение, а не диапазон
             if (object)   where.realty_id = parseInt(object)
             if (phone)    where.phone = { contains: phone }
             if (checkin)  where.begin_date = checkin
@@ -93,8 +91,6 @@ module.exports = async (fastify) => {
             })
             if (!booking) return reply.send({ booking: null })
 
-            // Горничная теперь назначается в графике уборок (CleaningSchedule), а не на самой
-            // брони — ищем запись графика по объекту и дате выезда (день, когда убирают после гостя)
             let scheduledMaid = null
             if (booking.realty_id && booking.end_date) {
                 const object = await fastify.prisma.objects.findFirst({
@@ -165,7 +161,6 @@ module.exports = async (fastify) => {
                     if (isNaN(numDeposit) || numDeposit < 0) {
                         return reply.status(400).send({ error: 'Некорректная сумма залога' })
                     }
-                    // Ограничение платформы: либо совсем без залога, либо больше 100 рублей
                     if (numDeposit !== 0 && numDeposit <= 100) {
                         return reply.status(400).send({ error: 'Сумма залога должна быть 0 либо больше 100 ₽' })
                     }
@@ -242,7 +237,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // GET /bookings/unprocessed
     fastify.get('/unprocessed', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -263,7 +257,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /bookings/unprocessed/resolve
     fastify.post('/unprocessed/resolve', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -325,7 +318,6 @@ module.exports = async (fastify) => {
                     }
 
                     function formatDate(dateString) {
-                        // Проверяем, что строка не пустая и соответствует формату YYYY-MM-DD
                         if (!dateString || !dateString.includes('-')) return dateString;
                         return dateString.split('-').reverse().join('.');
                     }
@@ -380,7 +372,6 @@ module.exports = async (fastify) => {
                     });
 
                     const data = await res.json();
-                    console.debug(data)
                     okiDokiLink = data.link;
                     okiDokiId = data.contract_id;
                 }
@@ -464,7 +455,6 @@ module.exports = async (fastify) => {
                         })
 
                         const data = await res.json()
-                        console.debug(data)
                         okiDokiLink = data.link
                         okiDokiId = data.contract_id
                     }
@@ -511,7 +501,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /bookings/unprocessed/delete
     fastify.post('/unprocessed/delete', async (req, reply) => {
         try {
             await req.jwtVerify()

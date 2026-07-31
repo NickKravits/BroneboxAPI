@@ -3,7 +3,6 @@ const { log } = require('console')
 const crypto = require('crypto')
 
 module.exports = async (fastify) => {
-  // POST /auth/login
   fastify.post('/login', async (req, reply) => {
     const { login, password } = req.body
 
@@ -37,7 +36,6 @@ module.exports = async (fastify) => {
     return { token }
   })
 
-  // POST /auth/register
   fastify.post('/register', async (req, reply) => {
     const { login, name, administrator_key } = req.body
 

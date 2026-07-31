@@ -13,7 +13,6 @@ const DEFAULT_CLEANING_TEMPLATE = `{Название_квартиры}
 {Новая_строка}`
 
 module.exports = async (fastify) => {
-    // GET /cabinet/cleaning-template
     fastify.get('/cleaning-template', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -40,7 +39,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /cabinet/cleaning-template
     fastify.post('/cleaning-template', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -72,7 +70,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // GET /cabinet/templates
     fastify.get('/templates', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -92,7 +89,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /cabinet/templates/save (create or update)
     fastify.post('/templates/save', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -134,7 +130,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /cabinet/templates/delete
     fastify.post('/templates/delete', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -162,7 +157,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // POST /cabinet/update-timezone
     fastify.post('/update-timezone', async (req, reply) => {
         try {
             await req.jwtVerify()

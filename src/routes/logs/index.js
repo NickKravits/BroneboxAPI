@@ -1,5 +1,4 @@
 module.exports = async (fastify) => {
-  // GET /logs/get
     fastify.get('/get', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -32,7 +31,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    // PATCH /logs/read
     fastify.patch('/read', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -51,12 +49,11 @@ module.exports = async (fastify) => {
 
             if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
 
-            // Обновляем только логи СВОЕГО кабинета — чужие молча игнорируются
             await fastify.prisma.logs.updateMany({
                 where: {
                     id:        { in: ids },
                     cabinetid: user.cabinet,
-                    readed:    'NO'          // не трогаем уже прочитанные
+                    readed:    'NO'
                 },
                 data: { readed: 'YES' }
             })

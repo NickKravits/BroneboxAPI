@@ -129,7 +129,8 @@ exports.Prisma.UserScalarFieldEnum = {
   role: 'role',
   cabinet: 'cabinet',
   status: 'status',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  tokenVersion: 'tokenVersion'
 };
 
 exports.Prisma.CabinetScalarFieldEnum = {
@@ -137,6 +138,7 @@ exports.Prisma.CabinetScalarFieldEnum = {
   Timezone: 'Timezone',
   realtycalendarid: 'realtycalendarid',
   okidokiapi: 'okidokiapi',
+  okidokiwebhookkey: 'okidokiwebhookkey',
   tochkaPhone: 'tochkaPhone',
   tochkaApiKey: 'tochkaApiKey',
   tochkaMerchantId: 'tochkaMerchantId',
@@ -144,7 +146,13 @@ exports.Prisma.CabinetScalarFieldEnum = {
   tochkaVatType: 'tochkaVatType',
   tochkaPurpose: 'tochkaPurpose',
   tochkaName: 'tochkaName',
+  tochkaPurposeDeposit: 'tochkaPurposeDeposit',
+  tochkaNameDeposit: 'tochkaNameDeposit',
   tochkaCustomerCode: 'tochkaCustomerCode',
+  tochkaOrgName: 'tochkaOrgName',
+  tochkaTaxCode: 'tochkaTaxCode',
+  tochkaAppClientId: 'tochkaAppClientId',
+  tochkaWebhookKey: 'tochkaWebhookKey',
   cleaningTemplate: 'cleaningTemplate',
   approxTimeMarker: 'approxTimeMarker',
   emptyStayMarker: 'emptyStayMarker',
@@ -171,7 +179,13 @@ exports.Prisma.StaffScalarFieldEnum = {
   managetemplates: 'managetemplates',
   manageautosent: 'manageautosent',
   seemaidsrate: 'seemaidsrate',
-  managebooks: 'managebooks'
+  managebooks: 'managebooks',
+  manualpaymentedit: 'manualpaymentedit',
+  manualdepositedit: 'manualdepositedit',
+  bankpaymentedit: 'bankpaymentedit',
+  bankdepositedit: 'bankdepositedit',
+  financesinformationpayment: 'financesinformationpayment',
+  financesinformationdeposit: 'financesinformationdeposit'
 };
 
 exports.Prisma.MaidsScalarFieldEnum = {
@@ -204,6 +218,7 @@ exports.Prisma.ObjectsScalarFieldEnum = {
   oddepositid: 'oddepositid',
   odpayperdayid: 'odpayperdayid',
   odpayedid: 'odpayedid',
+  okidokiactive: 'okidokiactive',
   depositchanel: 'depositchanel',
   paymentchanel: 'paymentchanel',
   active: 'active'
@@ -212,7 +227,8 @@ exports.Prisma.ObjectsScalarFieldEnum = {
 exports.Prisma.ObjectPhotoScalarFieldEnum = {
   id: 'id',
   objectId: 'objectId',
-  url: 'url'
+  url: 'url',
+  sortOrder: 'sortOrder'
 };
 
 exports.Prisma.BookingsScalarFieldEnum = {
@@ -230,6 +246,8 @@ exports.Prisma.BookingsScalarFieldEnum = {
   balance_to_be_paid_1: 'balance_to_be_paid_1',
   price_per_day: 'price_per_day',
   deposit: 'deposit',
+  returned: 'returned',
+  manual_deposit: 'manual_deposit',
   client_id: 'client_id',
   fio: 'fio',
   email: 'email',
@@ -240,6 +258,7 @@ exports.Prisma.BookingsScalarFieldEnum = {
   tochka_id_deposit: 'tochka_id_deposit',
   begin_time: 'begin_time',
   end_time: 'end_time',
+  contract_status: 'contract_status',
   contract_id: 'contract_id',
   contract_link: 'contract_link',
   maid_id: 'maid_id',
@@ -309,6 +328,27 @@ exports.Prisma.CabinetTemplateScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  cabinetid: 'cabinetid',
+  bookingId: 'bookingId',
+  amount: 'amount',
+  type: 'type',
+  method: 'method',
+  madeBy: 'madeBy',
+  receiptUrl: 'receiptUrl',
+  status: 'status',
+  returnedAmount: 'returnedAmount',
+  returnedAt: 'returnedAt',
+  externalId: 'externalId',
+  link: 'link',
+  linkExpiresAt: 'linkExpiresAt',
+  createdAt: 'createdAt',
+  paidAt: 'paidAt',
+  tochkaStatus: 'tochkaStatus',
+  tochkaPaymentType: 'tochkaPaymentType'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -344,12 +384,19 @@ exports.Prisma.QueryMode = {
 exports.Prisma.CabinetOrderByRelevanceFieldEnum = {
   realtycalendarid: 'realtycalendarid',
   okidokiapi: 'okidokiapi',
+  okidokiwebhookkey: 'okidokiwebhookkey',
   tochkaPhone: 'tochkaPhone',
   tochkaApiKey: 'tochkaApiKey',
   tochkaMerchantId: 'tochkaMerchantId',
   tochkaPurpose: 'tochkaPurpose',
   tochkaName: 'tochkaName',
+  tochkaPurposeDeposit: 'tochkaPurposeDeposit',
+  tochkaNameDeposit: 'tochkaNameDeposit',
   tochkaCustomerCode: 'tochkaCustomerCode',
+  tochkaOrgName: 'tochkaOrgName',
+  tochkaTaxCode: 'tochkaTaxCode',
+  tochkaAppClientId: 'tochkaAppClientId',
+  tochkaWebhookKey: 'tochkaWebhookKey',
   cleaningTemplate: 'cleaningTemplate',
   approxTimeMarker: 'approxTimeMarker',
   emptyStayMarker: 'emptyStayMarker',
@@ -398,6 +445,7 @@ exports.Prisma.BookingsOrderByRelevanceFieldEnum = {
   additional_phone: 'additional_phone',
   begin_time: 'begin_time',
   end_time: 'end_time',
+  contract_status: 'contract_status',
   contract_id: 'contract_id',
   contract_link: 'contract_link',
   channel: 'channel',
@@ -435,6 +483,15 @@ exports.Prisma.BugReportOrderByRelevanceFieldEnum = {
 exports.Prisma.CabinetTemplateOrderByRelevanceFieldEnum = {
   name: 'name',
   body: 'body'
+};
+
+exports.Prisma.PaymentOrderByRelevanceFieldEnum = {
+  madeBy: 'madeBy',
+  receiptUrl: 'receiptUrl',
+  externalId: 'externalId',
+  link: 'link',
+  tochkaStatus: 'tochkaStatus',
+  tochkaPaymentType: 'tochkaPaymentType'
 };
 exports.TemPass = exports.$Enums.TemPass = {
   YES: 'YES',
@@ -506,6 +563,24 @@ exports.BookStatus = exports.$Enums.BookStatus = {
   request: 'request'
 };
 
+exports.PaymentType = exports.$Enums.PaymentType = {
+  PAY: 'PAY',
+  DEPOSIT: 'DEPOSIT'
+};
+
+exports.PaymentMethod = exports.$Enums.PaymentMethod = {
+  MANAGER: 'MANAGER',
+  TOCHKA: 'TOCHKA',
+  TBANK: 'TBANK'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  RETURNED: 'RETURNED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Cabinet: 'Cabinet',
@@ -518,7 +593,8 @@ exports.Prisma.ModelName = {
   CleaningSchedule: 'CleaningSchedule',
   UnprocessedBooking: 'UnprocessedBooking',
   BugReport: 'BugReport',
-  CabinetTemplate: 'CabinetTemplate'
+  CabinetTemplate: 'CabinetTemplate',
+  Payment: 'Payment'
 };
 
 /**

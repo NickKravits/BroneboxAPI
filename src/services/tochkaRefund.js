@@ -1,12 +1,3 @@
-// Общая логика возврата платежа через Точка Банк.
-// Используется в двух местах:
-//   - POST /payments/returnTochkaPayment — ручной возврат менеджером (с правом canreturnpayments),
-//     обновляет Payment в базе так же, как обычный manualreturn.
-//   - returnTochkaFailedPayment — автоматический возврат "потерянного" платежа: гость всё же
-//     провёл оплату уже после того, как мы у себя списали платёж в FAILED/RETURNED (истёк по
-//     времени или был возвращён раньше). Вызывается напрямую из обработчика вебхука
-//     (src/routes/webhook/index.js), в базе ничего не меняет — платёж остаётся как был.
-
 async function callTochkaRefund(fastify, apiKey, externalId, amountStr) {
     let res
     try {
@@ -35,9 +26,6 @@ async function callTochkaRefund(fastify, apiKey, externalId, amountStr) {
     return { ok: true, data }
 }
 
-// Автоматический возврат "потерянного" платежа — вызывается из вебхука, когда Точка
-// подтверждает оплату по операции, чей Payment у нас уже не в PENDING/PAID (истёк или был
-// возвращён раньше). В базе ничего не меняем — платёж остаётся неактуальным, как и был.
 async function returnTochkaFailedPayment({ fastify, cabinetid, externalId, amount }) {
     const payment = await fastify.prisma.payment.findFirst({
         where: { cabinetid, externalId: String(externalId), method: 'TOCHKA' }

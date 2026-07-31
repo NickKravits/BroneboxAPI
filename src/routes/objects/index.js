@@ -1,11 +1,10 @@
 const bcrypt = require('bcrypt')
 
 const path = require('path')
-const fs = require('fs/promises') // Обязательно используем асинхронный fs
+const fs = require('fs/promises')
 const crypto = require('crypto')
 
 module.exports = async (fastify) => {
-  // GET /objects/getall
   fastify.get('/getall', async (req, reply) => {
     try {
         await req.jwtVerify()
@@ -204,8 +203,7 @@ module.exports = async (fastify) => {
         }
     }
 
-    // Переводим ID в число сразу, чтобы использовать везде без ошибок
-    const objectId = parseInt(req.params.id) 
+    const objectId = parseInt(req.params.id)
     
     if (isNaN(objectId)) {
         return reply.status(400).send({ error: 'Некорректный ID объекта' })
@@ -232,8 +230,6 @@ module.exports = async (fastify) => {
     const ext = path.extname(data.filename)
     const fileName = `${crypto.randomUUID()}${ext}`
     
-    // Поднимаемся на уровень выше к папке uploads, 
-    // так как этот файл лежит внутри src/routes/
     const dir = path.join(__dirname, '..', '..', 'uploads', 'objects', String(objectId))
 
     await fs.mkdir(dir, { recursive: true })
@@ -564,9 +560,8 @@ fastify.delete('/photos/:photoId', async (req, reply) => {
             return reply.status(403).send({ error: 'Недостаточно прав' })
         }
 
-        // Удаляем файл с диска
         const filePath = path.join(__dirname, '..', '..', 'uploads', photo.url.replace('/uploads/', ''))
-        await fs.unlink(filePath).catch(() => {}) // если файла нет — не падаем
+        await fs.unlink(filePath).catch(() => {})
 
         await fastify.prisma.objectPhoto.delete({ where: { id: photoId } })
 
@@ -620,7 +615,6 @@ fastify.delete('/photos/:photoId', async (req, reply) => {
             return reply.status(403).send({ error: 'Недостаточно прав' })
         }
 
-        // Удаляем все связанные фото с диска
         const photos = await fastify.prisma.objectPhoto.findMany({
             where: { objectId },
             select: { url: true }
@@ -628,7 +622,7 @@ fastify.delete('/photos/:photoId', async (req, reply) => {
 
         for (const photo of photos) {
             const filePath = path.join(__dirname, '..', '..', 'uploads', photo.url.replace('/uploads/', ''))
-            await fs.unlink(filePath).catch(() => {}) // если файла нет — не падаем
+            await fs.unlink(filePath).catch(() => {})
         }
 
         await fastify.prisma.objectPhoto.deleteMany({ where: { objectId } })
@@ -760,7 +754,6 @@ fastify.delete('/photos/:photoId', async (req, reply) => {
 
         const AvailableObjects = []
 
-        //Находим объекты
         const objects = await fastify.prisma.objects.findMany({
             where: { cabinetid: user.cabinet }
         })

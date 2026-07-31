@@ -2,7 +2,6 @@ const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 
 module.exports = async (fastify) => {
-  // GET /staff/getall
   fastify.get('/getall', async (req, reply) => {
     try {
         await req.jwtVerify()
@@ -45,7 +44,12 @@ module.exports = async (fastify) => {
                         manageautosent: true,
                         seemaidsrate: true,
                         managebooks: true,
-                        canreturnpayments: true
+                        manualpaymentedit: true,
+                        manualdepositedit: true,
+                        bankpaymentedit: true,
+                        bankdepositedit: true,
+                        financesinformationpayment: true,
+                        financesinformationdeposit: true
                     }
                 }
             }
@@ -56,7 +60,6 @@ module.exports = async (fastify) => {
         return reply.status(401).send({ error: 'Неавторизованный доступ' })
     }
   })
-    // POST /staff/create
     fastify.post('/create', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -128,7 +131,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    //POST /staff/delete
     fastify.post('/delete', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -194,7 +196,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    //POST /staff/get
     fastify.post('/get', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -248,7 +249,13 @@ module.exports = async (fastify) => {
                             managetemplates: true,
                             manageautosent: true,
                             seemaidsrate: true,
-                            managebooks: true
+                            managebooks: true,
+                            manualpaymentedit: true,
+                            manualdepositedit: true,
+                            bankpaymentedit: true,
+                            bankdepositedit: true,
+                            financesinformationpayment: true,
+                            financesinformationdeposit: true
                         }
                     }
                 }
@@ -261,7 +268,6 @@ module.exports = async (fastify) => {
         }
     })
 
-    //POST /staff/permissionschange
     fastify.post('/permissionschange', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -301,7 +307,7 @@ module.exports = async (fastify) => {
                 return reply.status(403).send({ error: 'Невозможно получить информацию об администраторе' })
             }
 
-            const validPermissions = ['manageobjects', 'managemaids', 'manageintegration', 'managetemplates', 'manageautosent', 'seemaidsrate', 'managebooks', 'canreturnpayments']
+            const validPermissions = ['manageobjects', 'managemaids', 'manageintegration', 'managetemplates', 'manageautosent', 'seemaidsrate', 'managebooks', 'manualpaymentedit', 'manualdepositedit', 'bankpaymentedit', 'bankdepositedit', 'financesinformationpayment', 'financesinformationdeposit']
 
             if (!validPermissions.includes(permission)) {
                 return reply.status(400).send({ error: 'Недопустимое имя разрешения' })

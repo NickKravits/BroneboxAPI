@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -29,54 +24,62 @@ enum TemPass {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  login     String   @unique
-  password  String
-  tempass   TemPass  @default(YES)
-  name      String?
-  role      Role
-  cabinet   Int
-  status    Status   @default(ACTIVE)
-  createdAt DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  login        String   @unique
+  password     String
+  tempass      TemPass  @default(YES)
+  name         String?
+  role         Role
+  cabinet      Int
+  status       Status   @default(ACTIVE)
+  createdAt    DateTime @default(now())
+  tokenVersion Int      @default(0)
 
   staff Staff?
 }
 
 model Cabinet {
-  id                 Int      @id @default(autoincrement())
-  Timezone           Timezone @default(EUROPE_MOSCOW)
-  realtycalendarid   String?  @unique
-  okidokiapi         String?
-  tochkaPhone        String?
-  tochkaApiKey       String?  @db.VarChar(1000)
-  tochkaMerchantId   String?
-  tochkaPaymentMode  Json?
-  tochkaVatType      Json?
-  tochkaPurpose      String?
-  tochkaName         String?
-  tochkaCustomerCode String?
-  cleaningTemplate   String?  @db.Text
-  approxTimeMarker   String?  @default("~")
-  emptyStayMarker    String?  @default("—")
-  cleaningHeader     String?  @db.Text
-  cleaningFooter     String?  @db.Text
-  balance            Float    @default(0.0)
+  id                   Int      @id @default(autoincrement())
+  Timezone             Timezone @default(EUROPE_MOSCOW)
+  realtycalendarid     String?  @unique
+  okidokiapi           String?
+  okidokiwebhookkey    String?  @unique
+  tochkaPhone          String?
+  tochkaApiKey         String?  @db.VarChar(1000)
+  tochkaMerchantId     String?
+  tochkaPaymentMode    Json?
+  tochkaVatType        Json?
+  tochkaPurpose        String?
+  tochkaName           String?
+  tochkaPurposeDeposit String?
+  tochkaNameDeposit    String?
+  tochkaCustomerCode   String?
+  tochkaOrgName        String?
+  tochkaTaxCode        String?
+  tochkaAppClientId    String?
+  tochkaWebhookKey     String?  @unique
+  cleaningTemplate     String?  @db.Text
+  approxTimeMarker     String?  @default("~")
+  emptyStayMarker      String?  @default("—")
+  cleaningHeader       String?  @db.Text
+  cleaningFooter       String?  @db.Text
+  balance              Float    @default(0.0)
 }
 
 enum Timezone {
-  ETC_GMT_1          @map("Etc/GMT-1") // ХЗ, что, но (UTC+1)
-  EUROPE_CENTRAL     @map("Europe/Berlin") // Центральная Европа (UTC+1 / UTC+2) 
-  EUROPE_KALININGRAD @map("Europe/Kaliningrad") // Калининград (UTC+2)
-  EUROPE_MOSCOW      @map("Europe/Moscow") // Москва, Санкт-Петербург, Казань (UTC+3)
-  EUROPE_SAMARA      @map("Europe/Samara") // Самара, Ижевск (UTC+4)
-  ASIA_YEKATERINBURG @map("Asia/Yekaterinburg") // Екатеринбург, Пермь, Тюмень (UTC+5)
-  ASIA_OMSK          @map("Asia/Omsk") // Омск (UTC+6)
-  ASIA_KRASNOYARSK   @map("Asia/Krasnoyarsk") // Красноярск, Новосибирск, Томск (UTC+7)
-  ASIA_IRKUTSK       @map("Asia/Irkutsk") // Иркутск, Улан-Удэ (UTC+8)
-  ASIA_YAKUTSK       @map("Asia/Yakutsk") // Якутск, Чита, Благовещенск (UTC+9)
-  ASIA_VLADIVOSTOK   @map("Asia/Vladivostok") // Владивосток, Хабаровск (UTC+10)
-  ASIA_MAGADAN       @map("Asia/Magadan") // Магадан, Сахалин (UTC+11)
-  ASIA_KAMCHATKA     @map("Asia/Kamchatka") // Камчатка, Анадырь (UTC+12)
+  ETC_GMT_1          @map("Etc/GMT-1")
+  EUROPE_CENTRAL     @map("Europe/Berlin")
+  EUROPE_KALININGRAD @map("Europe/Kaliningrad")
+  EUROPE_MOSCOW      @map("Europe/Moscow")
+  EUROPE_SAMARA      @map("Europe/Samara")
+  ASIA_YEKATERINBURG @map("Asia/Yekaterinburg")
+  ASIA_OMSK          @map("Asia/Omsk")
+  ASIA_KRASNOYARSK   @map("Asia/Krasnoyarsk")
+  ASIA_IRKUTSK       @map("Asia/Irkutsk")
+  ASIA_YAKUTSK       @map("Asia/Yakutsk")
+  ASIA_VLADIVOSTOK   @map("Asia/Vladivostok")
+  ASIA_MAGADAN       @map("Asia/Magadan")
+  ASIA_KAMCHATKA     @map("Asia/Kamchatka")
 }
 
 model Logs {
@@ -100,16 +103,22 @@ enum Thumbler {
 }
 
 model Staff {
-  id                Int      @id
-  user              User     @relation(fields: [id], references: [id], onDelete: Cascade)
-  cabinetid         Int
-  manageobjects     Thumbler @default(NO)
-  managemaids       Thumbler @default(NO)
-  manageintegration Thumbler @default(NO)
-  managetemplates   Thumbler @default(YES)
-  manageautosent    Thumbler @default(NO)
-  seemaidsrate      Thumbler @default(YES)
-  managebooks       Thumbler @default(NO)
+  id                         Int      @id
+  user                       User     @relation(fields: [id], references: [id], onDelete: Cascade)
+  cabinetid                  Int
+  manageobjects              Thumbler @default(NO)
+  managemaids                Thumbler @default(NO)
+  manageintegration          Thumbler @default(NO)
+  managetemplates            Thumbler @default(YES)
+  manageautosent             Thumbler @default(NO)
+  seemaidsrate               Thumbler @default(YES)
+  managebooks                Thumbler @default(NO)
+  manualpaymentedit          Thumbler @default(NO)
+  manualdepositedit          Thumbler @default(NO)
+  bankpaymentedit            Thumbler @default(NO)
+  bankdepositedit            Thumbler @default(NO)
+  financesinformationpayment Thumbler @default(NO)
+  financesinformationdeposit Thumbler @default(NO)
 }
 
 model Maids {
@@ -142,6 +151,7 @@ model Objects {
   oddepositid     String?
   odpayperdayid   String?
   odpayedid       String?
+  okidokiactive   Int           @default(0)
   depositchanel   DepositChanel @default(NONE)
   paymentchanel   PaymentChanel @default(NONE)
   active          Thumbler      @default(YES)
@@ -163,17 +173,18 @@ enum PaymentChanel {
 }
 
 model ObjectPhoto {
-  id       Int     @id @default(autoincrement())
-  objectId Int
-  url      String
-  objects  Objects @relation(fields: [objectId], references: [id])
+  id        Int     @id @default(autoincrement())
+  objectId  Int
+  url       String
+  sortOrder Int     @default(0)
+  objects   Objects @relation(fields: [objectId], references: [id])
 }
 
 enum ShowSettings {
-  IMMEDIATELY // Сразу
-  DAY_BEFORE // За день до заселения
-  AFTER_CHECKIN // После заселения
-  AFTER_CHECKOUT // Сразу после выезда
+  IMMEDIATELY
+  DAY_BEFORE
+  AFTER_CHECKIN
+  AFTER_CHECKOUT
 }
 
 model Bookings {
@@ -182,8 +193,8 @@ model Bookings {
   begin_date           String?
   end_date             String?
   realty_id            Int?
-  created_at           DateTime?
-  updated_at           DateTime?
+  created_at           DateTime?   @default(now())
+  updated_at           DateTime?   @default(now())
   amount               Int?
   notes                String?
   source               String?
@@ -191,18 +202,19 @@ model Bookings {
   balance_to_be_paid_1 Int?
   price_per_day        Int?
   deposit              Int?
-  //client
-  client_id            Int? //id
+  returned             Int?
+  manual_deposit       Int?
+  client_id            Int?
   fio                  String?
   email                String?
   phone                String?
   additional_phone     String?
-  //CRM additional info
   cabinet              Int
   tochka_id_pay        Int?
   tochka_id_deposit    Int?
   begin_time           String?
   end_time             String?
+  contract_status      String?
   contract_id          String?
   contract_link        String?
   maid_id              Int?
@@ -214,10 +226,10 @@ model Bookings {
 }
 
 enum BookStatus {
-  booked //Бронь активна
-  deleted //Бронь удалена
-  canceled //Бронь отменена
-  request //Заявка
+  booked
+  deleted
+  canceled
+  request
 }
 
 model CleaningSchedule {
@@ -280,4 +292,43 @@ model CabinetTemplate {
   body      String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id                Int           @id @default(autoincrement())
+  cabinetid         Int
+  bookingId         Int
+  amount            Float
+  type              PaymentType
+  method            PaymentMethod
+  madeBy            String?
+  receiptUrl        String?
+  status            PaymentStatus
+  returnedAmount    Float?
+  returnedAt        DateTime?
+  externalId        String?
+  link              String?
+  linkExpiresAt     DateTime?
+  createdAt         DateTime      @default(now())
+  paidAt            DateTime?
+  tochkaStatus      String?
+  tochkaPaymentType String?
+}
+
+enum PaymentType {
+  PAY
+  DEPOSIT
+}
+
+enum PaymentMethod {
+  MANAGER
+  TOCHKA
+  TBANK
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  RETURNED
 }

@@ -1,12 +1,10 @@
 require('dotenv').config()
-const path = require('path') // Обязательно импортируем path!
+const path = require('path')
 
 const fastify = require('fastify')({ logger: true })
 
-// Переписываем на require. Больше никакой await здесь не нужен, 
-// Fastify сам под капотом разберется с асинхронностью.
 fastify.register(require('@fastify/multipart'), {
-  limits: { fileSize: 20 * 1024 * 1024 } // 20MB
+  limits: { fileSize: 20 * 1024 * 1024 }
 })
 
 fastify.register(require('@fastify/static'), {
@@ -19,12 +17,10 @@ fastify.register(require('@fastify/cors'), {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
 })
 
-// Плагины
 fastify.register(require('./src/plugins/prisma'))
 fastify.register(require('./src/plugins/jwt'))
 fastify.register(require('./src/plugins/sse'))
 
-// Роуты
 fastify.register(require('./src/routes/auth'), { prefix: '/auth' })
 fastify.register(require('./src/routes/users'), { prefix: '/users' })
 fastify.register(require('./src/routes/staff'), { prefix: '/staff' })
@@ -39,7 +35,6 @@ fastify.register(require('./src/routes/cabinet'), { prefix: '/cabinet' })
 fastify.register(require('./src/routes/payments'), { prefix: '/payments' })
 fastify.register(require('./src/routes/events'))
 
-// CronTab
 fastify.register(require('./src/cron/expireStalePayments'))
 
 fastify.listen({ port: parseInt(process.env.PORT) || 3000, host: process.env.IP_ADDRESS || '127.0.0.1' }, (err) => {
