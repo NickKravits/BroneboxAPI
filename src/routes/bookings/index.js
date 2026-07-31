@@ -12,10 +12,11 @@ module.exports = async (fastify) => {
             const { object, checkin, checkout, phone } = req.body
             const where = {}
 
-            if (object)   where.realty_id = object
+            // object — realty_id объекта (число); даты — точное совпадение, а не диапазон
+            if (object)   where.realty_id = parseInt(object)
             if (phone)    where.phone = { contains: phone }
-            if (checkin)  where.begin_date = { gte: checkin }
-            if (checkout) where.end_date   = { lte: checkout }
+            if (checkin)  where.begin_date = checkin
+            if (checkout) where.end_date   = checkout
 
             const cabinet = await fastify.prisma.user.findUnique({
                 where: { id: userId },
