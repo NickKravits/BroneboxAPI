@@ -124,23 +124,25 @@ module.exports = async (fastify) => {
             return reply.status(404).send({ error: 'Booking not found' })
         }
 
+        // status PAID и RETURNED оба считаем — Payment.amount уже самоуменьшается при (частичном)
+        // возврате через /payments/manualreturn, так что RETURNED-платёж с остатком всё ещё в игре
         const paidAgg = await fastify.prisma.payment.aggregate({
-            where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'PAY', status: 'PAID' },
+            where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'PAY', status: { in: ['PAID', 'RETURNED'] } },
             _sum: { amount: true }
         })
         const paidAmount = paidAgg._sum.amount || 0
 
         // Залог: держим отдельно "сколько сейчас реально держим" и "сколько вернули гостю" —
         // и из самой брони (Bookings.deposit/returned, синхронизируется из RealtyCalendar),
-        // и из Payment (type=DEPOSIT, status=PAID) — там возврат отражается в returnedAmount
+        // и из Payment (type=DEPOSIT) — amount уже net (уменьшен возвратом), returnedAmount копит возвраты
         const depositAgg = await fastify.prisma.payment.aggregate({
-            where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'DEPOSIT', status: 'PAID' },
+            where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'DEPOSIT', status: { in: ['PAID', 'RETURNED'] } },
             _sum: { amount: true, returnedAmount: true }
         })
-        const depositPaymentsPaid     = depositAgg._sum.amount || 0
+        const depositPaymentsHeld     = depositAgg._sum.amount || 0
         const depositPaymentsReturned = depositAgg._sum.returnedAmount || 0
 
-        const depositHeld     = (booking.deposit || 0) + (depositPaymentsPaid - depositPaymentsReturned)
+        const depositHeld     = (booking.deposit || 0) + depositPaymentsHeld
         const depositReturned = (booking.returned || 0) + depositPaymentsReturned
 
         const objects = await fastify.prisma.objects.findFirst({
@@ -384,7 +386,7 @@ module.exports = async (fastify) => {
         if (!booking) return reply.status(404).send({ error: 'Booking not found' })
 
         const payments = await fastify.prisma.payment.findMany({
-            where: { bookingId: booking.id, type: 'PAY', status: 'PAID', cabinetid: booking.cabinet },
+            where: { bookingId: booking.id, type: 'PAY', status: { in: ['PAID', 'RETURNED'] }, cabinetid: booking.cabinet },
         })
 
         // Тот же источник истины, что и на странице гостя (balance_to_be_paid_1 минус уже оплаченное),

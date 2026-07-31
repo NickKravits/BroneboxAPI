@@ -75,8 +75,10 @@ module.exports = async (fastify) => {
                 return reply.status(400).send({ error: 'Сумма должна быть не менее 0' })
             }
 
+            // status PAID и RETURNED оба считаем — amount у платежа уже уменьшается при частичном
+            // возврате (см. /manualreturn), так что RETURNED-платёж с остатком всё ещё занимает лимит
             const paidAgg = await fastify.prisma.payment.aggregate({
-                where: { bookingId: parseInt(bookingId), cabinetid: user.cabinet, type, status: 'PAID' },
+                where: { bookingId: parseInt(bookingId), cabinetid: user.cabinet, type, status: { in: ['PAID', 'RETURNED'] } },
                 _sum: { amount: true }
             })
             const alreadyPaid = paidAgg._sum.amount || 0
@@ -155,6 +157,61 @@ module.exports = async (fastify) => {
         }
     })
 
+    // POST /payments/manualreturn — фиксируем (частичный или полный) возврат денег гостю.
+    // amount у платежа уменьшается на сумму возврата (self-reducing — остаток "на руках"),
+    // returnedAmount копит сумму всех возвратов, status всегда переключается на RETURNED
+    fastify.post('/manualreturn', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const userId = req.user.id
+            const { paymentId, amount } = req.body
+
+            if (!paymentId || amount === undefined || amount === null) {
+                return reply.status(400).send({ error: 'paymentId и amount обязательны' })
+            }
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true, role: true, staff: { select: { managebooks: true } } }
+            })
+            if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
+
+            if (user.role !== 'ADMINISTRATOR') {
+                if (!user.staff || user.staff.managebooks !== 'YES') {
+                    return reply.status(403).send({ error: 'Доступ запрещён' })
+                }
+            }
+
+            const payment = await fastify.prisma.payment.findFirst({
+                where: { id: parseInt(paymentId), cabinetid: user.cabinet }
+            })
+            if (!payment) return reply.status(404).send({ error: 'Платёж не найден' })
+
+            const numAmount = parseFloat(amount)
+            if (isNaN(numAmount) || numAmount <= 0) {
+                return reply.status(400).send({ error: 'Сумма возврата должна быть больше 0' })
+            }
+            if (numAmount > payment.amount) {
+                return reply.status(400).send({ error: `Сумма возврата не может превышать ${payment.amount}` })
+            }
+
+            const updated = await fastify.prisma.payment.update({
+                where: { id: payment.id },
+                data: {
+                    amount:         payment.amount - numAmount,
+                    returnedAmount: (payment.returnedAmount || 0) + numAmount,
+                    returnedAt:     new Date(),
+                    status:         'RETURNED'
+                }
+            })
+
+            return reply.send({ payment: updated })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
     fastify.post('/getpaymentamount', async (req, reply) => {
         try {
             await req.jwtVerify()
@@ -177,7 +234,7 @@ module.exports = async (fastify) => {
             if (!booking) return reply.status(404).send({ error: 'Бронирование не найдено' })
 
             const payments = await fastify.prisma.payment.findMany({
-                where: { cabinetid: user.cabinet, bookingId: parseInt(bookingId), type, status: 'PAID' }
+                where: { cabinetid: user.cabinet, bookingId: parseInt(bookingId), type, status: { in: ['PAID', 'RETURNED'] } }
             })
 
             let amount = type === 'DEPOSIT' ? (booking.deposit || 0) : 0
@@ -217,7 +274,7 @@ module.exports = async (fastify) => {
 
             const sums = await fastify.prisma.payment.groupBy({
                 by: ['bookingId'],
-                where: { cabinetid: user.cabinet, bookingId: { in: ids }, type, status: 'PAID' },
+                where: { cabinetid: user.cabinet, bookingId: { in: ids }, type, status: { in: ['PAID', 'RETURNED'] } },
                 _sum: { amount: true }
             })
             sums.forEach(s => { amounts[s.bookingId] = s._sum.amount || 0 })
