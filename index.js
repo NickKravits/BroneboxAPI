@@ -39,12 +39,13 @@ fastify.register(require('./src/routes/cabinet'), { prefix: '/cabinet' })
 fastify.register(require('./src/routes/payments'), { prefix: '/payments' })
 fastify.register(require('./src/routes/events'))
 
+// CronTab
+fastify.register(require('./src/cron/expireStalePayments'))
+
 fastify.listen({ port: parseInt(process.env.PORT) || 3000, host: process.env.IP_ADDRESS || '127.0.0.1' }, (err) => {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
   }
   console.log(`Сервер запущен на http://${process.env.IP_ADDRESS || '127.0.0.1'}:${process.env.PORT || 3000}`)
-
-  require('./src/cron/expireStalePayments')(fastify)
 })
