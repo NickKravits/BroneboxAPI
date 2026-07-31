@@ -48,10 +48,12 @@ module.exports = async (fastify) => {
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: req.user.id },
-                select: { cabinet: true, role: true }
+                select: { cabinet: true, role: true, staff: { select: { managetemplates: true } } }
             })
             if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
-            if (user.role !== 'ADMINISTRATOR') return reply.status(403).send({ error: 'Только администратор может менять шаблон' })
+
+            const allowed = user.role === 'ADMINISTRATOR' || user.staff?.managetemplates === 'YES'
+            if (!allowed) return reply.status(403).send({ error: 'Недостаточно прав для изменения шаблона' })
 
             const updateData = { cleaningTemplate: template }
             if (approxTimeMarker !== undefined) updateData.approxTimeMarker = approxTimeMarker
