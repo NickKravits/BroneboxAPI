@@ -199,6 +199,7 @@ model Bookings {
   balance_to_be_paid_1  Int?
   price_per_day         Int?
   deposit               Int?
+  returned              Int?
   //client
   client_id             Int? //id
   fio                   String?

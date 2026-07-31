@@ -322,6 +322,15 @@ module.exports = async (fastify) => {
                     deposit_payment_link: depositPaymentLink,
                 }
 
+                // Если входящий залог меньше того, что был — считаем это (частичным) возвратом
+                // и копим сумму возврата в Bookings.returned, чтобы показывать её гостю
+                const oldDepositValue = book.deposit || 0
+                const newDepositValue = deposit || 0
+                if (oldDepositValue > newDepositValue) {
+                    const returnedDelta = oldDepositValue - newDepositValue
+                    updateData.returned = (book.returned || 0) + returnedDelta
+                }
+
                 if (book.realty_id !== realty_id) {
                     const objectExists = await fastify.prisma.objects.findFirst({
                         where: { realtyid: realty_id, cabinetid: cabinet.id },

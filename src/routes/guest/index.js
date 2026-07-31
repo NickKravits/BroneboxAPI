@@ -107,6 +107,7 @@ module.exports = async (fastify) => {
                 balance_to_be_paid_1: true,
                 price_per_day:        true,
                 deposit:              true,
+                returned:             true,
                 fio:                  true,
                 email:                true,
                 begin_time:           true,
@@ -129,11 +130,18 @@ module.exports = async (fastify) => {
         })
         const paidAmount = paidAgg._sum.amount || 0
 
+        // Залог: держим отдельно "сколько сейчас реально держим" и "сколько вернули гостю" —
+        // и из самой брони (Bookings.deposit/returned, синхронизируется из RealtyCalendar),
+        // и из Payment (type=DEPOSIT, status=PAID) — там возврат отражается в returnedAmount
         const depositAgg = await fastify.prisma.payment.aggregate({
             where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'DEPOSIT', status: 'PAID' },
-            _sum: { amount: true }
+            _sum: { amount: true, returnedAmount: true }
         })
-        const depositPaidAmount = depositAgg._sum.amount || 0
+        const depositPaymentsPaid     = depositAgg._sum.amount || 0
+        const depositPaymentsReturned = depositAgg._sum.returnedAmount || 0
+
+        const depositHeld     = (booking.deposit || 0) + (depositPaymentsPaid - depositPaymentsReturned)
+        const depositReturned = (booking.returned || 0) + depositPaymentsReturned
 
         const objects = await fastify.prisma.objects.findFirst({
             where: { realtyid: booking.realty_id },
@@ -267,7 +275,7 @@ module.exports = async (fastify) => {
             }
         }
 
-        return reply.send({ booking, objects, photos, show, bookingState, checkoutPassed, paidAmount, depositPaidAmount })
+        return reply.send({ booking, objects, photos, show, bookingState, checkoutPassed, paidAmount, depositHeld, depositReturned })
     })
 
     // ── POST /guest/save-times ─────────────────────────────────────────────
