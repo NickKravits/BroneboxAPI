@@ -261,7 +261,7 @@ module.exports = async (fastify) => {
                 ? req.body.bookingIds.map(id => parseInt(id)).filter(id => !isNaN(id))
                 : []
 
-            if (!ids.length) return reply.send({ amounts: {} })
+            if (!ids.length) return reply.send({ amounts: {}, returnedAmounts: {} })
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
@@ -270,24 +270,31 @@ module.exports = async (fastify) => {
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
 
             const amounts = {}
-            ids.forEach(id => { amounts[id] = 0 })
+            const returnedAmounts = {}
+            ids.forEach(id => { amounts[id] = 0; returnedAmounts[id] = 0 })
 
             const sums = await fastify.prisma.payment.groupBy({
                 by: ['bookingId'],
                 where: { cabinetid: user.cabinet, bookingId: { in: ids }, type, status: { in: ['PAID', 'RETURNED'] } },
-                _sum: { amount: true }
+                _sum: { amount: true, returnedAmount: true }
             })
-            sums.forEach(s => { amounts[s.bookingId] = s._sum.amount || 0 })
+            sums.forEach(s => {
+                amounts[s.bookingId] = s._sum.amount || 0
+                returnedAmounts[s.bookingId] = s._sum.returnedAmount || 0
+            })
 
             if (type === 'DEPOSIT') {
                 const bookings = await fastify.prisma.bookings.findMany({
                     where: { id: { in: ids }, cabinet: user.cabinet },
-                    select: { id: true, deposit: true }
+                    select: { id: true, deposit: true, returned: true }
                 })
-                bookings.forEach(b => { amounts[b.id] = (amounts[b.id] || 0) + (b.deposit || 0) })
+                bookings.forEach(b => {
+                    amounts[b.id] = (amounts[b.id] || 0) + (b.deposit || 0)
+                    returnedAmounts[b.id] = (returnedAmounts[b.id] || 0) + (b.returned || 0)
+                })
             }
 
-            return reply.send({ amounts })
+            return reply.send({ amounts, returnedAmounts })
         } catch (err) {
             console.error(err)
             return reply.status(500).send({ error: 'Ошибка сервера' })
