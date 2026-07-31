@@ -126,7 +126,8 @@ module.exports = async (fastify) => {
                     role: true,
                     staff: {
                         select: {
-                            managebooks: true
+                            managebooks: true,
+                            depositamountedit: true
                         }
                     }
                 }
@@ -136,10 +137,15 @@ module.exports = async (fastify) => {
                 return reply.status(403).send({ error: 'Доступ запрещён' })
             }
 
-            if (user.role !== 'ADMINISTRATOR') {
-                if ( !user.staff || user.staff.managebooks !== "YES" ) {
-                    return reply.status(403).send({ error: 'Доступ запрещён' })
-                }
+            const isAdmin = user.role === 'ADMINISTRATOR'
+            const hasManageBooks = isAdmin || user.staff?.managebooks === 'YES'
+            const hasDepositEdit = isAdmin || user.staff?.depositamountedit === 'YES'
+
+            if ((checkin || checkout || channel || maidid) && !hasManageBooks) {
+                return reply.status(403).send({ error: 'Доступ запрещён' })
+            }
+            if (manualDeposit !== undefined && !hasDepositEdit) {
+                return reply.status(403).send({ error: 'Недостаточно прав для изменения суммы залога' })
             }
 
             const data = {}

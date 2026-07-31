@@ -119,6 +119,7 @@ model Staff {
   bankdepositedit            Thumbler @default(NO)
   financesinformationpayment Thumbler @default(NO)
   financesinformationdeposit Thumbler @default(NO)
+  depositamountedit          Thumbler @default(NO)
 }
 
 model Maids {

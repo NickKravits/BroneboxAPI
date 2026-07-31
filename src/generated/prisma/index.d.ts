@@ -5229,6 +5229,7 @@ export namespace Prisma {
     bankdepositedit: $Enums.Thumbler | null
     financesinformationpayment: $Enums.Thumbler | null
     financesinformationdeposit: $Enums.Thumbler | null
+    depositamountedit: $Enums.Thumbler | null
   }
 
   export type StaffMaxAggregateOutputType = {
@@ -5247,6 +5248,7 @@ export namespace Prisma {
     bankdepositedit: $Enums.Thumbler | null
     financesinformationpayment: $Enums.Thumbler | null
     financesinformationdeposit: $Enums.Thumbler | null
+    depositamountedit: $Enums.Thumbler | null
   }
 
   export type StaffCountAggregateOutputType = {
@@ -5265,6 +5267,7 @@ export namespace Prisma {
     bankdepositedit: number
     financesinformationpayment: number
     financesinformationdeposit: number
+    depositamountedit: number
     _all: number
   }
 
@@ -5295,6 +5298,7 @@ export namespace Prisma {
     bankdepositedit?: true
     financesinformationpayment?: true
     financesinformationdeposit?: true
+    depositamountedit?: true
   }
 
   export type StaffMaxAggregateInputType = {
@@ -5313,6 +5317,7 @@ export namespace Prisma {
     bankdepositedit?: true
     financesinformationpayment?: true
     financesinformationdeposit?: true
+    depositamountedit?: true
   }
 
   export type StaffCountAggregateInputType = {
@@ -5331,6 +5336,7 @@ export namespace Prisma {
     bankdepositedit?: true
     financesinformationpayment?: true
     financesinformationdeposit?: true
+    depositamountedit?: true
     _all?: true
   }
 
@@ -5436,6 +5442,7 @@ export namespace Prisma {
     bankdepositedit: $Enums.Thumbler
     financesinformationpayment: $Enums.Thumbler
     financesinformationdeposit: $Enums.Thumbler
+    depositamountedit: $Enums.Thumbler
     _count: StaffCountAggregateOutputType | null
     _avg: StaffAvgAggregateOutputType | null
     _sum: StaffSumAggregateOutputType | null
@@ -5473,6 +5480,7 @@ export namespace Prisma {
     bankdepositedit?: boolean
     financesinformationpayment?: boolean
     financesinformationdeposit?: boolean
+    depositamountedit?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["staff"]>
 
@@ -5494,9 +5502,10 @@ export namespace Prisma {
     bankdepositedit?: boolean
     financesinformationpayment?: boolean
     financesinformationdeposit?: boolean
+    depositamountedit?: boolean
   }
 
-  export type StaffOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cabinetid" | "manageobjects" | "managemaids" | "manageintegration" | "managetemplates" | "manageautosent" | "seemaidsrate" | "managebooks" | "manualpaymentedit" | "manualdepositedit" | "bankpaymentedit" | "bankdepositedit" | "financesinformationpayment" | "financesinformationdeposit", ExtArgs["result"]["staff"]>
+  export type StaffOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cabinetid" | "manageobjects" | "managemaids" | "manageintegration" | "managetemplates" | "manageautosent" | "seemaidsrate" | "managebooks" | "manualpaymentedit" | "manualdepositedit" | "bankpaymentedit" | "bankdepositedit" | "financesinformationpayment" | "financesinformationdeposit" | "depositamountedit", ExtArgs["result"]["staff"]>
   export type StaffInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -5522,6 +5531,7 @@ export namespace Prisma {
       bankdepositedit: $Enums.Thumbler
       financesinformationpayment: $Enums.Thumbler
       financesinformationdeposit: $Enums.Thumbler
+      depositamountedit: $Enums.Thumbler
     }, ExtArgs["result"]["staff"]>
     composites: {}
   }
@@ -5907,6 +5917,7 @@ export namespace Prisma {
     readonly bankdepositedit: FieldRef<"Staff", 'Thumbler'>
     readonly financesinformationpayment: FieldRef<"Staff", 'Thumbler'>
     readonly financesinformationdeposit: FieldRef<"Staff", 'Thumbler'>
+    readonly depositamountedit: FieldRef<"Staff", 'Thumbler'>
   }
     
 
@@ -15913,7 +15924,8 @@ export namespace Prisma {
     bankpaymentedit: 'bankpaymentedit',
     bankdepositedit: 'bankdepositedit',
     financesinformationpayment: 'financesinformationpayment',
-    financesinformationdeposit: 'financesinformationdeposit'
+    financesinformationdeposit: 'financesinformationdeposit',
+    depositamountedit: 'depositamountedit'
   };
 
   export type StaffScalarFieldEnum = (typeof StaffScalarFieldEnum)[keyof typeof StaffScalarFieldEnum]
@@ -16768,6 +16780,7 @@ export namespace Prisma {
     bankdepositedit?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     financesinformationpayment?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
+    depositamountedit?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -16787,6 +16800,7 @@ export namespace Prisma {
     bankdepositedit?: SortOrder
     financesinformationpayment?: SortOrder
     financesinformationdeposit?: SortOrder
+    depositamountedit?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -16809,6 +16823,7 @@ export namespace Prisma {
     bankdepositedit?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     financesinformationpayment?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
+    depositamountedit?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
@@ -16828,6 +16843,7 @@ export namespace Prisma {
     bankdepositedit?: SortOrder
     financesinformationpayment?: SortOrder
     financesinformationdeposit?: SortOrder
+    depositamountedit?: SortOrder
     _count?: StaffCountOrderByAggregateInput
     _avg?: StaffAvgOrderByAggregateInput
     _max?: StaffMaxOrderByAggregateInput
@@ -16854,6 +16870,7 @@ export namespace Prisma {
     bankdepositedit?: EnumThumblerWithAggregatesFilter<"Staff"> | $Enums.Thumbler
     financesinformationpayment?: EnumThumblerWithAggregatesFilter<"Staff"> | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerWithAggregatesFilter<"Staff"> | $Enums.Thumbler
+    depositamountedit?: EnumThumblerWithAggregatesFilter<"Staff"> | $Enums.Thumbler
   }
 
   export type MaidsWhereInput = {
@@ -18163,6 +18180,7 @@ export namespace Prisma {
     bankdepositedit?: $Enums.Thumbler
     financesinformationpayment?: $Enums.Thumbler
     financesinformationdeposit?: $Enums.Thumbler
+    depositamountedit?: $Enums.Thumbler
     user: UserCreateNestedOneWithoutStaffInput
   }
 
@@ -18182,6 +18200,7 @@ export namespace Prisma {
     bankdepositedit?: $Enums.Thumbler
     financesinformationpayment?: $Enums.Thumbler
     financesinformationdeposit?: $Enums.Thumbler
+    depositamountedit?: $Enums.Thumbler
   }
 
   export type StaffUpdateInput = {
@@ -18199,6 +18218,7 @@ export namespace Prisma {
     bankdepositedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     user?: UserUpdateOneRequiredWithoutStaffNestedInput
   }
 
@@ -18218,6 +18238,7 @@ export namespace Prisma {
     bankdepositedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
   }
 
   export type StaffCreateManyInput = {
@@ -18236,6 +18257,7 @@ export namespace Prisma {
     bankdepositedit?: $Enums.Thumbler
     financesinformationpayment?: $Enums.Thumbler
     financesinformationdeposit?: $Enums.Thumbler
+    depositamountedit?: $Enums.Thumbler
   }
 
   export type StaffUpdateManyMutationInput = {
@@ -18253,6 +18275,7 @@ export namespace Prisma {
     bankdepositedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
   }
 
   export type StaffUncheckedUpdateManyInput = {
@@ -18271,6 +18294,7 @@ export namespace Prisma {
     bankdepositedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
   }
 
   export type MaidsCreateInput = {
@@ -19902,6 +19926,7 @@ export namespace Prisma {
     bankdepositedit?: SortOrder
     financesinformationpayment?: SortOrder
     financesinformationdeposit?: SortOrder
+    depositamountedit?: SortOrder
   }
 
   export type StaffAvgOrderByAggregateInput = {
@@ -19925,6 +19950,7 @@ export namespace Prisma {
     bankdepositedit?: SortOrder
     financesinformationpayment?: SortOrder
     financesinformationdeposit?: SortOrder
+    depositamountedit?: SortOrder
   }
 
   export type StaffMinOrderByAggregateInput = {
@@ -19943,6 +19969,7 @@ export namespace Prisma {
     bankdepositedit?: SortOrder
     financesinformationpayment?: SortOrder
     financesinformationdeposit?: SortOrder
+    depositamountedit?: SortOrder
   }
 
   export type StaffSumOrderByAggregateInput = {
@@ -21575,6 +21602,7 @@ export namespace Prisma {
     bankdepositedit?: $Enums.Thumbler
     financesinformationpayment?: $Enums.Thumbler
     financesinformationdeposit?: $Enums.Thumbler
+    depositamountedit?: $Enums.Thumbler
   }
 
   export type StaffUncheckedCreateWithoutUserInput = {
@@ -21592,6 +21620,7 @@ export namespace Prisma {
     bankdepositedit?: $Enums.Thumbler
     financesinformationpayment?: $Enums.Thumbler
     financesinformationdeposit?: $Enums.Thumbler
+    depositamountedit?: $Enums.Thumbler
   }
 
   export type StaffCreateOrConnectWithoutUserInput = {
@@ -21625,6 +21654,7 @@ export namespace Prisma {
     bankdepositedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
   }
 
   export type StaffUncheckedUpdateWithoutUserInput = {
@@ -21642,6 +21672,7 @@ export namespace Prisma {
     bankdepositedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
   }
 
   export type UserCreateWithoutStaffInput = {

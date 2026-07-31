@@ -185,7 +185,8 @@ exports.Prisma.StaffScalarFieldEnum = {
   bankpaymentedit: 'bankpaymentedit',
   bankdepositedit: 'bankdepositedit',
   financesinformationpayment: 'financesinformationpayment',
-  financesinformationdeposit: 'financesinformationdeposit'
+  financesinformationdeposit: 'financesinformationdeposit',
+  depositamountedit: 'depositamountedit'
 };
 
 exports.Prisma.MaidsScalarFieldEnum = {
