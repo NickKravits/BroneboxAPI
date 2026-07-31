@@ -90,7 +90,31 @@ module.exports = async (fastify) => {
             const booking = await fastify.prisma.bookings.findFirst({
                 where: { id, cabinet: user.cabinet }
             })
-            return reply.send({ booking })
+            if (!booking) return reply.send({ booking: null })
+
+            // Горничная теперь назначается в графике уборок (CleaningSchedule), а не на самой
+            // брони — ищем запись графика по объекту и дате выезда (день, когда убирают после гостя)
+            let scheduledMaid = null
+            if (booking.realty_id && booking.end_date) {
+                const object = await fastify.prisma.objects.findFirst({
+                    where: { realtyid: booking.realty_id, cabinetid: user.cabinet },
+                    select: { id: true }
+                })
+                if (object) {
+                    const schedule = await fastify.prisma.cleaningSchedule.findFirst({
+                        where: { cabinetid: user.cabinet, objectid: object.id, date: booking.end_date },
+                        select: { maid_id: true }
+                    })
+                    if (schedule?.maid_id) {
+                        scheduledMaid = await fastify.prisma.maids.findFirst({
+                            where: { id: schedule.maid_id, cabinetid: user.cabinet },
+                            select: { id: true, name: true }
+                        })
+                    }
+                }
+            }
+
+            return reply.send({ booking, scheduledMaid })
         } catch (err) {
             return reply.status(500).send({ error: 'Ошибка сервера' })
         }
