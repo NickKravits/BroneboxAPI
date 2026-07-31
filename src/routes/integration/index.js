@@ -2,7 +2,13 @@ const { ok } = require('assert')
 const crypto = require('crypto')
 
 // Полный сброс интеграции с Точка Банком — используется и при явном отключении,
-// и при неудачном подключении вебхука (интеграция считается незавершённой)
+// и при неудачном подключении вебхука (интеграция считается незавершённой).
+// tochkaWebhookKey сюда намеренно НЕ входит: мы никогда не отменяем регистрацию
+// вебхука на стороне Точки при сбросе/отключении, поэтому подписка на их стороне
+// продолжает жить под этим ключом. Если обнулить ключ у себя, следующая попытка
+// сгенерирует новый случайный ключ и Точка ответит "Object already exists" на
+// повторную регистрацию — вечный цикл сломанной интеграции. Сохраняя ключ, мы
+// переиспользуем тот же URL и повторная регистрация становится идемпотентной.
 const TOCHKA_RESET_DATA = {
     tochkaPhone: null,
     tochkaApiKey: null,
@@ -16,8 +22,7 @@ const TOCHKA_RESET_DATA = {
     tochkaCustomerCode: null,
     tochkaOrgName: null,
     tochkaTaxCode: null,
-    tochkaAppClientId: null,
-    tochkaWebhookKey: null
+    tochkaAppClientId: null
 }
 
 module.exports = async (fastify) => {
@@ -791,48 +796,87 @@ module.exports = async (fastify) => {
                 const errorText = await webhookRes.text();
                 fastify.log.error(`[Ошибка Точки] Вебхук. Статус: ${httpStatus} | Ответ: ${errorText}`);
 
-                await fastify.prisma.cabinet.update({
-                    where: { id: user.cabinet },
-                    data: TOCHKA_RESET_DATA
-                })
-                await fastify.prisma.logs.create({
-                    data: {
-                        cabinetid: user.cabinet,
-                        status: "ERROR",
-                        message: `Интеграция | Не удалось подключить вебхук Точка Банка (код ${httpStatus}). Интеграция сброшена, пройдите настройку заново.`
+                // "Object already exists" — у Точки уже есть подписка на вебхук для этого Client ID
+                // (например, осталась от прошлой попытки настройки). Пробуем удалить старую подписку
+                // и зарегистрировать вебхук заново тем же ключом — если получится, считаем подключение
+                // успешным и не трогаем остальные данные интеграции.
+                let recovered = false
+                if (httpStatus === 400 && /already exists/i.test(errorText)) {
+                    try {
+                        const deleteRes = await fetch(`https://enter.tochka.com/uapi/webhook/v1.0/${cabinet.tochkaAppClientId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Authorization': `Bearer ${cabinet.tochkaApiKey}`
+                            }
+                        })
+                        if (deleteRes.ok) {
+                            const retryRes = await fetch(`https://enter.tochka.com/uapi/webhook/v1.0/${cabinet.tochkaAppClientId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'Authorization': `Bearer ${cabinet.tochkaApiKey}`
+                                },
+                                body: JSON.stringify({
+                                    webhooksList: ['acquiringInternetPayment'],
+                                    url: `${process.env.APP_URL}/webhook/TochkaPayment/${webhookKey}`
+                                })
+                            })
+                            if (retryRes.ok) {
+                                recovered = true
+                                fastify.log.info(`[Точка] Вебхук пересоздан после конфликта "already exists" (cabinet ${user.cabinet})`)
+                            }
+                        }
+                    } catch (err) {
+                        fastify.log.error(`[Точка] Не удалось восстановить регистрацию вебхука после конфликта: ${err.message}`)
                     }
-                })
+                }
 
-                switch (httpStatus) {
-                    case 400:
-                        return reply.status(400).send({
-                            error: 'Код: 400. Ошибка валидации при подключении вебхука! Проверьте данные и пройдите интеграцию с Точка Банком заново.'
-                        });
+                if (!recovered) {
+                    await fastify.prisma.cabinet.update({
+                        where: { id: user.cabinet },
+                        data: TOCHKA_RESET_DATA
+                    })
+                    await fastify.prisma.logs.create({
+                        data: {
+                            cabinetid: user.cabinet,
+                            status: "ERROR",
+                            message: `Интеграция | Не удалось подключить вебхук Точка Банка (код ${httpStatus}). Интеграция сброшена, пройдите настройку заново.`
+                        }
+                    })
 
-                    case 403:
-                        return reply.status(403).send({
-                            error: 'Код: 403. Не удалось подключить вебхук! Проверьте данные и пройдите интеграцию с Точка Банком заново.'
-                        });
+                    switch (httpStatus) {
+                        case 400:
+                            return reply.status(400).send({
+                                error: 'Код: 400. Ошибка валидации при подключении вебхука! Проверьте данные и пройдите интеграцию с Точка Банком заново.'
+                            });
 
-                    case 404:
-                        return reply.status(404).send({
-                            error: 'Код: 404. Метод не найден при подключении вебхука! Обратитесь к разработчику.'
-                        });
+                        case 403:
+                            return reply.status(403).send({
+                                error: 'Код: 403. Не удалось подключить вебхук! Проверьте данные и пройдите интеграцию с Точка Банком заново.'
+                            });
 
-                    case 424:
-                        return reply.status(424).send({
-                            error: 'Код: 424. Не удалось подключить вебхук! Попробуйте позже, проверьте данные и пройдите интеграцию заново.'
-                        });
+                        case 404:
+                            return reply.status(404).send({
+                                error: 'Код: 404. Метод не найден при подключении вебхука! Обратитесь к разработчику.'
+                            });
 
-                    case 500:
-                        return reply.status(500).send({
-                            error: 'Код: 500. Ошибка запроса при подключении вебхука! Обратитесь к разработчику.'
-                        });
+                        case 424:
+                            return reply.status(424).send({
+                                error: 'Код: 424. Не удалось подключить вебхук! Попробуйте позже, проверьте данные и пройдите интеграцию заново.'
+                            });
 
-                    default:
-                        return reply.status(502).send({
-                            error: `Неожиданный ответ от банка при подключении вебхука. Код: ${httpStatus}. Проверьте данные и пройдите интеграцию заново.`
-                        });
+                        case 500:
+                            return reply.status(500).send({
+                                error: 'Код: 500. Ошибка запроса при подключении вебхука! Обратитесь к разработчику.'
+                            });
+
+                        default:
+                            return reply.status(502).send({
+                                error: `Неожиданный ответ от банка при подключении вебхука. Код: ${httpStatus}. Проверьте данные и пройдите интеграцию заново.`
+                            });
+                    }
                 }
             }
 
