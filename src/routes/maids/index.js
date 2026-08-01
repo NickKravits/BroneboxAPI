@@ -135,7 +135,7 @@ module.exports = async (fastify) => {
             const allBookings = await fastify.prisma.bookings.findMany({
                 where: {
                     cabinet: user.cabinet,
-                    status: { not: 'deleted' },
+                    status: 'booked',
                     OR: [
                         { end_date: date },
                         { begin_date: date },
