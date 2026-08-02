@@ -564,16 +564,16 @@ module.exports = async (fastify) => {
                 where: { cabinetid: user.cabinet, bookingId: parseInt(bookingId), type, status: { in: ['PAID', 'RETURNED'] } }
             })
 
-            let depositViaTochka = false
+            let depositTrackedByPayments = false
             if (type === 'DEPOSIT' && booking.realty_id != null) {
                 const object = await fastify.prisma.objects.findFirst({
                     where: { realtyid: booking.realty_id, cabinetid: user.cabinet },
                     select: { depositchanel: true }
                 })
-                depositViaTochka = object?.depositchanel === 'TOCHKA'
+                depositTrackedByPayments = object?.depositchanel === 'TOCHKA' || object?.depositchanel === 'TRANSFER'
             }
 
-            let amount = (type === 'DEPOSIT' && !depositViaTochka) ? (booking.deposit || 0) : 0
+            let amount = (type === 'DEPOSIT' && !depositTrackedByPayments) ? (booking.deposit || 0) : 0
             for (const payment of payments) {
                 amount += payment.amount
             }
@@ -637,8 +637,8 @@ module.exports = async (fastify) => {
                 objects.forEach(o => { channelByRealty[o.realtyid] = o.depositchanel })
 
                 bookings.forEach(b => {
-                    const depositViaTochka = channelByRealty[b.realty_id] === 'TOCHKA'
-                    if (!depositViaTochka) {
+                    const depositTrackedByPayments = channelByRealty[b.realty_id] === 'TOCHKA' || channelByRealty[b.realty_id] === 'TRANSFER'
+                    if (!depositTrackedByPayments) {
                         amounts[b.id] = (amounts[b.id] || 0) + (b.deposit || 0)
                         returnedAmounts[b.id] = (returnedAmounts[b.id] || 0) + (b.returned || 0)
                     }

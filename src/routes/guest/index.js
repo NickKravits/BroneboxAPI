@@ -152,14 +152,14 @@ module.exports = async (fastify) => {
         })
 
         const objectDepositDefault = parseFloat(objects?.deposit) || 0
-        const depositManualAllowed = objects?.depositchanel === 'TOCHKA' || objects?.depositchanel === 'TBANK'
+        const depositManualAllowed = objects?.depositchanel === 'TOCHKA' || objects?.depositchanel === 'TBANK' || objects?.depositchanel === 'TRANSFER'
         const depositTarget = (depositManualAllowed && booking.manual_deposit !== null && booking.manual_deposit !== undefined)
             ? booking.manual_deposit
             : objectDepositDefault
 
-        const depositViaTochka = objects?.depositchanel === 'TOCHKA'
-        const depositHeld     = depositViaTochka ? depositPaymentsHeld     : (booking.deposit  || 0) + depositPaymentsHeld
-        const depositReturned = depositViaTochka ? depositPaymentsReturned : (booking.returned || 0) + depositPaymentsReturned
+        const depositTrackedByPayments = objects?.depositchanel === 'TOCHKA' || objects?.depositchanel === 'TRANSFER'
+        const depositHeld     = depositTrackedByPayments ? depositPaymentsHeld     : (booking.deposit  || 0) + depositPaymentsHeld
+        const depositReturned = depositTrackedByPayments ? depositPaymentsReturned : (booking.returned || 0) + depositPaymentsReturned
 
         const cabinet = await fastify.prisma.cabinet.findFirst({
             where:  { id: booking.cabinet },
