@@ -11,13 +11,19 @@ module.exports = async (fastify) => {
 
         const cabinetId = user.cabinet
 
+        const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean)
+        const requestOrigin = req.headers.origin
+        const corsOrigin = allowedOrigins.length
+            ? (requestOrigin && allowedOrigins.includes(requestOrigin) ? requestOrigin : allowedOrigins[0])
+            : (requestOrigin || '*')
+
         reply.hijack()
         reply.raw.writeHead(200, {
             'Content-Type':            'text/event-stream',
             'Cache-Control':           'no-cache',
             'Connection':              'keep-alive',
             'X-Accel-Buffering':       'no',
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': corsOrigin
         })
         reply.raw.flushHeaders()
 

@@ -133,7 +133,7 @@ module.exports = async (fastify) => {
         const depositPaymentsReturned = depositAgg._sum.returnedAmount || 0
 
         const objects = await fastify.prisma.objects.findFirst({
-            where: { realtyid: booking.realty_id },
+            where: { realtyid: booking.realty_id, cabinetid: booking.cabinet },
             select: {
                 id:              true,
                 instruction:     true,
@@ -309,7 +309,7 @@ module.exports = async (fastify) => {
         if (!booking) return reply.status(404).send({ error: 'Booking not found' })
 
         const objects = await fastify.prisma.objects.findFirst({
-            where:  { realtyid: booking.realty_id },
+            where:  { realtyid: booking.realty_id, cabinetid: booking.cabinet },
             select: { checkoutdef: true }
         })
         const cabinet = await fastify.prisma.cabinet.findFirst({
@@ -695,7 +695,9 @@ module.exports = async (fastify) => {
         return reply.send({ url: payment.link })
     })
 
-    fastify.post('/payment/uploadReceipt', async (req, reply) => {
+    fastify.post('/payment/uploadReceipt', {
+        config: { rateLimit: { max: 20, timeWindow: '10 minutes' } }
+    }, async (req, reply) => {
         const type = req.query.type === 'DEPOSIT' ? 'DEPOSIT' : 'PAY'
         const { id } = req.query
 
@@ -719,6 +721,13 @@ module.exports = async (fastify) => {
         })
         if (existing && (existing.status === 'PENDING' || existing.status === 'PAID')) {
             return reply.status(400).send({ error: 'Чек уже прикреплён и находится на проверке либо платёж уже подтверждён' })
+        }
+
+        const attemptsCount = await fastify.prisma.payment.count({
+            where: { bookingId: booking.id, cabinetid: booking.cabinet, type, method: 'TRANSFER' }
+        })
+        if (attemptsCount >= 20) {
+            return reply.status(429).send({ error: 'Превышено количество попыток. Свяжитесь с менеджером.' })
         }
 
         let amount

@@ -63,6 +63,9 @@ module.exports = async (fastify) => {
         if (!name || !name.trim()) {
             return reply.status(400).send({ error: 'Имя не может быть пустым' })
         }
+        if (name.trim().length > 100) {
+            return reply.status(400).send({ error: 'Имя слишком длинное (максимум 100 символов)' })
+        }
         const updated = await fastify.prisma.user.update({
             where: { id: req.user.id },
             data: { name: name.trim() }
@@ -81,8 +84,8 @@ module.exports = async (fastify) => {
         if (!currentPassword || !newPassword) {
             return reply.status(400).send({ error: 'Заполните все поля' })
         }
-        if (newPassword.length < 6) {
-            return reply.status(400).send({ error: 'Новый пароль должен быть не менее 6 символов' })
+        if (newPassword.length < 8) {
+            return reply.status(400).send({ error: 'Новый пароль должен быть не менее 8 символов' })
         }
 
         const user = await fastify.prisma.user.findUnique({
@@ -97,7 +100,7 @@ module.exports = async (fastify) => {
             return reply.status(401).send({ error: 'Неверный текущий пароль' })
         }
 
-        const hashed = await bcrypt.hash(newPassword, 10)
+        const hashed = await bcrypt.hash(newPassword, 12)
 
         const updated = await fastify.prisma.user.update({
             where: { id: user.id },
@@ -112,7 +115,10 @@ module.exports = async (fastify) => {
             }
         })
 
-        const newToken = fastify.jwt.sign({ id: updated.id, login: updated.login, tokenVersion: updated.tokenVersion })
+        const newToken = fastify.jwt.sign(
+            { id: updated.id, login: updated.login, tokenVersion: updated.tokenVersion },
+            { expiresIn: '30d' }
+        )
 
         return reply.send({ message: 'Пароль успешно изменён', token: newToken })
     } catch (err) {

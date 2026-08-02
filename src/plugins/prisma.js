@@ -11,9 +11,12 @@ module.exports = fp(async (fastify) => {
     database: process.env.DB_NAME,
     connectionLimit: 5,
     allowPublicKeyRetrieval: true,
+    // Опционально: DB_SSL=true в .env включает TLS до БД (не влияет на текущее поведение, если не задано)
+    ...(process.env.DB_SSL === 'true' ? { ssl: { rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false' } } : {}),
   })
 
-  const prisma = new PrismaClient({ adapter, log: ['query', 'error', 'warn'] })
+  // 'query' убран из логов — иначе туда попадают параметры запросов (включая bcrypt-хэши паролей)
+  const prisma = new PrismaClient({ adapter, log: ['error', 'warn'] })
 
   fastify.decorate('prisma', prisma)
 

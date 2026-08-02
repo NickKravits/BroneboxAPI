@@ -227,9 +227,13 @@ module.exports = async (fastify) => {
         return reply.status(400).send({ error: 'Файл не загружен' })
     }
 
-    const ext = path.extname(data.filename)
+    const allowedExt = ['.jpg', '.jpeg', '.png', '.webp', '.heic']
+    const ext = path.extname(data.filename).toLowerCase()
+    if (!allowedExt.includes(ext)) {
+        return reply.status(400).send({ error: 'Допустимы только изображения (jpg, png, webp, heic)' })
+    }
     const fileName = `${crypto.randomUUID()}${ext}`
-    
+
     const dir = path.join(__dirname, '..', '..', 'uploads', 'objects', String(objectId))
 
     await fs.mkdir(dir, { recursive: true })
@@ -604,7 +608,7 @@ fastify.delete('/photos/:photoId', async (req, reply) => {
 
         const object = await fastify.prisma.objects.findUnique({
             where: { id: objectId },
-            select: { id: true, cabinetid: true, name: true }
+            select: { id: true, cabinetid: true, name: true, realtyid: true }
         })
 
         if (!object) {
@@ -627,7 +631,9 @@ fastify.delete('/photos/:photoId', async (req, reply) => {
 
         await fastify.prisma.objectPhoto.deleteMany({ where: { objectId } })
 
-        await fastify.prisma.bookings.deleteMany({ where: { realty_id: object.realtyid } })
+        if (object.realtyid != null) {
+            await fastify.prisma.bookings.deleteMany({ where: { realty_id: object.realtyid, cabinet: user.cabinet } })
+        }
 
         await fastify.prisma.objects.delete({ where: { id: objectId } })
 
@@ -763,6 +769,7 @@ fastify.delete('/photos/:photoId', async (req, reply) => {
                 where: {
                     status: "booked",
                     realty_id: object.realtyid,
+                    cabinet: user.cabinet,
                     begin_date: {lte: todayStr},
                     end_date: {gt: todayStr}
                 }

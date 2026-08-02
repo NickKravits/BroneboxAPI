@@ -94,9 +94,9 @@ module.exports = async (fastify) => {
                 return reply.status(400).send({ error: 'Логин уже существует' })
             }
 
-            const password = crypto.randomBytes(4).toString('hex');
+            const password = crypto.randomBytes(12).toString('hex');
 
-            const hashed = await bcrypt.hash(password, 10)
+            const hashed = await bcrypt.hash(password, 12)
 
             await fastify.prisma.$transaction(async (tx) => {
                 const createNewStaff = await tx.user.create({

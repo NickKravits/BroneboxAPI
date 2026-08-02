@@ -3,7 +3,9 @@ const { log } = require('console')
 const crypto = require('crypto')
 
 module.exports = async (fastify) => {
-  fastify.post('/login', async (req, reply) => {
+  fastify.post('/login', {
+    config: { rateLimit: { max: 10, timeWindow: '5 minutes' } }
+  }, async (req, reply) => {
     const { login, password } = req.body
 
     const user = await fastify.prisma.user.findUnique({
@@ -23,7 +25,10 @@ module.exports = async (fastify) => {
       return reply.status(401).send({ error: 'Пользователь удален' })
     }
 
-    const token = fastify.jwt.sign({ id: user.id, login: user.login, tokenVersion: user.tokenVersion })
+    const token = fastify.jwt.sign(
+      { id: user.id, login: user.login, tokenVersion: user.tokenVersion },
+      { expiresIn: '30d' }
+    )
 
     await fastify.prisma.logs.create({
             data: {
@@ -36,37 +41,47 @@ module.exports = async (fastify) => {
     return { token }
   })
 
-  fastify.post('/register', async (req, reply) => {
+  fastify.post('/register', {
+    config: { rateLimit: { max: 5, timeWindow: '15 minutes' } }
+  }, async (req, reply) => {
     const { login, name, administrator_key } = req.body
 
     if (!login || !name || !administrator_key) {
       return reply.status(400).send({ error: 'Пожалуйста, заполните все поля' })
     }
 
-    if (administrator_key == "g57h8j9k") {
+    const expectedKey = process.env.ADMIN_REGISTRATION_KEY
+    if (!expectedKey) {
+      fastify.log.error('ADMIN_REGISTRATION_KEY не задан в .env — регистрация новых кабинетов отключена')
+      return reply.status(503).send({ error: 'Регистрация временно недоступна' })
+    }
 
-        const findUserLogin = await fastify.prisma.user.findUnique({
-            where: { login }
-        })
+    const providedBuf = Buffer.from(String(administrator_key))
+    const expectedBuf = Buffer.from(expectedKey)
+    const keyValid = providedBuf.length === expectedBuf.length && crypto.timingSafeEqual(providedBuf, expectedBuf)
 
-        if (findUserLogin) {
-            return reply.status(400).send({ error: 'Пользователь с таким логином уже существует' })
-        } else {
-
-          const cabinet = await fastify.prisma.cabinet.create({ data: {} })
-
-          const password = crypto.randomBytes(4).toString('hex');
-
-          const hashed = await bcrypt.hash(password, 10)
-
-          const user = await fastify.prisma.user.create({
-            data: { login, password: hashed, name, role: "ADMINISTRATOR", cabinet: cabinet.id, status: "ACTIVE" }
-          })
-
-          return reply.status(201).send({ login: login, password: password })
-        }
-    } else {
+    if (!keyValid) {
         return reply.status(401).send({ error: 'Неверный ключ администратора' })
     }
+
+    const findUserLogin = await fastify.prisma.user.findUnique({
+        where: { login }
+    })
+
+    if (findUserLogin) {
+        return reply.status(400).send({ error: 'Пользователь с таким логином уже существует' })
+    }
+
+    const cabinet = await fastify.prisma.cabinet.create({ data: {} })
+
+    const password = crypto.randomBytes(12).toString('hex');
+
+    const hashed = await bcrypt.hash(password, 12)
+
+    const user = await fastify.prisma.user.create({
+      data: { login, password: hashed, name, role: "ADMINISTRATOR", cabinet: cabinet.id, status: "ACTIVE" }
+    })
+
+    return reply.status(201).send({ login: login, password: password })
   })
 }

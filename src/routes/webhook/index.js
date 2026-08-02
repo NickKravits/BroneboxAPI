@@ -1,5 +1,48 @@
 const crypto = require('crypto')
+const fs = require('fs')
+const path = require('path')
 const { returnTochkaFailedPayment } = require('../../services/tochkaRefund')
+
+let tochkaPublicKey = null
+try {
+    const jwkRaw = fs.readFileSync(path.join(__dirname, '..', '..', 'security', 'tochka_public_key'), 'utf8')
+    const jwk = JSON.parse(jwkRaw)
+    tochkaPublicKey = crypto.createPublicKey({ key: jwk, format: 'jwk' })
+} catch (err) {
+    console.error(`[Точка вебхук] Не удалось загрузить публичный ключ (src/security/tochka_public_key): ${err.message}. Вебхуки Точка Банка приниматься не будут.`)
+}
+
+// Проверяет подпись JWT публичным ключом Точки. Возвращает payload при валидной подписи, иначе null.
+function verifyTochkaWebhookToken(token) {
+    if (!tochkaPublicKey) return null
+
+    const parts = (token || '').split('.')
+    if (parts.length !== 3) return null
+
+    let header, payload
+    try {
+        header  = JSON.parse(Buffer.from(parts[0], 'base64url').toString('utf8'))
+        payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'))
+    } catch {
+        return null
+    }
+
+    if (header.alg !== 'RS256') return null
+
+    let signatureValid = false
+    try {
+        signatureValid = crypto.verify(
+            'RSA-SHA256',
+            Buffer.from(parts[0] + '.' + parts[1]),
+            tochkaPublicKey,
+            Buffer.from(parts[2], 'base64url')
+        )
+    } catch {
+        signatureValid = false
+    }
+
+    return signatureValid ? payload : null
+}
 
 module.exports = async (fastify) => {
     fastify.post('/rc/:webhookkey', async (req, reply) => {
@@ -483,17 +526,10 @@ module.exports = async (fastify) => {
                 }
 
                 const token = typeof req.body === 'string' ? req.body.trim() : ''
-                const parts = token.split('.')
-                if (parts.length !== 3) {
-                    fastify.log.error(`[Точка вебхук] Тело запроса не похоже на JWT`)
-                    return reply.status(200).send({ ok: true })
-                }
 
-                let payload
-                try {
-                    payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'))
-                } catch (err) {
-                    fastify.log.error(`[Точка вебхук] Не удалось разобрать JWT: ${err.message}`)
+                const payload = verifyTochkaWebhookToken(token)
+                if (!payload) {
+                    fastify.log.error(`[Точка вебхук] Подпись не прошла проверку (или тело не является валидным JWT) — запрос отклонён, кабинет ${cabinet.id}`)
                     return reply.status(200).send({ ok: true })
                 }
 
