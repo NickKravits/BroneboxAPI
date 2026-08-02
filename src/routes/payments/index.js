@@ -735,7 +735,11 @@ module.exports = async (fastify) => {
 
             const bySourceWhere = { cabinetid: user.cabinet }
             if (['MANAGER', 'TOCHKA', 'TBANK', 'TRANSFER'].includes(source)) bySourceWhere.method = source
-            if (['PENDING', 'PAID', 'FAILED', 'RETURNED'].includes(status)) bySourceWhere.status = status
+            if (['PENDING', 'PAID', 'FAILED', 'RETURNED'].includes(status)) {
+                bySourceWhere.status = status
+            } else {
+                bySourceWhere.status = { in: ['PAID', 'RETURNED'] }
+            }
             if (['PAY', 'DEPOSIT'].includes(type)) bySourceWhere.type = type
             if (permissionType) {
                 if (bySourceWhere.type && bySourceWhere.type !== permissionType) {

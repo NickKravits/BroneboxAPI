@@ -469,12 +469,12 @@ module.exports = async (fastify) => {
         const VALID_TIMINGS = ["IMMEDIATELY", "DAY_BEFORE", "AFTER_CHECKIN", "AFTER_CHECKOUT"]
         const timingFields = { showPaymentTiming, showInstructionTiming, showContractTiming, showReviewTiming }
 
-        if (DepositChanel !== "NONE" && DepositChanel !== "MONETA" && DepositChanel !== "TOCHKA" && DepositChanel != "TBANK") {
-            return reply.status(400).send({ error: `Неверное значение поля ${field}: ${value}` });
+        if (DepositChanel !== "NONE" && DepositChanel !== "MONETA" && DepositChanel !== "TOCHKA" && DepositChanel !== "TBANK" && DepositChanel !== "TRANSFER") {
+            return reply.status(400).send({ error: `Неверное значение поля DepositChanel: ${DepositChanel}` });
         }
 
-        if (PaymentChanel !== "NONE" && PaymentChanel !== "TOCHKA" && PaymentChanel != "TBANK") {
-            return reply.status(400).send({ error: `Неверное значение поля ${field}: ${value}` });
+        if (PaymentChanel !== "NONE" && PaymentChanel !== "TOCHKA" && PaymentChanel !== "TBANK" && PaymentChanel !== "TRANSFER") {
+            return reply.status(400).send({ error: `Неверное значение поля PaymentChanel: ${PaymentChanel}` });
         }
 
         for (const [field, value] of Object.entries(timingFields)) {
