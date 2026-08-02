@@ -153,6 +153,7 @@ exports.Prisma.CabinetScalarFieldEnum = {
   tochkaTaxCode: 'tochkaTaxCode',
   tochkaAppClientId: 'tochkaAppClientId',
   tochkaWebhookKey: 'tochkaWebhookKey',
+  transferInstructions: 'transferInstructions',
   cleaningTemplate: 'cleaningTemplate',
   approxTimeMarker: 'approxTimeMarker',
   emptyStayMarker: 'emptyStayMarker',
@@ -186,7 +187,8 @@ exports.Prisma.StaffScalarFieldEnum = {
   bankdepositedit: 'bankdepositedit',
   financesinformationpayment: 'financesinformationpayment',
   financesinformationdeposit: 'financesinformationdeposit',
-  depositamountedit: 'depositamountedit'
+  depositamountedit: 'depositamountedit',
+  transferpaymentscheck: 'transferpaymentscheck'
 };
 
 exports.Prisma.MaidsScalarFieldEnum = {
@@ -341,6 +343,7 @@ exports.Prisma.PaymentScalarFieldEnum = {
   status: 'status',
   returnedAmount: 'returnedAmount',
   returnedAt: 'returnedAt',
+  returnedBy: 'returnedBy',
   externalId: 'externalId',
   link: 'link',
   linkExpiresAt: 'linkExpiresAt',
@@ -398,6 +401,7 @@ exports.Prisma.CabinetOrderByRelevanceFieldEnum = {
   tochkaTaxCode: 'tochkaTaxCode',
   tochkaAppClientId: 'tochkaAppClientId',
   tochkaWebhookKey: 'tochkaWebhookKey',
+  transferInstructions: 'transferInstructions',
   cleaningTemplate: 'cleaningTemplate',
   approxTimeMarker: 'approxTimeMarker',
   emptyStayMarker: 'emptyStayMarker',
@@ -489,6 +493,7 @@ exports.Prisma.CabinetTemplateOrderByRelevanceFieldEnum = {
 exports.Prisma.PaymentOrderByRelevanceFieldEnum = {
   madeBy: 'madeBy',
   receiptUrl: 'receiptUrl',
+  returnedBy: 'returnedBy',
   externalId: 'externalId',
   link: 'link',
   tochkaStatus: 'tochkaStatus',
@@ -548,13 +553,15 @@ exports.DepositChanel = exports.$Enums.DepositChanel = {
   NONE: 'NONE',
   MONETA: 'MONETA',
   TOCHKA: 'TOCHKA',
-  TBANK: 'TBANK'
+  TBANK: 'TBANK',
+  TRANSFER: 'TRANSFER'
 };
 
 exports.PaymentChanel = exports.$Enums.PaymentChanel = {
   NONE: 'NONE',
   TOCHKA: 'TOCHKA',
-  TBANK: 'TBANK'
+  TBANK: 'TBANK',
+  TRANSFER: 'TRANSFER'
 };
 
 exports.BookStatus = exports.$Enums.BookStatus = {
@@ -572,7 +579,8 @@ exports.PaymentType = exports.$Enums.PaymentType = {
 exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   MANAGER: 'MANAGER',
   TOCHKA: 'TOCHKA',
-  TBANK: 'TBANK'
+  TBANK: 'TBANK',
+  TRANSFER: 'TRANSFER'
 };
 
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {

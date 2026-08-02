@@ -50,7 +50,8 @@ module.exports = async (fastify) => {
                         bankdepositedit: true,
                         financesinformationpayment: true,
                         financesinformationdeposit: true,
-                        depositamountedit: true
+                        depositamountedit: true,
+                        transferpaymentscheck: true
                     }
                 }
             }
@@ -257,7 +258,8 @@ module.exports = async (fastify) => {
                             bankdepositedit: true,
                             financesinformationpayment: true,
                             financesinformationdeposit: true,
-                            depositamountedit: true
+                            depositamountedit: true,
+                            transferpaymentscheck: true
                         }
                     }
                 }
@@ -309,7 +311,7 @@ module.exports = async (fastify) => {
                 return reply.status(403).send({ error: 'Невозможно получить информацию об администраторе' })
             }
 
-            const validPermissions = ['manageobjects', 'managemaids', 'manageintegration', 'managetemplates', 'manageautosent', 'seemaidsrate', 'managebooks', 'manualpaymentedit', 'manualdepositedit', 'bankpaymentedit', 'bankdepositedit', 'financesinformationpayment', 'financesinformationdeposit', 'depositamountedit']
+            const validPermissions = ['manageobjects', 'managemaids', 'manageintegration', 'managetemplates', 'manageautosent', 'seemaidsrate', 'managebooks', 'manualpaymentedit', 'manualdepositedit', 'bankpaymentedit', 'bankdepositedit', 'financesinformationpayment', 'financesinformationdeposit', 'depositamountedit', 'transferpaymentscheck']
 
             if (!validPermissions.includes(permission)) {
                 return reply.status(400).send({ error: 'Недопустимое имя разрешения' })

@@ -72,6 +72,52 @@ module.exports = async (fastify) => {
         }
     })
 
+    fastify.get('/transfer-instructions', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: req.user.id },
+                select: { cabinet: true }
+            })
+            if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
+
+            const cabinet = await fastify.prisma.cabinet.findUnique({
+                where: { id: user.cabinet },
+                select: { transferInstructions: true }
+            })
+
+            return reply.send({ transferInstructions: cabinet?.transferInstructions ?? '' })
+        } catch (err) {
+            return reply.status(401).send({ error: 'Неавторизованный доступ' })
+        }
+    })
+
+    fastify.post('/transfer-instructions', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const { transferInstructions } = req.body
+            if (transferInstructions === undefined) return reply.status(400).send({ error: 'Не указан текст инструкции' })
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: req.user.id },
+                select: { cabinet: true, role: true, staff: { select: { manageintegration: true } } }
+            })
+            if (!user) return reply.status(404).send({ error: 'Пользователь не найден' })
+
+            const allowed = user.role === 'ADMINISTRATOR' || user.staff?.manageintegration === 'YES'
+            if (!allowed) return reply.status(403).send({ error: 'Недостаточно прав для изменения инструкции' })
+
+            await fastify.prisma.cabinet.update({
+                where: { id: user.cabinet },
+                data: { transferInstructions }
+            })
+
+            return reply.send({ message: 'Инструкция сохранена' })
+        } catch (err) {
+            return reply.status(401).send({ error: 'Неавторизованный доступ' })
+        }
+    })
+
     fastify.get('/templates', async (req, reply) => {
         try {
             await req.jwtVerify()

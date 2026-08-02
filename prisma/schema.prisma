@@ -58,6 +58,7 @@ model Cabinet {
   tochkaTaxCode       String?
   tochkaAppClientId   String?
   tochkaWebhookKey    String?   @unique
+  transferInstructions String?  @db.Text
   cleaningTemplate    String?   @db.Text
   approxTimeMarker    String?   @default("~")
   emptyStayMarker     String?   @default("—")
@@ -120,6 +121,7 @@ model Staff {
   financesinformationpayment Thumbler @default(NO)
   financesinformationdeposit Thumbler @default(NO)
   depositamountedit          Thumbler @default(NO)
+  transferpaymentscheck      Thumbler @default(NO)
 }
 
 model Maids {
@@ -165,12 +167,14 @@ enum DepositChanel {
   MONETA
   TOCHKA
   TBANK
+  TRANSFER
 }
 
 enum PaymentChanel {
   NONE
   TOCHKA
   TBANK
+  TRANSFER
 }
 
 model ObjectPhoto {
@@ -307,6 +311,7 @@ model Payment {
   status         PaymentStatus
   returnedAmount Float?
   returnedAt     DateTime?
+  returnedBy     String?
   externalId     String?
   link           String?
   linkExpiresAt  DateTime?
@@ -325,6 +330,7 @@ enum PaymentMethod {
   MANAGER
   TOCHKA
   TBANK
+  TRANSFER
 }
 
 enum PaymentStatus {

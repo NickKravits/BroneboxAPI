@@ -1,5 +1,9 @@
 'use strict'
 
+const path = require('path')
+const fs = require('fs/promises')
+const crypto = require('crypto')
+
 const TZ_MAP = {
     ETC_GMT_1:          'Etc/GMT-1',
     EUROPE_CENTRAL:     'Europe/Berlin',
@@ -170,7 +174,8 @@ module.exports = async (fastify) => {
                 tochkaName:           true,
                 tochkaPurposeDeposit: true,
                 tochkaNameDeposit:    true,
-                tochkaCustomerCode:   true
+                tochkaCustomerCode:   true,
+                transferInstructions: true
             }
         })
 
@@ -268,7 +273,29 @@ module.exports = async (fastify) => {
             }
         }
 
-        return reply.send({ booking, objects, photos, show, bookingState, checkoutPassed, paidAmount, depositHeld, depositReturned, depositTarget })
+        let transferPay = null
+        let transferDeposit = null
+        if (objects?.paymentchanel === 'TRANSFER') {
+            transferPay = await fastify.prisma.payment.findFirst({
+                where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'PAY', method: 'TRANSFER' },
+                orderBy: { createdAt: 'desc' },
+                select: { id: true, status: true, amount: true, returnedAmount: true, returnedAt: true, createdAt: true }
+            })
+        }
+        if (objects?.depositchanel === 'TRANSFER') {
+            transferDeposit = await fastify.prisma.payment.findFirst({
+                where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'DEPOSIT', method: 'TRANSFER' },
+                orderBy: { createdAt: 'desc' },
+                select: { id: true, status: true, amount: true, returnedAmount: true, returnedAt: true, createdAt: true }
+            })
+        }
+
+        return reply.send({
+            booking, objects, photos, show, bookingState, checkoutPassed,
+            paidAmount, depositHeld, depositReturned, depositTarget,
+            transferInstructions: cabinet?.transferInstructions || '',
+            transferPay, transferDeposit
+        })
     })
 
     fastify.post('/save-times', async (req, reply) => {
@@ -666,6 +693,91 @@ module.exports = async (fastify) => {
         })
 
         return reply.send({ url: payment.link })
+    })
+
+    fastify.post('/payment/uploadReceipt', async (req, reply) => {
+        const type = req.query.type === 'DEPOSIT' ? 'DEPOSIT' : 'PAY'
+        const { id } = req.query
+
+        const booking = await fastify.prisma.bookings.findFirst({ where: { link: id } })
+        if (!booking) return reply.status(404).send({ error: 'Booking not found' })
+
+        const object = await fastify.prisma.objects.findFirst({
+            where: { realtyid: booking.realty_id, cabinetid: booking.cabinet },
+            select: { paymentchanel: true, depositchanel: true, deposit: true }
+        })
+        if (!object) return reply.status(404).send({ error: 'Object not found' })
+
+        const channel = type === 'DEPOSIT' ? object.depositchanel : object.paymentchanel
+        if (channel !== 'TRANSFER') {
+            return reply.status(400).send({ error: 'Приём через перевод не настроен для этого объекта' })
+        }
+
+        const existing = await fastify.prisma.payment.findFirst({
+            where: { bookingId: booking.id, cabinetid: booking.cabinet, type, method: 'TRANSFER' },
+            orderBy: { createdAt: 'desc' }
+        })
+        if (existing && (existing.status === 'PENDING' || existing.status === 'PAID')) {
+            return reply.status(400).send({ error: 'Чек уже прикреплён и находится на проверке либо платёж уже подтверждён' })
+        }
+
+        let amount
+        if (type === 'DEPOSIT') {
+            const depositTarget = (booking.manual_deposit !== null && booking.manual_deposit !== undefined)
+                ? booking.manual_deposit
+                : (parseFloat(object.deposit) || 0)
+            const paidAgg = await fastify.prisma.payment.aggregate({
+                where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'DEPOSIT', status: { in: ['PAID', 'RETURNED'] } },
+                _sum: { amount: true }
+            })
+            amount = Math.max(0, depositTarget - (paidAgg._sum.amount || 0))
+        } else {
+            const paidAgg = await fastify.prisma.payment.aggregate({
+                where: { bookingId: booking.id, cabinetid: booking.cabinet, type: 'PAY', status: { in: ['PAID', 'RETURNED'] } },
+                _sum: { amount: true }
+            })
+            amount = Math.max(0, (booking.balance_to_be_paid_1 || 0) - (paidAgg._sum.amount || 0))
+        }
+
+        if (amount <= 0) {
+            return reply.status(400).send({ error: 'Нет суммы к оплате' })
+        }
+
+        const data = await req.file()
+        if (!data) return reply.status(400).send({ error: 'Файл не загружен' })
+
+        const allowedExt = ['.jpg', '.jpeg', '.png', '.webp', '.heic', '.pdf']
+        const ext = path.extname(data.filename).toLowerCase()
+        if (!allowedExt.includes(ext)) {
+            return reply.status(400).send({ error: 'Допустимы только изображения или PDF-файл' })
+        }
+
+        const fileName = `${crypto.randomUUID()}${ext}`
+        const dir = path.join(__dirname, '..', '..', 'uploads', 'receipts', String(booking.id))
+        await fs.mkdir(dir, { recursive: true })
+        await fs.writeFile(path.join(dir, fileName), await data.toBuffer())
+
+        const payment = await fastify.prisma.payment.create({
+            data: {
+                cabinetid:  booking.cabinet,
+                bookingId:  booking.id,
+                amount,
+                type,
+                method:     'TRANSFER',
+                status:     'PENDING',
+                receiptUrl: `/uploads/receipts/${booking.id}/${fileName}`
+            }
+        })
+
+        await fastify.prisma.logs.create({
+            data: {
+                cabinetid: booking.cabinet,
+                status:    'INFO',
+                message:   `Перевод | Гость прикрепил чек по бронированию #${booking.id} (${type === 'DEPOSIT' ? 'залог' : 'оплата'})`
+            }
+        }).catch(() => {})
+
+        return reply.send({ ok: true, payment })
     })
 
     fastify.post('/review', async (req, reply) => {

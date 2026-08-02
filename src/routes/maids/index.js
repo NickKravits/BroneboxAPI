@@ -197,13 +197,13 @@ module.exports = async (fastify) => {
                     checkoutBookingId: checkoutBooking?.id ?? null,
                     checkoutDate: checkoutBooking?.end_date ?? null,
                     checkoutTime: schedule?.checkout_time ?? checkoutBooking?.end_time ?? '',
-                    hasBookingCheckoutTime: !!checkoutBooking?.end_time,
+                    hasBookingCheckoutTime: !!(schedule?.checkout_time || checkoutBooking?.end_time),
                     guestReview: checkinBooking?.review ?? null,
 
                     checkinBookingId: checkinBooking?.id ?? null,
                     checkinDate: checkinBooking?.begin_date ?? null,
                     checkinTime: schedule?.checkin_time ?? checkinBooking?.begin_time ?? '',
-                    hasBookingCheckinTime: !!checkinBooking?.begin_time,
+                    hasBookingCheckinTime: !!(schedule?.checkin_time || checkinBooking?.begin_time),
                     hasNextBooking: !!checkinBooking,
 
                     ongoingCheckin:  ongoingBooking?.begin_date ?? null,

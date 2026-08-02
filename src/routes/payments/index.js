@@ -2,6 +2,65 @@
 
 const { callTochkaRefund } = require('../../services/tochkaRefund')
 
+function parseObjectIds(objects) {
+    return (objects || '').split(',').map(s => parseInt(s)).filter(n => !isNaN(n))
+}
+
+function applyDateRange(where, field, from, to) {
+    if (!from && !to) return
+    where[field] = {}
+    if (from) where[field].gte = new Date(from)
+    if (to) where[field].lte = new Date(to + 'T23:59:59.999')
+}
+
+async function findFilteredBookingIds(fastify, cabinet, { checkinFrom, checkinTo, checkoutFrom, checkoutTo, objectIds }) {
+    const bookingWhere = { cabinet }
+    if (objectIds.length) bookingWhere.realty_id = { in: objectIds }
+    if (checkinFrom || checkinTo) {
+        bookingWhere.begin_date = {}
+        if (checkinFrom) bookingWhere.begin_date.gte = checkinFrom
+        if (checkinTo) bookingWhere.begin_date.lte = checkinTo
+    }
+    if (checkoutFrom || checkoutTo) {
+        bookingWhere.end_date = {}
+        if (checkoutFrom) bookingWhere.end_date.gte = checkoutFrom
+        if (checkoutTo) bookingWhere.end_date.lte = checkoutTo
+    }
+    const bookings = await fastify.prisma.bookings.findMany({ where: bookingWhere, select: { id: true } })
+    return bookings.map(b => b.id)
+}
+
+async function enrichPaymentsWithBookingInfo(fastify, cabinet, payments) {
+    const bookingIds = [...new Set(payments.map(p => p.bookingId))]
+    const bookings = bookingIds.length ? await fastify.prisma.bookings.findMany({
+        where: { id: { in: bookingIds }, cabinet },
+        select: { id: true, fio: true, realty_id: true, begin_date: true, end_date: true }
+    }) : []
+    const bookingById = {}
+    bookings.forEach(b => { bookingById[b.id] = b })
+
+    const realtyIds = [...new Set(bookings.map(b => b.realty_id).filter(id => id != null))]
+    const objectsList = realtyIds.length ? await fastify.prisma.objects.findMany({
+        where: { realtyid: { in: realtyIds }, cabinetid: cabinet },
+        select: { realtyid: true, name: true, location: true }
+    }) : []
+    const objectByRealty = {}
+    objectsList.forEach(o => { objectByRealty[o.realtyid] = o })
+
+    return payments.map(p => {
+        const b = bookingById[p.bookingId]
+        const obj = b && b.realty_id != null ? objectByRealty[b.realty_id] : null
+        return {
+            ...p,
+            bookingFio:    b?.fio || null,
+            objectName:    obj?.name || null,
+            objectAddress: obj?.location || null,
+            checkinDate:   b?.begin_date || null,
+            checkoutDate:  b?.end_date || null
+        }
+    })
+}
+
 module.exports = async (fastify) => {
 
     fastify.get('/getbybooking', async (req, reply) => {
@@ -122,7 +181,7 @@ module.exports = async (fastify) => {
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
-                select: { cabinet: true, role: true, staff: { select: { manualpaymentedit: true, manualdepositedit: true } } }
+                select: { cabinet: true, role: true, login: true, staff: { select: { manualpaymentedit: true, manualdepositedit: true } } }
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
 
@@ -138,6 +197,9 @@ module.exports = async (fastify) => {
                 const allowed = payment.type === 'DEPOSIT' ? user.staff?.manualdepositedit === 'YES' : user.staff?.manualpaymentedit === 'YES'
                 if (!allowed) {
                     return reply.status(403).send({ error: `Недостаточно прав для удаления ${payment.type === 'DEPOSIT' ? 'залога' : 'оплаты'}` })
+                }
+                if (payment.madeBy !== user.login) {
+                    return reply.status(403).send({ error: 'Удалить платёж может только его создатель или администратор' })
                 }
             }
 
@@ -162,7 +224,7 @@ module.exports = async (fastify) => {
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
-                select: { cabinet: true, role: true, staff: { select: { manualpaymentedit: true, manualdepositedit: true } } }
+                select: { cabinet: true, role: true, login: true, staff: { select: { manualpaymentedit: true, manualdepositedit: true } } }
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
 
@@ -196,6 +258,7 @@ module.exports = async (fastify) => {
                     amount:         payment.amount - numAmount,
                     returnedAmount: (payment.returnedAmount || 0) + numAmount,
                     returnedAt:     new Date(),
+                    returnedBy:     user.login,
                     status:         'RETURNED'
                 }
             })
@@ -219,7 +282,7 @@ module.exports = async (fastify) => {
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
-                select: { cabinet: true, role: true, staff: { select: { bankpaymentedit: true, bankdepositedit: true } } }
+                select: { cabinet: true, role: true, login: true, staff: { select: { bankpaymentedit: true, bankdepositedit: true } } }
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
 
@@ -301,6 +364,7 @@ module.exports = async (fastify) => {
                     amount:         payment.amount - numAmount,
                     returnedAmount: (payment.returnedAmount || 0) + numAmount,
                     returnedAt:     new Date(),
+                    returnedBy:     user.login,
                     status:         'RETURNED'
                 }
             })
@@ -312,6 +376,161 @@ module.exports = async (fastify) => {
                     message: `Точка | Возврат платежа #${payment.id} на сумму ${amountStr} ₽ выполнен`
                 }
             }).catch(() => {})
+
+            return reply.send({ payment: updated })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
+    fastify.post('/confirmTransfer', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const userId = req.user.id
+            const { paymentId } = req.body
+
+            if (!paymentId) return reply.status(400).send({ error: 'paymentId обязателен' })
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true, role: true, staff: { select: { transferpaymentscheck: true } } }
+            })
+            if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
+
+            if (user.role !== 'ADMINISTRATOR' && user.staff?.transferpaymentscheck !== 'YES') {
+                return reply.status(403).send({ error: 'Недостаточно прав для проверки платежей переводом' })
+            }
+
+            const payment = await fastify.prisma.payment.findFirst({
+                where: { id: parseInt(paymentId), cabinetid: user.cabinet }
+            })
+            if (!payment) return reply.status(404).send({ error: 'Платёж не найден' })
+            if (payment.method !== 'TRANSFER') {
+                return reply.status(400).send({ error: 'Этот платёж не является переводом' })
+            }
+            if (payment.status !== 'PENDING') {
+                return reply.status(400).send({ error: 'Подтвердить можно только платёж на проверке' })
+            }
+
+            const updated = await fastify.prisma.payment.update({
+                where: { id: payment.id },
+                data: { status: 'PAID', paidAt: new Date() }
+            })
+
+            await fastify.prisma.logs.create({
+                data: {
+                    cabinetid: user.cabinet,
+                    status: 'SUCCESS',
+                    message: `Перевод | Чек по платежу #${payment.id} подтверждён`
+                }
+            }).catch(() => {})
+
+            return reply.send({ payment: updated })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
+    fastify.post('/rejectTransfer', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const userId = req.user.id
+            const { paymentId } = req.body
+
+            if (!paymentId) return reply.status(400).send({ error: 'paymentId обязателен' })
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true, role: true, staff: { select: { transferpaymentscheck: true } } }
+            })
+            if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
+
+            if (user.role !== 'ADMINISTRATOR' && user.staff?.transferpaymentscheck !== 'YES') {
+                return reply.status(403).send({ error: 'Недостаточно прав для проверки платежей переводом' })
+            }
+
+            const payment = await fastify.prisma.payment.findFirst({
+                where: { id: parseInt(paymentId), cabinetid: user.cabinet }
+            })
+            if (!payment) return reply.status(404).send({ error: 'Платёж не найден' })
+            if (payment.method !== 'TRANSFER') {
+                return reply.status(400).send({ error: 'Этот платёж не является переводом' })
+            }
+            if (payment.status !== 'PENDING') {
+                return reply.status(400).send({ error: 'Отклонить можно только платёж на проверке' })
+            }
+
+            const updated = await fastify.prisma.payment.update({
+                where: { id: payment.id },
+                data: { status: 'FAILED' }
+            })
+
+            await fastify.prisma.logs.create({
+                data: {
+                    cabinetid: user.cabinet,
+                    status: 'ERROR',
+                    message: `Перевод | Чек по платежу #${payment.id} отклонён`
+                }
+            }).catch(() => {})
+
+            return reply.send({ payment: updated })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
+    fastify.post('/returnTransferPayment', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const userId = req.user.id
+            const { paymentId, amount } = req.body
+
+            if (!paymentId || amount === undefined || amount === null) {
+                return reply.status(400).send({ error: 'paymentId и amount обязательны' })
+            }
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true, role: true, login: true, staff: { select: { transferpaymentscheck: true } } }
+            })
+            if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
+
+            if (user.role !== 'ADMINISTRATOR' && user.staff?.transferpaymentscheck !== 'YES') {
+                return reply.status(403).send({ error: 'Недостаточно прав для возврата платежей переводом' })
+            }
+
+            const payment = await fastify.prisma.payment.findFirst({
+                where: { id: parseInt(paymentId), cabinetid: user.cabinet }
+            })
+            if (!payment) return reply.status(404).send({ error: 'Платёж не найден' })
+            if (payment.method !== 'TRANSFER') {
+                return reply.status(400).send({ error: 'Этот платёж не является переводом' })
+            }
+            if (payment.status !== 'PAID' && payment.status !== 'RETURNED') {
+                return reply.status(400).send({ error: 'Возврат возможен только для оплаченных платежей' })
+            }
+
+            const numAmount = parseFloat(amount)
+            if (isNaN(numAmount) || numAmount <= 0) {
+                return reply.status(400).send({ error: 'Сумма возврата должна быть больше 0' })
+            }
+            if (numAmount > payment.amount) {
+                return reply.status(400).send({ error: `Сумма возврата не может превышать ${payment.amount}` })
+            }
+
+            const updated = await fastify.prisma.payment.update({
+                where: { id: payment.id },
+                data: {
+                    amount:         payment.amount - numAmount,
+                    returnedAmount: (payment.returnedAmount || 0) + numAmount,
+                    returnedAt:     new Date(),
+                    returnedBy:     user.login,
+                    status:         'RETURNED'
+                }
+            })
 
             return reply.send({ payment: updated })
         } catch (err) {
@@ -375,7 +594,7 @@ module.exports = async (fastify) => {
                 ? req.body.bookingIds.map(id => parseInt(id)).filter(id => !isNaN(id))
                 : []
 
-            if (!ids.length) return reply.send({ amounts: {}, returnedAmounts: {} })
+            if (!ids.length) return reply.send({ amounts: {}, returnedAmounts: {}, pendingTransfer: {} })
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
@@ -385,7 +604,8 @@ module.exports = async (fastify) => {
 
             const amounts = {}
             const returnedAmounts = {}
-            ids.forEach(id => { amounts[id] = 0; returnedAmounts[id] = 0 })
+            const pendingTransfer = {}
+            ids.forEach(id => { amounts[id] = 0; returnedAmounts[id] = 0; pendingTransfer[id] = false })
 
             const sums = await fastify.prisma.payment.groupBy({
                 by: ['bookingId'],
@@ -396,6 +616,12 @@ module.exports = async (fastify) => {
                 amounts[s.bookingId] = s._sum.amount || 0
                 returnedAmounts[s.bookingId] = s._sum.returnedAmount || 0
             })
+
+            const pending = await fastify.prisma.payment.findMany({
+                where: { cabinetid: user.cabinet, bookingId: { in: ids }, type, method: 'TRANSFER', status: 'PENDING' },
+                select: { bookingId: true }
+            })
+            pending.forEach(p => { pendingTransfer[p.bookingId] = true })
 
             if (type === 'DEPOSIT') {
                 const bookings = await fastify.prisma.bookings.findMany({
@@ -419,7 +645,7 @@ module.exports = async (fastify) => {
                 })
             }
 
-            return reply.send({ amounts, returnedAmounts })
+            return reply.send({ amounts, returnedAmounts, pendingTransfer })
         } catch (err) {
             console.error(err)
             return reply.status(500).send({ error: 'Ошибка сервера' })
@@ -430,7 +656,7 @@ module.exports = async (fastify) => {
         try {
             await req.jwtVerify()
             const userId = req.user.id
-            const { source, status, type } = req.query
+            const { source, status, type, paidFrom, paidTo, returnedFrom, returnedTo, checkinFrom, checkinTo, checkoutFrom, checkoutTo, objects } = req.query
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
@@ -439,9 +665,11 @@ module.exports = async (fastify) => {
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
 
             const where = { cabinetid: user.cabinet }
-            if (['MANAGER', 'TOCHKA', 'TBANK'].includes(source)) where.method = source
+            if (['MANAGER', 'TOCHKA', 'TBANK', 'TRANSFER'].includes(source)) where.method = source
             if (['PENDING', 'PAID', 'FAILED', 'RETURNED'].includes(status)) where.status = status
             if (['PAY', 'DEPOSIT'].includes(type)) where.type = type
+            applyDateRange(where, 'paidAt', paidFrom, paidTo)
+            applyDateRange(where, 'returnedAt', returnedFrom, returnedTo)
 
             if (user.role !== 'ADMINISTRATOR') {
                 const allowPay = user.staff?.financesinformationpayment === 'YES'
@@ -458,21 +686,19 @@ module.exports = async (fastify) => {
                 }
             }
 
+            const objectIds = parseObjectIds(objects)
+            if (objectIds.length || checkinFrom || checkinTo || checkoutFrom || checkoutTo) {
+                const bookingIds = await findFilteredBookingIds(fastify, user.cabinet, { checkinFrom, checkinTo, checkoutFrom, checkoutTo, objectIds })
+                where.bookingId = { in: bookingIds }
+            }
+
             const payments = await fastify.prisma.payment.findMany({
                 where,
                 orderBy: { createdAt: 'desc' },
                 take: 300
             })
 
-            const bookingIds = [...new Set(payments.map(p => p.bookingId))]
-            const bookings = bookingIds.length ? await fastify.prisma.bookings.findMany({
-                where: { id: { in: bookingIds }, cabinet: user.cabinet },
-                select: { id: true, fio: true }
-            }) : []
-            const fioById = {}
-            bookings.forEach(b => { fioById[b.id] = b.fio })
-
-            const result = payments.map(p => ({ ...p, bookingFio: fioById[p.bookingId] || null }))
+            const result = await enrichPaymentsWithBookingInfo(fastify, user.cabinet, payments)
 
             return reply.send({ payments: result })
         } catch (err) {
@@ -485,6 +711,7 @@ module.exports = async (fastify) => {
         try {
             await req.jwtVerify()
             const userId = req.user.id
+            const { source, status, type, paidFrom, paidTo, returnedFrom, returnedTo, checkinFrom, checkinTo, checkoutFrom, checkoutTo, objects } = req.query
 
             const user = await fastify.prisma.user.findUnique({
                 where: { id: userId },
@@ -492,16 +719,7 @@ module.exports = async (fastify) => {
             })
             if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
 
-            const since = new Date()
-            since.setDate(since.getDate() - 29)
-            since.setHours(0, 0, 0, 0)
-
-            const where = {
-                cabinetid: user.cabinet,
-                status: { in: ['PAID', 'RETURNED'] },
-                createdAt: { gte: since }
-            }
-
+            let permissionType = null
             if (user.role !== 'ADMINISTRATOR') {
                 const allowPay = user.staff?.financesinformationpayment === 'YES'
                 const allowDeposit = user.staff?.financesinformationdeposit === 'YES'
@@ -509,13 +727,58 @@ module.exports = async (fastify) => {
                     return reply.status(403).send({ error: 'Нет доступа к вкладке финансов' })
                 }
                 if (!allowPay || !allowDeposit) {
-                    where.type = allowPay ? 'PAY' : 'DEPOSIT'
+                    permissionType = allowPay ? 'PAY' : 'DEPOSIT'
                 }
             }
 
-            const payments = await fastify.prisma.payment.findMany({
-                where,
-                select: { amount: true, method: true, createdAt: true }
+            const objectIds = parseObjectIds(objects)
+
+            const bySourceWhere = { cabinetid: user.cabinet }
+            if (['MANAGER', 'TOCHKA', 'TBANK', 'TRANSFER'].includes(source)) bySourceWhere.method = source
+            if (['PENDING', 'PAID', 'FAILED', 'RETURNED'].includes(status)) bySourceWhere.status = status
+            if (['PAY', 'DEPOSIT'].includes(type)) bySourceWhere.type = type
+            if (permissionType) {
+                if (bySourceWhere.type && bySourceWhere.type !== permissionType) {
+                    return reply.status(403).send({ error: 'Нет доступа к этому типу платежей' })
+                }
+                bySourceWhere.type = permissionType
+            }
+            applyDateRange(bySourceWhere, 'paidAt', paidFrom, paidTo)
+            applyDateRange(bySourceWhere, 'returnedAt', returnedFrom, returnedTo)
+
+            if (objectIds.length || checkinFrom || checkinTo || checkoutFrom || checkoutTo) {
+                const bookingIds = await findFilteredBookingIds(fastify, user.cabinet, { checkinFrom, checkinTo, checkoutFrom, checkoutTo, objectIds })
+                bySourceWhere.bookingId = { in: bookingIds }
+            }
+
+            const bySourcePayments = await fastify.prisma.payment.findMany({
+                where: bySourceWhere,
+                select: { amount: true, method: true }
+            })
+            const bySourceMap = { MANAGER: 0, TOCHKA: 0, TBANK: 0, TRANSFER: 0 }
+            bySourcePayments.forEach(p => { bySourceMap[p.method] = (bySourceMap[p.method] || 0) + (p.amount || 0) })
+            const bySource = Object.entries(bySourceMap)
+                .filter(([, amount]) => amount > 0)
+                .map(([method, amount]) => ({ method, amount }))
+
+            const since = new Date()
+            since.setDate(since.getDate() - 29)
+            since.setHours(0, 0, 0, 0)
+
+            const dailyWhere = {
+                cabinetid: user.cabinet,
+                status: { in: ['PAID', 'RETURNED'] },
+                createdAt: { gte: since }
+            }
+            if (permissionType) dailyWhere.type = permissionType
+            if (objectIds.length) {
+                const dailyBookingIds = await findFilteredBookingIds(fastify, user.cabinet, { objectIds })
+                dailyWhere.bookingId = { in: dailyBookingIds }
+            }
+
+            const dailyPayments = await fastify.prisma.payment.findMany({
+                where: dailyWhere,
+                select: { amount: true, createdAt: true }
             })
 
             const dayKey = (d) => new Date(d).toISOString().split('T')[0]
@@ -525,19 +788,101 @@ module.exports = async (fastify) => {
                 d.setDate(d.getDate() + i)
                 dailyMap[dayKey(d)] = 0
             }
-            payments.forEach(p => {
+            dailyPayments.forEach(p => {
                 const key = dayKey(p.createdAt)
                 if (key in dailyMap) dailyMap[key] += p.amount || 0
             })
             const daily = Object.keys(dailyMap).sort().map(date => ({ date, total: dailyMap[date] }))
 
-            const bySourceMap = { MANAGER: 0, TOCHKA: 0, TBANK: 0 }
-            payments.forEach(p => { bySourceMap[p.method] = (bySourceMap[p.method] || 0) + (p.amount || 0) })
-            const bySource = Object.entries(bySourceMap)
-                .filter(([, amount]) => amount > 0)
-                .map(([method, amount]) => ({ method, amount }))
-
             return reply.send({ daily, bySource })
+        } catch (err) {
+            console.error(err)
+            return reply.status(500).send({ error: 'Ошибка сервера' })
+        }
+    })
+
+    fastify.post('/report', async (req, reply) => {
+        try {
+            await req.jwtVerify()
+            const userId = req.user.id
+            const { type, paidFrom, paidTo, sources, objects } = req.body
+
+            const user = await fastify.prisma.user.findUnique({
+                where: { id: userId },
+                select: { cabinet: true, role: true, staff: { select: { financesinformationpayment: true, financesinformationdeposit: true } } }
+            })
+            if (!user) return reply.status(403).send({ error: 'Доступ запрещён' })
+
+            let permissionType = null
+            if (user.role !== 'ADMINISTRATOR') {
+                const allowPay = user.staff?.financesinformationpayment === 'YES'
+                const allowDeposit = user.staff?.financesinformationdeposit === 'YES'
+                if (!allowPay && !allowDeposit) {
+                    return reply.status(403).send({ error: 'Нет доступа к вкладке финансов' })
+                }
+                if (!allowPay || !allowDeposit) {
+                    permissionType = allowPay ? 'PAY' : 'DEPOSIT'
+                }
+            }
+
+            const where = { cabinetid: user.cabinet, status: { in: ['PAID', 'RETURNED'] } }
+
+            if (['PAY', 'DEPOSIT'].includes(type)) where.type = type
+            if (permissionType) {
+                if (where.type && where.type !== permissionType) {
+                    return reply.status(403).send({ error: 'Нет доступа к этому типу платежей' })
+                }
+                where.type = permissionType
+            }
+
+            if (Array.isArray(sources) && sources.length) {
+                const validSources = sources.filter(s => ['MANAGER', 'TOCHKA', 'TBANK', 'TRANSFER'].includes(s))
+                if (validSources.length) where.method = { in: validSources }
+            }
+
+            applyDateRange(where, 'paidAt', paidFrom, paidTo)
+
+            const objectIds = Array.isArray(objects) ? objects.map(o => parseInt(o)).filter(n => !isNaN(n)) : []
+            if (objectIds.length) {
+                const bookingIds = await findFilteredBookingIds(fastify, user.cabinet, { objectIds })
+                where.bookingId = { in: bookingIds }
+            }
+
+            const payments = await fastify.prisma.payment.findMany({
+                where,
+                orderBy: { paidAt: 'desc' }
+            })
+
+            const enriched = await enrichPaymentsWithBookingInfo(fastify, user.cabinet, payments)
+
+            const rows = enriched.map(p => {
+                const received = Number(p.amount || 0) + Number(p.returnedAmount || 0)
+                return {
+                    paymentId:     p.id,
+                    paidAt:        p.paidAt,
+                    returnedAt:    p.returnedAt,
+                    objectAddress: p.objectAddress,
+                    objectName:    p.objectName,
+                    checkinDate:   p.checkinDate,
+                    checkoutDate:  p.checkoutDate,
+                    bookingId:     p.bookingId,
+                    type:          p.type,
+                    method:        p.method,
+                    received,
+                    returned:      Number(p.returnedAmount || 0),
+                    remaining:     Number(p.amount || 0)
+                }
+            })
+
+            const totals = rows.reduce((acc, r) => {
+                acc.count++
+                acc.received  += r.received
+                acc.returned  += r.returned
+                acc.remaining += r.remaining
+                return acc
+            }, { count: 0, received: 0, returned: 0, remaining: 0 })
+
+            return reply.send({ rows, totals })
         } catch (err) {
             console.error(err)
             return reply.status(500).send({ error: 'Ошибка сервера' })

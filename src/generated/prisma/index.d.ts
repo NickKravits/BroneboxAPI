@@ -148,7 +148,8 @@ export const DepositChanel: {
   NONE: 'NONE',
   MONETA: 'MONETA',
   TOCHKA: 'TOCHKA',
-  TBANK: 'TBANK'
+  TBANK: 'TBANK',
+  TRANSFER: 'TRANSFER'
 };
 
 export type DepositChanel = (typeof DepositChanel)[keyof typeof DepositChanel]
@@ -157,7 +158,8 @@ export type DepositChanel = (typeof DepositChanel)[keyof typeof DepositChanel]
 export const PaymentChanel: {
   NONE: 'NONE',
   TOCHKA: 'TOCHKA',
-  TBANK: 'TBANK'
+  TBANK: 'TBANK',
+  TRANSFER: 'TRANSFER'
 };
 
 export type PaymentChanel = (typeof PaymentChanel)[keyof typeof PaymentChanel]
@@ -194,7 +196,8 @@ export type PaymentType = (typeof PaymentType)[keyof typeof PaymentType]
 export const PaymentMethod: {
   MANAGER: 'MANAGER',
   TOCHKA: 'TOCHKA',
-  TBANK: 'TBANK'
+  TBANK: 'TBANK',
+  TRANSFER: 'TRANSFER'
 };
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
@@ -3158,6 +3161,7 @@ export namespace Prisma {
     tochkaTaxCode: string | null
     tochkaAppClientId: string | null
     tochkaWebhookKey: string | null
+    transferInstructions: string | null
     cleaningTemplate: string | null
     approxTimeMarker: string | null
     emptyStayMarker: string | null
@@ -3184,6 +3188,7 @@ export namespace Prisma {
     tochkaTaxCode: string | null
     tochkaAppClientId: string | null
     tochkaWebhookKey: string | null
+    transferInstructions: string | null
     cleaningTemplate: string | null
     approxTimeMarker: string | null
     emptyStayMarker: string | null
@@ -3212,6 +3217,7 @@ export namespace Prisma {
     tochkaTaxCode: number
     tochkaAppClientId: number
     tochkaWebhookKey: number
+    transferInstructions: number
     cleaningTemplate: number
     approxTimeMarker: number
     emptyStayMarker: number
@@ -3250,6 +3256,7 @@ export namespace Prisma {
     tochkaTaxCode?: true
     tochkaAppClientId?: true
     tochkaWebhookKey?: true
+    transferInstructions?: true
     cleaningTemplate?: true
     approxTimeMarker?: true
     emptyStayMarker?: true
@@ -3276,6 +3283,7 @@ export namespace Prisma {
     tochkaTaxCode?: true
     tochkaAppClientId?: true
     tochkaWebhookKey?: true
+    transferInstructions?: true
     cleaningTemplate?: true
     approxTimeMarker?: true
     emptyStayMarker?: true
@@ -3304,6 +3312,7 @@ export namespace Prisma {
     tochkaTaxCode?: true
     tochkaAppClientId?: true
     tochkaWebhookKey?: true
+    transferInstructions?: true
     cleaningTemplate?: true
     approxTimeMarker?: true
     emptyStayMarker?: true
@@ -3419,6 +3428,7 @@ export namespace Prisma {
     tochkaTaxCode: string | null
     tochkaAppClientId: string | null
     tochkaWebhookKey: string | null
+    transferInstructions: string | null
     cleaningTemplate: string | null
     approxTimeMarker: string | null
     emptyStayMarker: string | null
@@ -3466,6 +3476,7 @@ export namespace Prisma {
     tochkaTaxCode?: boolean
     tochkaAppClientId?: boolean
     tochkaWebhookKey?: boolean
+    transferInstructions?: boolean
     cleaningTemplate?: boolean
     approxTimeMarker?: boolean
     emptyStayMarker?: boolean
@@ -3496,6 +3507,7 @@ export namespace Prisma {
     tochkaTaxCode?: boolean
     tochkaAppClientId?: boolean
     tochkaWebhookKey?: boolean
+    transferInstructions?: boolean
     cleaningTemplate?: boolean
     approxTimeMarker?: boolean
     emptyStayMarker?: boolean
@@ -3504,7 +3516,7 @@ export namespace Prisma {
     balance?: boolean
   }
 
-  export type CabinetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "Timezone" | "realtycalendarid" | "okidokiapi" | "okidokiwebhookkey" | "tochkaPhone" | "tochkaApiKey" | "tochkaMerchantId" | "tochkaPaymentMode" | "tochkaVatType" | "tochkaPurpose" | "tochkaName" | "tochkaPurposeDeposit" | "tochkaNameDeposit" | "tochkaCustomerCode" | "tochkaOrgName" | "tochkaTaxCode" | "tochkaAppClientId" | "tochkaWebhookKey" | "cleaningTemplate" | "approxTimeMarker" | "emptyStayMarker" | "cleaningHeader" | "cleaningFooter" | "balance", ExtArgs["result"]["cabinet"]>
+  export type CabinetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "Timezone" | "realtycalendarid" | "okidokiapi" | "okidokiwebhookkey" | "tochkaPhone" | "tochkaApiKey" | "tochkaMerchantId" | "tochkaPaymentMode" | "tochkaVatType" | "tochkaPurpose" | "tochkaName" | "tochkaPurposeDeposit" | "tochkaNameDeposit" | "tochkaCustomerCode" | "tochkaOrgName" | "tochkaTaxCode" | "tochkaAppClientId" | "tochkaWebhookKey" | "transferInstructions" | "cleaningTemplate" | "approxTimeMarker" | "emptyStayMarker" | "cleaningHeader" | "cleaningFooter" | "balance", ExtArgs["result"]["cabinet"]>
 
   export type $CabinetPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Cabinet"
@@ -3529,6 +3541,7 @@ export namespace Prisma {
       tochkaTaxCode: string | null
       tochkaAppClientId: string | null
       tochkaWebhookKey: string | null
+      transferInstructions: string | null
       cleaningTemplate: string | null
       approxTimeMarker: string | null
       emptyStayMarker: string | null
@@ -3923,6 +3936,7 @@ export namespace Prisma {
     readonly tochkaTaxCode: FieldRef<"Cabinet", 'String'>
     readonly tochkaAppClientId: FieldRef<"Cabinet", 'String'>
     readonly tochkaWebhookKey: FieldRef<"Cabinet", 'String'>
+    readonly transferInstructions: FieldRef<"Cabinet", 'String'>
     readonly cleaningTemplate: FieldRef<"Cabinet", 'String'>
     readonly approxTimeMarker: FieldRef<"Cabinet", 'String'>
     readonly emptyStayMarker: FieldRef<"Cabinet", 'String'>
@@ -5230,6 +5244,7 @@ export namespace Prisma {
     financesinformationpayment: $Enums.Thumbler | null
     financesinformationdeposit: $Enums.Thumbler | null
     depositamountedit: $Enums.Thumbler | null
+    transferpaymentscheck: $Enums.Thumbler | null
   }
 
   export type StaffMaxAggregateOutputType = {
@@ -5249,6 +5264,7 @@ export namespace Prisma {
     financesinformationpayment: $Enums.Thumbler | null
     financesinformationdeposit: $Enums.Thumbler | null
     depositamountedit: $Enums.Thumbler | null
+    transferpaymentscheck: $Enums.Thumbler | null
   }
 
   export type StaffCountAggregateOutputType = {
@@ -5268,6 +5284,7 @@ export namespace Prisma {
     financesinformationpayment: number
     financesinformationdeposit: number
     depositamountedit: number
+    transferpaymentscheck: number
     _all: number
   }
 
@@ -5299,6 +5316,7 @@ export namespace Prisma {
     financesinformationpayment?: true
     financesinformationdeposit?: true
     depositamountedit?: true
+    transferpaymentscheck?: true
   }
 
   export type StaffMaxAggregateInputType = {
@@ -5318,6 +5336,7 @@ export namespace Prisma {
     financesinformationpayment?: true
     financesinformationdeposit?: true
     depositamountedit?: true
+    transferpaymentscheck?: true
   }
 
   export type StaffCountAggregateInputType = {
@@ -5337,6 +5356,7 @@ export namespace Prisma {
     financesinformationpayment?: true
     financesinformationdeposit?: true
     depositamountedit?: true
+    transferpaymentscheck?: true
     _all?: true
   }
 
@@ -5443,6 +5463,7 @@ export namespace Prisma {
     financesinformationpayment: $Enums.Thumbler
     financesinformationdeposit: $Enums.Thumbler
     depositamountedit: $Enums.Thumbler
+    transferpaymentscheck: $Enums.Thumbler
     _count: StaffCountAggregateOutputType | null
     _avg: StaffAvgAggregateOutputType | null
     _sum: StaffSumAggregateOutputType | null
@@ -5481,6 +5502,7 @@ export namespace Prisma {
     financesinformationpayment?: boolean
     financesinformationdeposit?: boolean
     depositamountedit?: boolean
+    transferpaymentscheck?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["staff"]>
 
@@ -5503,9 +5525,10 @@ export namespace Prisma {
     financesinformationpayment?: boolean
     financesinformationdeposit?: boolean
     depositamountedit?: boolean
+    transferpaymentscheck?: boolean
   }
 
-  export type StaffOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cabinetid" | "manageobjects" | "managemaids" | "manageintegration" | "managetemplates" | "manageautosent" | "seemaidsrate" | "managebooks" | "manualpaymentedit" | "manualdepositedit" | "bankpaymentedit" | "bankdepositedit" | "financesinformationpayment" | "financesinformationdeposit" | "depositamountedit", ExtArgs["result"]["staff"]>
+  export type StaffOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cabinetid" | "manageobjects" | "managemaids" | "manageintegration" | "managetemplates" | "manageautosent" | "seemaidsrate" | "managebooks" | "manualpaymentedit" | "manualdepositedit" | "bankpaymentedit" | "bankdepositedit" | "financesinformationpayment" | "financesinformationdeposit" | "depositamountedit" | "transferpaymentscheck", ExtArgs["result"]["staff"]>
   export type StaffInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -5532,6 +5555,7 @@ export namespace Prisma {
       financesinformationpayment: $Enums.Thumbler
       financesinformationdeposit: $Enums.Thumbler
       depositamountedit: $Enums.Thumbler
+      transferpaymentscheck: $Enums.Thumbler
     }, ExtArgs["result"]["staff"]>
     composites: {}
   }
@@ -5918,6 +5942,7 @@ export namespace Prisma {
     readonly financesinformationpayment: FieldRef<"Staff", 'Thumbler'>
     readonly financesinformationdeposit: FieldRef<"Staff", 'Thumbler'>
     readonly depositamountedit: FieldRef<"Staff", 'Thumbler'>
+    readonly transferpaymentscheck: FieldRef<"Staff", 'Thumbler'>
   }
     
 
@@ -14796,6 +14821,7 @@ export namespace Prisma {
     status: $Enums.PaymentStatus | null
     returnedAmount: number | null
     returnedAt: Date | null
+    returnedBy: string | null
     externalId: string | null
     link: string | null
     linkExpiresAt: Date | null
@@ -14817,6 +14843,7 @@ export namespace Prisma {
     status: $Enums.PaymentStatus | null
     returnedAmount: number | null
     returnedAt: Date | null
+    returnedBy: string | null
     externalId: string | null
     link: string | null
     linkExpiresAt: Date | null
@@ -14838,6 +14865,7 @@ export namespace Prisma {
     status: number
     returnedAmount: number
     returnedAt: number
+    returnedBy: number
     externalId: number
     link: number
     linkExpiresAt: number
@@ -14877,6 +14905,7 @@ export namespace Prisma {
     status?: true
     returnedAmount?: true
     returnedAt?: true
+    returnedBy?: true
     externalId?: true
     link?: true
     linkExpiresAt?: true
@@ -14898,6 +14927,7 @@ export namespace Prisma {
     status?: true
     returnedAmount?: true
     returnedAt?: true
+    returnedBy?: true
     externalId?: true
     link?: true
     linkExpiresAt?: true
@@ -14919,6 +14949,7 @@ export namespace Prisma {
     status?: true
     returnedAmount?: true
     returnedAt?: true
+    returnedBy?: true
     externalId?: true
     link?: true
     linkExpiresAt?: true
@@ -15027,6 +15058,7 @@ export namespace Prisma {
     status: $Enums.PaymentStatus
     returnedAmount: number | null
     returnedAt: Date | null
+    returnedBy: string | null
     externalId: string | null
     link: string | null
     linkExpiresAt: Date | null
@@ -15067,6 +15099,7 @@ export namespace Prisma {
     status?: boolean
     returnedAmount?: boolean
     returnedAt?: boolean
+    returnedBy?: boolean
     externalId?: boolean
     link?: boolean
     linkExpiresAt?: boolean
@@ -15090,6 +15123,7 @@ export namespace Prisma {
     status?: boolean
     returnedAmount?: boolean
     returnedAt?: boolean
+    returnedBy?: boolean
     externalId?: boolean
     link?: boolean
     linkExpiresAt?: boolean
@@ -15099,7 +15133,7 @@ export namespace Prisma {
     tochkaPaymentType?: boolean
   }
 
-  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cabinetid" | "bookingId" | "amount" | "type" | "method" | "madeBy" | "receiptUrl" | "status" | "returnedAmount" | "returnedAt" | "externalId" | "link" | "linkExpiresAt" | "createdAt" | "paidAt" | "tochkaStatus" | "tochkaPaymentType", ExtArgs["result"]["payment"]>
+  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cabinetid" | "bookingId" | "amount" | "type" | "method" | "madeBy" | "receiptUrl" | "status" | "returnedAmount" | "returnedAt" | "returnedBy" | "externalId" | "link" | "linkExpiresAt" | "createdAt" | "paidAt" | "tochkaStatus" | "tochkaPaymentType", ExtArgs["result"]["payment"]>
 
   export type $PaymentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Payment"
@@ -15116,6 +15150,7 @@ export namespace Prisma {
       status: $Enums.PaymentStatus
       returnedAmount: number | null
       returnedAt: Date | null
+      returnedBy: string | null
       externalId: string | null
       link: string | null
       linkExpiresAt: Date | null
@@ -15503,6 +15538,7 @@ export namespace Prisma {
     readonly status: FieldRef<"Payment", 'PaymentStatus'>
     readonly returnedAmount: FieldRef<"Payment", 'Float'>
     readonly returnedAt: FieldRef<"Payment", 'DateTime'>
+    readonly returnedBy: FieldRef<"Payment", 'String'>
     readonly externalId: FieldRef<"Payment", 'String'>
     readonly link: FieldRef<"Payment", 'String'>
     readonly linkExpiresAt: FieldRef<"Payment", 'DateTime'>
@@ -15886,6 +15922,7 @@ export namespace Prisma {
     tochkaTaxCode: 'tochkaTaxCode',
     tochkaAppClientId: 'tochkaAppClientId',
     tochkaWebhookKey: 'tochkaWebhookKey',
+    transferInstructions: 'transferInstructions',
     cleaningTemplate: 'cleaningTemplate',
     approxTimeMarker: 'approxTimeMarker',
     emptyStayMarker: 'emptyStayMarker',
@@ -15925,7 +15962,8 @@ export namespace Prisma {
     bankdepositedit: 'bankdepositedit',
     financesinformationpayment: 'financesinformationpayment',
     financesinformationdeposit: 'financesinformationdeposit',
-    depositamountedit: 'depositamountedit'
+    depositamountedit: 'depositamountedit',
+    transferpaymentscheck: 'transferpaymentscheck'
   };
 
   export type StaffScalarFieldEnum = (typeof StaffScalarFieldEnum)[keyof typeof StaffScalarFieldEnum]
@@ -16107,6 +16145,7 @@ export namespace Prisma {
     status: 'status',
     returnedAmount: 'returnedAmount',
     returnedAt: 'returnedAt',
+    returnedBy: 'returnedBy',
     externalId: 'externalId',
     link: 'link',
     linkExpiresAt: 'linkExpiresAt',
@@ -16185,6 +16224,7 @@ export namespace Prisma {
     tochkaTaxCode: 'tochkaTaxCode',
     tochkaAppClientId: 'tochkaAppClientId',
     tochkaWebhookKey: 'tochkaWebhookKey',
+    transferInstructions: 'transferInstructions',
     cleaningTemplate: 'cleaningTemplate',
     approxTimeMarker: 'approxTimeMarker',
     emptyStayMarker: 'emptyStayMarker',
@@ -16306,6 +16346,7 @@ export namespace Prisma {
   export const PaymentOrderByRelevanceFieldEnum: {
     madeBy: 'madeBy',
     receiptUrl: 'receiptUrl',
+    returnedBy: 'returnedBy',
     externalId: 'externalId',
     link: 'link',
     tochkaStatus: 'tochkaStatus',
@@ -16569,6 +16610,7 @@ export namespace Prisma {
     tochkaTaxCode?: StringNullableFilter<"Cabinet"> | string | null
     tochkaAppClientId?: StringNullableFilter<"Cabinet"> | string | null
     tochkaWebhookKey?: StringNullableFilter<"Cabinet"> | string | null
+    transferInstructions?: StringNullableFilter<"Cabinet"> | string | null
     cleaningTemplate?: StringNullableFilter<"Cabinet"> | string | null
     approxTimeMarker?: StringNullableFilter<"Cabinet"> | string | null
     emptyStayMarker?: StringNullableFilter<"Cabinet"> | string | null
@@ -16597,6 +16639,7 @@ export namespace Prisma {
     tochkaTaxCode?: SortOrderInput | SortOrder
     tochkaAppClientId?: SortOrderInput | SortOrder
     tochkaWebhookKey?: SortOrderInput | SortOrder
+    transferInstructions?: SortOrderInput | SortOrder
     cleaningTemplate?: SortOrderInput | SortOrder
     approxTimeMarker?: SortOrderInput | SortOrder
     emptyStayMarker?: SortOrderInput | SortOrder
@@ -16629,6 +16672,7 @@ export namespace Prisma {
     tochkaOrgName?: StringNullableFilter<"Cabinet"> | string | null
     tochkaTaxCode?: StringNullableFilter<"Cabinet"> | string | null
     tochkaAppClientId?: StringNullableFilter<"Cabinet"> | string | null
+    transferInstructions?: StringNullableFilter<"Cabinet"> | string | null
     cleaningTemplate?: StringNullableFilter<"Cabinet"> | string | null
     approxTimeMarker?: StringNullableFilter<"Cabinet"> | string | null
     emptyStayMarker?: StringNullableFilter<"Cabinet"> | string | null
@@ -16657,6 +16701,7 @@ export namespace Prisma {
     tochkaTaxCode?: SortOrderInput | SortOrder
     tochkaAppClientId?: SortOrderInput | SortOrder
     tochkaWebhookKey?: SortOrderInput | SortOrder
+    transferInstructions?: SortOrderInput | SortOrder
     cleaningTemplate?: SortOrderInput | SortOrder
     approxTimeMarker?: SortOrderInput | SortOrder
     emptyStayMarker?: SortOrderInput | SortOrder
@@ -16693,6 +16738,7 @@ export namespace Prisma {
     tochkaTaxCode?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     tochkaAppClientId?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     tochkaWebhookKey?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
+    transferInstructions?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     cleaningTemplate?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     approxTimeMarker?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
     emptyStayMarker?: StringNullableWithAggregatesFilter<"Cabinet"> | string | null
@@ -16781,6 +16827,7 @@ export namespace Prisma {
     financesinformationpayment?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     depositamountedit?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
+    transferpaymentscheck?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -16801,6 +16848,7 @@ export namespace Prisma {
     financesinformationpayment?: SortOrder
     financesinformationdeposit?: SortOrder
     depositamountedit?: SortOrder
+    transferpaymentscheck?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -16824,6 +16872,7 @@ export namespace Prisma {
     financesinformationpayment?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     depositamountedit?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
+    transferpaymentscheck?: EnumThumblerFilter<"Staff"> | $Enums.Thumbler
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
@@ -16844,6 +16893,7 @@ export namespace Prisma {
     financesinformationpayment?: SortOrder
     financesinformationdeposit?: SortOrder
     depositamountedit?: SortOrder
+    transferpaymentscheck?: SortOrder
     _count?: StaffCountOrderByAggregateInput
     _avg?: StaffAvgOrderByAggregateInput
     _max?: StaffMaxOrderByAggregateInput
@@ -16871,6 +16921,7 @@ export namespace Prisma {
     financesinformationpayment?: EnumThumblerWithAggregatesFilter<"Staff"> | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerWithAggregatesFilter<"Staff"> | $Enums.Thumbler
     depositamountedit?: EnumThumblerWithAggregatesFilter<"Staff"> | $Enums.Thumbler
+    transferpaymentscheck?: EnumThumblerWithAggregatesFilter<"Staff"> | $Enums.Thumbler
   }
 
   export type MaidsWhereInput = {
@@ -17715,6 +17766,7 @@ export namespace Prisma {
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     returnedAmount?: FloatNullableFilter<"Payment"> | number | null
     returnedAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
+    returnedBy?: StringNullableFilter<"Payment"> | string | null
     externalId?: StringNullableFilter<"Payment"> | string | null
     link?: StringNullableFilter<"Payment"> | string | null
     linkExpiresAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
@@ -17736,6 +17788,7 @@ export namespace Prisma {
     status?: SortOrder
     returnedAmount?: SortOrderInput | SortOrder
     returnedAt?: SortOrderInput | SortOrder
+    returnedBy?: SortOrderInput | SortOrder
     externalId?: SortOrderInput | SortOrder
     link?: SortOrderInput | SortOrder
     linkExpiresAt?: SortOrderInput | SortOrder
@@ -17761,6 +17814,7 @@ export namespace Prisma {
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     returnedAmount?: FloatNullableFilter<"Payment"> | number | null
     returnedAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
+    returnedBy?: StringNullableFilter<"Payment"> | string | null
     externalId?: StringNullableFilter<"Payment"> | string | null
     link?: StringNullableFilter<"Payment"> | string | null
     linkExpiresAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
@@ -17782,6 +17836,7 @@ export namespace Prisma {
     status?: SortOrder
     returnedAmount?: SortOrderInput | SortOrder
     returnedAt?: SortOrderInput | SortOrder
+    returnedBy?: SortOrderInput | SortOrder
     externalId?: SortOrderInput | SortOrder
     link?: SortOrderInput | SortOrder
     linkExpiresAt?: SortOrderInput | SortOrder
@@ -17811,6 +17866,7 @@ export namespace Prisma {
     status?: EnumPaymentStatusWithAggregatesFilter<"Payment"> | $Enums.PaymentStatus
     returnedAmount?: FloatNullableWithAggregatesFilter<"Payment"> | number | null
     returnedAt?: DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
+    returnedBy?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     externalId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     link?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     linkExpiresAt?: DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
@@ -17931,6 +17987,7 @@ export namespace Prisma {
     tochkaTaxCode?: string | null
     tochkaAppClientId?: string | null
     tochkaWebhookKey?: string | null
+    transferInstructions?: string | null
     cleaningTemplate?: string | null
     approxTimeMarker?: string | null
     emptyStayMarker?: string | null
@@ -17959,6 +18016,7 @@ export namespace Prisma {
     tochkaTaxCode?: string | null
     tochkaAppClientId?: string | null
     tochkaWebhookKey?: string | null
+    transferInstructions?: string | null
     cleaningTemplate?: string | null
     approxTimeMarker?: string | null
     emptyStayMarker?: string | null
@@ -17986,6 +18044,7 @@ export namespace Prisma {
     tochkaTaxCode?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaAppClientId?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaWebhookKey?: NullableStringFieldUpdateOperationsInput | string | null
+    transferInstructions?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningTemplate?: NullableStringFieldUpdateOperationsInput | string | null
     approxTimeMarker?: NullableStringFieldUpdateOperationsInput | string | null
     emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18014,6 +18073,7 @@ export namespace Prisma {
     tochkaTaxCode?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaAppClientId?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaWebhookKey?: NullableStringFieldUpdateOperationsInput | string | null
+    transferInstructions?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningTemplate?: NullableStringFieldUpdateOperationsInput | string | null
     approxTimeMarker?: NullableStringFieldUpdateOperationsInput | string | null
     emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18042,6 +18102,7 @@ export namespace Prisma {
     tochkaTaxCode?: string | null
     tochkaAppClientId?: string | null
     tochkaWebhookKey?: string | null
+    transferInstructions?: string | null
     cleaningTemplate?: string | null
     approxTimeMarker?: string | null
     emptyStayMarker?: string | null
@@ -18069,6 +18130,7 @@ export namespace Prisma {
     tochkaTaxCode?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaAppClientId?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaWebhookKey?: NullableStringFieldUpdateOperationsInput | string | null
+    transferInstructions?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningTemplate?: NullableStringFieldUpdateOperationsInput | string | null
     approxTimeMarker?: NullableStringFieldUpdateOperationsInput | string | null
     emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18097,6 +18159,7 @@ export namespace Prisma {
     tochkaTaxCode?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaAppClientId?: NullableStringFieldUpdateOperationsInput | string | null
     tochkaWebhookKey?: NullableStringFieldUpdateOperationsInput | string | null
+    transferInstructions?: NullableStringFieldUpdateOperationsInput | string | null
     cleaningTemplate?: NullableStringFieldUpdateOperationsInput | string | null
     approxTimeMarker?: NullableStringFieldUpdateOperationsInput | string | null
     emptyStayMarker?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18181,6 +18244,7 @@ export namespace Prisma {
     financesinformationpayment?: $Enums.Thumbler
     financesinformationdeposit?: $Enums.Thumbler
     depositamountedit?: $Enums.Thumbler
+    transferpaymentscheck?: $Enums.Thumbler
     user: UserCreateNestedOneWithoutStaffInput
   }
 
@@ -18201,6 +18265,7 @@ export namespace Prisma {
     financesinformationpayment?: $Enums.Thumbler
     financesinformationdeposit?: $Enums.Thumbler
     depositamountedit?: $Enums.Thumbler
+    transferpaymentscheck?: $Enums.Thumbler
   }
 
   export type StaffUpdateInput = {
@@ -18219,6 +18284,7 @@ export namespace Prisma {
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    transferpaymentscheck?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     user?: UserUpdateOneRequiredWithoutStaffNestedInput
   }
 
@@ -18239,6 +18305,7 @@ export namespace Prisma {
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    transferpaymentscheck?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
   }
 
   export type StaffCreateManyInput = {
@@ -18258,6 +18325,7 @@ export namespace Prisma {
     financesinformationpayment?: $Enums.Thumbler
     financesinformationdeposit?: $Enums.Thumbler
     depositamountedit?: $Enums.Thumbler
+    transferpaymentscheck?: $Enums.Thumbler
   }
 
   export type StaffUpdateManyMutationInput = {
@@ -18276,6 +18344,7 @@ export namespace Prisma {
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    transferpaymentscheck?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
   }
 
   export type StaffUncheckedUpdateManyInput = {
@@ -18295,6 +18364,7 @@ export namespace Prisma {
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    transferpaymentscheck?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
   }
 
   export type MaidsCreateInput = {
@@ -19270,6 +19340,7 @@ export namespace Prisma {
     status: $Enums.PaymentStatus
     returnedAmount?: number | null
     returnedAt?: Date | string | null
+    returnedBy?: string | null
     externalId?: string | null
     link?: string | null
     linkExpiresAt?: Date | string | null
@@ -19291,6 +19362,7 @@ export namespace Prisma {
     status: $Enums.PaymentStatus
     returnedAmount?: number | null
     returnedAt?: Date | string | null
+    returnedBy?: string | null
     externalId?: string | null
     link?: string | null
     linkExpiresAt?: Date | string | null
@@ -19311,6 +19383,7 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     returnedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     returnedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    returnedBy?: NullableStringFieldUpdateOperationsInput | string | null
     externalId?: NullableStringFieldUpdateOperationsInput | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
     linkExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19332,6 +19405,7 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     returnedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     returnedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    returnedBy?: NullableStringFieldUpdateOperationsInput | string | null
     externalId?: NullableStringFieldUpdateOperationsInput | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
     linkExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19353,6 +19427,7 @@ export namespace Prisma {
     status: $Enums.PaymentStatus
     returnedAmount?: number | null
     returnedAt?: Date | string | null
+    returnedBy?: string | null
     externalId?: string | null
     link?: string | null
     linkExpiresAt?: Date | string | null
@@ -19373,6 +19448,7 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     returnedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     returnedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    returnedBy?: NullableStringFieldUpdateOperationsInput | string | null
     externalId?: NullableStringFieldUpdateOperationsInput | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
     linkExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19394,6 +19470,7 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     returnedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     returnedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    returnedBy?: NullableStringFieldUpdateOperationsInput | string | null
     externalId?: NullableStringFieldUpdateOperationsInput | string | null
     link?: NullableStringFieldUpdateOperationsInput | string | null
     linkExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19706,6 +19783,7 @@ export namespace Prisma {
     tochkaTaxCode?: SortOrder
     tochkaAppClientId?: SortOrder
     tochkaWebhookKey?: SortOrder
+    transferInstructions?: SortOrder
     cleaningTemplate?: SortOrder
     approxTimeMarker?: SortOrder
     emptyStayMarker?: SortOrder
@@ -19737,6 +19815,7 @@ export namespace Prisma {
     tochkaTaxCode?: SortOrder
     tochkaAppClientId?: SortOrder
     tochkaWebhookKey?: SortOrder
+    transferInstructions?: SortOrder
     cleaningTemplate?: SortOrder
     approxTimeMarker?: SortOrder
     emptyStayMarker?: SortOrder
@@ -19763,6 +19842,7 @@ export namespace Prisma {
     tochkaTaxCode?: SortOrder
     tochkaAppClientId?: SortOrder
     tochkaWebhookKey?: SortOrder
+    transferInstructions?: SortOrder
     cleaningTemplate?: SortOrder
     approxTimeMarker?: SortOrder
     emptyStayMarker?: SortOrder
@@ -19927,6 +20007,7 @@ export namespace Prisma {
     financesinformationpayment?: SortOrder
     financesinformationdeposit?: SortOrder
     depositamountedit?: SortOrder
+    transferpaymentscheck?: SortOrder
   }
 
   export type StaffAvgOrderByAggregateInput = {
@@ -19951,6 +20032,7 @@ export namespace Prisma {
     financesinformationpayment?: SortOrder
     financesinformationdeposit?: SortOrder
     depositamountedit?: SortOrder
+    transferpaymentscheck?: SortOrder
   }
 
   export type StaffMinOrderByAggregateInput = {
@@ -19970,6 +20052,7 @@ export namespace Prisma {
     financesinformationpayment?: SortOrder
     financesinformationdeposit?: SortOrder
     depositamountedit?: SortOrder
+    transferpaymentscheck?: SortOrder
   }
 
   export type StaffSumOrderByAggregateInput = {
@@ -20787,6 +20870,7 @@ export namespace Prisma {
     status?: SortOrder
     returnedAmount?: SortOrder
     returnedAt?: SortOrder
+    returnedBy?: SortOrder
     externalId?: SortOrder
     link?: SortOrder
     linkExpiresAt?: SortOrder
@@ -20816,6 +20900,7 @@ export namespace Prisma {
     status?: SortOrder
     returnedAmount?: SortOrder
     returnedAt?: SortOrder
+    returnedBy?: SortOrder
     externalId?: SortOrder
     link?: SortOrder
     linkExpiresAt?: SortOrder
@@ -20837,6 +20922,7 @@ export namespace Prisma {
     status?: SortOrder
     returnedAmount?: SortOrder
     returnedAt?: SortOrder
+    returnedBy?: SortOrder
     externalId?: SortOrder
     link?: SortOrder
     linkExpiresAt?: SortOrder
@@ -21603,6 +21689,7 @@ export namespace Prisma {
     financesinformationpayment?: $Enums.Thumbler
     financesinformationdeposit?: $Enums.Thumbler
     depositamountedit?: $Enums.Thumbler
+    transferpaymentscheck?: $Enums.Thumbler
   }
 
   export type StaffUncheckedCreateWithoutUserInput = {
@@ -21621,6 +21708,7 @@ export namespace Prisma {
     financesinformationpayment?: $Enums.Thumbler
     financesinformationdeposit?: $Enums.Thumbler
     depositamountedit?: $Enums.Thumbler
+    transferpaymentscheck?: $Enums.Thumbler
   }
 
   export type StaffCreateOrConnectWithoutUserInput = {
@@ -21655,6 +21743,7 @@ export namespace Prisma {
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    transferpaymentscheck?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
   }
 
   export type StaffUncheckedUpdateWithoutUserInput = {
@@ -21673,6 +21762,7 @@ export namespace Prisma {
     financesinformationpayment?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     financesinformationdeposit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
     depositamountedit?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
+    transferpaymentscheck?: EnumThumblerFieldUpdateOperationsInput | $Enums.Thumbler
   }
 
   export type UserCreateWithoutStaffInput = {
