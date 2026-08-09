@@ -301,6 +301,12 @@ module.exports = async (fastify) => {
                     checkout:   end_date
                 })
 
+                fastify.sendPushToCabinet(cabinet.id, {
+                    title: 'Новое бронирование',
+                    body:  `${object.name} · ${fio || 'Гость'} · ${begin_date} — ${end_date}`,
+                    url:   `${process.env.FRONTEND_URL}/crm`
+                }).catch(err => fastify.log.error(`[WebPush] new_booking: ${err.message}`))
+
                 return reply.status(200).send({ ok: true })
             } else if (action === 'update_booking') {
                 const book = await fastify.prisma.bookings.findFirst({
@@ -494,10 +500,27 @@ module.exports = async (fastify) => {
                 return reply.status(200).send({ ok: true })
             }
 
+            const newStatus = status?.name || null
+
             await fastify.prisma.bookings.update({
                 where: { id: booking.id },
-                data: { contract_status: status?.name || null }
+                data: { contract_status: newStatus }
             })
+
+            if (newStatus === 'Подписан' && booking.contract_status !== 'Подписан') {
+                const object = booking.realty_id != null
+                    ? await fastify.prisma.objects.findFirst({
+                        where: { realtyid: booking.realty_id, cabinetid: cabinet.id },
+                        select: { name: true }
+                    })
+                    : null
+
+                fastify.sendPushToCabinet(cabinet.id, {
+                    title: 'Гость подписал договор',
+                    body:  `${object?.name || ''} · ${booking.fio || 'Гость'}`.trim(),
+                    url:   `${process.env.FRONTEND_URL}/crm`
+                }).catch(err => fastify.log.error(`[WebPush] contract signed: ${err.message}`))
+            }
 
             return reply.status(200).send({ ok: true })
 
@@ -588,6 +611,8 @@ module.exports = async (fastify) => {
                     fastify.log.error(`[Точка вебхук] Некорректный amount у платежа #${payment.id}: ${amount}`)
                 }
 
+                const wasAlreadyPaid = payment.status === 'PAID'
+
                 await fastify.prisma.payment.update({
                     where: { id: payment.id },
                     data: updateData
@@ -600,6 +625,26 @@ module.exports = async (fastify) => {
                         message: `Точка | Платёж #${payment.id} подтверждён вебхуком (operationId: ${operationId})`
                     }
                 })
+
+                if (!wasAlreadyPaid) {
+                    const booking = await fastify.prisma.bookings.findFirst({
+                        where: { id: payment.bookingId, cabinet: cabinet.id },
+                        select: { fio: true, realty_id: true }
+                    })
+                    const bookingObject = booking?.realty_id != null
+                        ? await fastify.prisma.objects.findFirst({
+                            where: { realtyid: booking.realty_id, cabinetid: cabinet.id },
+                            select: { name: true }
+                        })
+                        : null
+
+                    const isDeposit = payment.type === 'DEPOSIT'
+                    fastify.sendPushToCabinet(cabinet.id, {
+                        title: isDeposit ? 'Залог внесён (Точка)' : 'Оплата подтверждена (Точка)',
+                        body:  `${bookingObject?.name || ''} · ${booking?.fio || 'Гость'} · ${updateData.amount ?? payment.amount} ₽`.trim(),
+                        url:   `${process.env.FRONTEND_URL}/crm`
+                    }).catch(err => fastify.log.error(`[WebPush] tochka payment: ${err.message}`))
+                }
 
                 return reply.status(200).send({ ok: true })
             } catch (err) {

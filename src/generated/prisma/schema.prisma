@@ -38,6 +38,16 @@ model User {
   staff Staff?
 }
 
+model PushSubscription {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  cabinetid Int
+  endpoint  String   @unique @db.VarChar(500)
+  p256dh    String   @db.VarChar(255)
+  auth      String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+}
+
 model Cabinet {
   id                   Int      @id @default(autoincrement())
   Timezone             Timezone @default(EUROPE_MOSCOW)

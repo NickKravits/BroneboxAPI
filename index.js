@@ -52,6 +52,7 @@ fastify.setErrorHandler((err, req, reply) => {
 fastify.register(require('./src/plugins/prisma'))
 fastify.register(require('./src/plugins/jwt'))
 fastify.register(require('./src/plugins/sse'))
+fastify.register(require('./src/plugins/webpush'))
 
 fastify.register(require('./src/routes/auth'), { prefix: '/auth' })
 fastify.register(require('./src/routes/users'), { prefix: '/users' })
@@ -65,6 +66,7 @@ fastify.register(require('./src/routes/guest'), { prefix: '/guest' })
 fastify.register(require('./src/routes/logs'), { prefix: '/logs' })
 fastify.register(require('./src/routes/cabinet'), { prefix: '/cabinet' })
 fastify.register(require('./src/routes/payments'), { prefix: '/payments' })
+fastify.register(require('./src/routes/push'), { prefix: '/push' })
 fastify.register(require('./src/routes/events'))
 
 fastify.register(require('./src/cron/expireStalePayments'))

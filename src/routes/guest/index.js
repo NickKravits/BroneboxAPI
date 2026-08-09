@@ -706,7 +706,7 @@ module.exports = async (fastify) => {
 
         const object = await fastify.prisma.objects.findFirst({
             where: { realtyid: booking.realty_id, cabinetid: booking.cabinet },
-            select: { paymentchanel: true, depositchanel: true, deposit: true }
+            select: { name: true, paymentchanel: true, depositchanel: true, deposit: true }
         })
         if (!object) return reply.status(404).send({ error: 'Object not found' })
 
@@ -785,6 +785,12 @@ module.exports = async (fastify) => {
                 message:   `Перевод | Гость прикрепил чек по бронированию #${booking.id} (${type === 'DEPOSIT' ? 'залог' : 'оплата'})`
             }
         }).catch(() => {})
+
+        fastify.sendPushToCabinet(booking.cabinet, {
+            title: type === 'DEPOSIT' ? 'Гость прикрепил чек залога' : 'Гость прикрепил чек оплаты',
+            body:  `${object.name || ''} · ${booking.fio || 'Гость'} · ${amount} ₽`.trim(),
+            url:   `${process.env.FRONTEND_URL}/crm`
+        }).catch(err => fastify.log.error(`[WebPush] receipt upload: ${err.message}`))
 
         return reply.send({ ok: true, payment })
     })
