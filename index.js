@@ -28,7 +28,11 @@ fastify.register(require('@fastify/helmet'), {
   // Фронтенд (broneboxy.ru) грузит картинки/файлы с этого API (api.broneboxy.ru) — другой origin,
   // поэтому дефолтный "same-origin" сломает показ фото объектов и чеков.
   crossOriginResourcePolicy: { policy: 'cross-origin' },
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  // X-Frame-Options: SAMEORIGIN по умолчанию блокирует показ PDF-чеков в <iframe> на CRM
+  // (broneboxy.ru встраивает файл с api.broneboxy.ru — другой origin). Этот сервер отдаёт
+  // только JSON и статику, отдельных кликабельных страниц у него нет — кликджекинг тут не риск.
+  frameguard: false
 })
 
 fastify.register(require('@fastify/rate-limit'), {
