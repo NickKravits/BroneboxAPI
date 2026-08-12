@@ -24,7 +24,8 @@ module.exports = async (fastify) => {
                 financesinformationpayment: true,
                 financesinformationdeposit: true,
                 depositamountedit: true,
-                transferpaymentscheck: true
+                transferpaymentscheck: true,
+                managetemplates: true
             } }
         }
         })
@@ -49,7 +50,8 @@ module.exports = async (fastify) => {
             financesInformationPayment: isAdmin || user.staff?.financesinformationpayment === 'YES',
             financesInformationDeposit: isAdmin || user.staff?.financesinformationdeposit === 'YES',
             depositAmountEdit: isAdmin || user.staff?.depositamountedit === 'YES',
-            transferPaymentsCheck: isAdmin || user.staff?.transferpaymentscheck === 'YES'
+            transferPaymentsCheck: isAdmin || user.staff?.transferpaymentscheck === 'YES',
+            templatesEdit: isAdmin || user.staff?.managetemplates === 'YES'
         }
     } catch (err) {
         return reply.status(401).send({ error: 'Неавторизованный доступ' })
