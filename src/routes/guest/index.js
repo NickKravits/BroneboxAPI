@@ -108,6 +108,7 @@ module.exports = async (fastify) => {
                 begin_time:           true,
                 end_time:             true,
                 contract_link:        true,
+                contract_status:      true,
                 review:               true,
                 source:               true,
                 cabinet:              true,
