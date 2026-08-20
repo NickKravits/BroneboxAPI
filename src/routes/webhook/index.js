@@ -53,7 +53,12 @@ module.exports = async (fastify) => {
 
             const { webhookkey } = req.params
             const { action, status, data } = req.body
-            const { booking } = data
+            const { booking } = data || {}
+
+            if (!booking) {
+                fastify.log.warn(`[RC webhook] action=${action} пришёл без объекта booking — пропускаю`)
+                return reply.status(200).send({ ok: true })
+            }
 
             const {
                 id,
@@ -243,8 +248,18 @@ module.exports = async (fastify) => {
                         body: JSON.stringify(requestBody)
                     });
 
-                    const data = await res.json();
-                    
+                    const rawText = await res.text();
+                    let data = {};
+                    try {
+                        data = JSON.parse(rawText);
+                    } catch {
+                        fastify.log.error(`[OkiDoki] Не-JSON ответ от api.doki.online (status ${res.status}): ${rawText.slice(0, 300)}`)
+                    }
+
+                    if (!res.ok) {
+                        fastify.log.error(`[OkiDoki] HTTP ${res.status} при создании договора (realty_id ${realty_id})`)
+                    }
+
                     okiDokiLink = data.link;
                     okiDokiId = data.contract_id;
                 }
