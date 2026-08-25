@@ -504,7 +504,7 @@ module.exports = async (fastify) => {
                     })
                 })
             } catch (err) {
-                fastify.log.error(`[Точка] Ошибка сети при создании платежа: ${err.message}`)
+                fastify.log.error(`[Точка] Ошибка сети при создании платежа: ${err.message} | cause: ${err.cause?.code || err.cause?.message || err.cause || 'нет'}`)
                 return reply.status(502).send({ error: 'Не удалось связаться с банком' })
             }
 
@@ -666,7 +666,7 @@ module.exports = async (fastify) => {
                 })
             })
         } catch (err) {
-            fastify.log.error(`[Точка] Ошибка сети при создании платежа (залог): ${err.message}`)
+            fastify.log.error(`[Точка] Ошибка сети при создании платежа (залог): ${err.message} | cause: ${err.cause?.code || err.cause?.message || err.cause || 'нет'}`)
             return reply.status(502).send({ error: 'Не удалось связаться с банком' })
         }
 

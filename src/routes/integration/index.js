@@ -393,13 +393,19 @@ module.exports = async (fastify) => {
                 return reply.status(400).send({ error: 'Недопустимая ставка НДС' });
             }
 
-            const customerCodeRes = await fetch('https://enter.tochka.com/uapi/open-banking/v1.0/customers', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                }
-            });
+            let customerCodeRes
+            try {
+                customerCodeRes = await fetch('https://enter.tochka.com/uapi/open-banking/v1.0/customers', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    }
+                });
+            } catch (err) {
+                fastify.log.error(`[Точка] Ошибка сети при проверке токена: ${err.message} | cause: ${err.cause?.code || err.cause?.message || err.cause || 'нет'}`)
+                return reply.status(502).send({ error: 'Не удалось связаться с банком. Попробуйте позже.' })
+            }
 
             const data = await customerCodeRes.json();
 
@@ -617,8 +623,11 @@ module.exports = async (fastify) => {
 
             return reply.send({ message, merchantResult, dataMerchant })
         } catch (err) {
-            console.error(err)
-            return reply.status(401).send({ error: 'Неавторизованный доступ' })
+            if (err.statusCode === 401) {
+                return reply.status(401).send({ error: 'Неавторизованный доступ' })
+            }
+            fastify.log.error(`[Точка] Непредвиденная ошибка при сохранении интеграции: ${err.message}`)
+            return reply.status(500).send({ error: 'Внутренняя ошибка сервера. Обратитесь к разработчику.' })
         }
 
     })

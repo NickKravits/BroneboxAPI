@@ -56,7 +56,10 @@ module.exports = async (fastify) => {
             const { booking } = data || {}
 
             if (!booking) {
-                fastify.log.warn(`[RC webhook] action=${action} пришёл без объекта booking — пропускаю`)
+                const fallbackId = data?.id ?? data?.booking_id ?? req.body?.id ?? null
+                fastify.log.warn(
+                    `[RC webhook] action=${action}${fallbackId ? `, возможный id=${fallbackId}` : ''} — booking отсутствует в payload. Raw body: ${JSON.stringify(req.body).slice(0, 500)}`
+                )
                 return reply.status(200).send({ ok: true })
             }
 
